@@ -770,3 +770,104 @@ mark { background: rgba(47,227,180,.3); color: inherit; border-radius: 3px; padd
   .rotator .is-in, .rotator .is-out { animation: none; }
   .js .h2 .w { opacity: 1; transform: none; filter: none; transition: none; }
 }
+
+/* ============================================================ REACT BITS
+   Styles for the vanilla ports in assets/js/reactbits.js. */
+.has-gl > .aurora { display: none; }
+.section--night, .journey__pin { isolation: isolate; }
+.gl-bg { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1.2s; }
+.gl-bg.is-on { opacity: 1; }
+.noise-layer { position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .07; mix-blend-mode: overlay; background-repeat: repeat; background-size: 128px 128px; image-rendering: pixelated; }
+
+.statement { padding-block: clamp(64px, 10vw, 140px); background: var(--snow); position: relative; overflow: hidden; }
+.statement__text { font-size: clamp(1.7rem, 1.1rem + 3.2vw, 3.6rem); line-height: 1.18; letter-spacing: -.025em; font-weight: 700; color: var(--ink); max-width: 22ch; }
+.statement__text .hl { color: var(--fi-blue); }
+.sr-text { display: block; transform-origin: 0% 50%; }
+.sr-word { display: inline-block; will-change: opacity, filter; }
+.statement__foot { margin-top: clamp(24px, 3vw, 40px); display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+.shiny-text { -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; background-repeat: no-repeat; }
+
+.star-border { position: relative; isolation: isolate; }
+.star-border__light { position: absolute; top: -48px; left: -48px; width: calc(100% + 96px); height: calc(100% + 96px); z-index: -1; pointer-events: none; }
+
+.trail { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.trail__img { position: absolute; left: 0; top: 0; width: 170px; aspect-ratio: 1.1; border-radius: 15px; overflow: hidden; opacity: 0; will-change: transform, opacity; box-shadow: 0 20px 40px -18px rgba(0,0,0,.6); }
+.trail__inner { position: absolute; inset: -10px; background-size: cover; background-position: center; }
+
+/* Sticky stacked cards (ScrollStack) */
+.stack { display: grid; gap: 0; }
+.stack-card { position: sticky; top: calc(var(--header-h) + 24px + var(--i, 0) * 22px); margin-bottom: 18px; border-radius: 26px; padding: clamp(22px, 3vw, 34px); background: #fff; border: 1px solid var(--line); box-shadow: 0 -12px 40px -16px rgba(6,22,49,.18), 0 24px 48px -24px rgba(6,22,49,.25); transform-origin: 50% 0; will-change: transform; display: grid; gap: 10px; grid-template-columns: auto 1fr; align-items: start; }
+.stack-card::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--night); opacity: var(--stack-dim, 0); pointer-events: none; }
+.stack-card b { font-size: clamp(2rem, 1.5rem + 2vw, 3rem); line-height: 1; color: var(--fi-blue); letter-spacing: -.04em; min-width: 2.2ch; }
+.stack-card strong { display: block; font-size: 1.15rem; margin-bottom: 4px; }
+.stack-card span { color: var(--muted); font-size: 15px; line-height: 1.6; }
+.stack-card:nth-child(2) { background: var(--ice); }
+.stack-card:nth-child(3) { background: #eef6ff; }
+.stack-card:nth-child(4) { background: linear-gradient(135deg, var(--night), var(--fi-blue)); color: #fff; border-color: transparent; }
+.stack-card:nth-child(4) b { color: var(--aurora); }
+.stack-card:nth-child(4) span { color: #c6d4e8; }
+
+/* Rolling button labels (Awwwards pattern) */
+.btn .roll { display: inline-grid; overflow: hidden; height: 1.3em; line-height: 1.3em; }
+.btn .roll > span { grid-area: 1 / 1; transition: transform .45s var(--ease); }
+.btn .roll > span + span { transform: translateY(105%); }
+.btn:hover .roll > span:first-child, .btn:focus-visible .roll > span:first-child { transform: translateY(-105%); }
+.btn:hover .roll > span + span, .btn:focus-visible .roll > span + span { transform: none; }
+
+/* Hovering one item in a list dims its siblings */
+@media (hover: hover) {
+  .dir-grid.is-list:has(.urow:hover) .urow:not(:hover) { opacity: .35; }
+  .urow { transition: opacity .3s; }
+  .footer ul:has(a:hover) a:not(:hover) { opacity: .45; }
+}
+
+/* Shortlist chips inside the evaluation form */
+.slchips { display: grid; gap: 8px; padding: 12px; border-radius: 12px; background: var(--ice); border: 1px dashed #b9cbe3; }
+.slchips[hidden] { display: none; }
+.slchips__top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.slchips__top a { font-size: 13px; font-weight: 700; color: var(--fi-blue); }
+.slchips__list { display: flex; flex-wrap: wrap; gap: 6px; }
+.slchip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 4px 4px 10px; border-radius: 999px; background: #fff; border: 1px solid var(--line); font-size: 13px; font-weight: 700; }
+.slchip a:hover { color: var(--fi-blue); }
+.slchip button { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); }
+.slchip button:hover { background: var(--brand); color: #fff; }
+.slchip .ico { width: 12px; height: 12px; }
+
+/* Directory CTA band + detail "how" list */
+.match-cta { margin-top: clamp(36px, 5vw, 56px); display: grid; gap: 20px; align-items: center; padding: clamp(22px, 3.5vw, 40px); border-radius: var(--radius-lg); background: #fff; border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
+@media (min-width: 900px) { .match-cta { grid-template-columns: 1.3fr auto; } }
+.match-cta__btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.howto { list-style: none; margin: 0; padding: 0; }
+
+/* Giant outlined wordmark at the foot of every page */
+.wordmark { margin-top: 28px; font-size: clamp(4rem, 2rem + 14vw, 15rem); line-height: .8; font-weight: 700; letter-spacing: -.05em; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,.14); text-align: center; user-select: none; overflow: hidden; white-space: nowrap; transition: -webkit-text-stroke-color .4s; }
+.wordmark:hover { -webkit-text-stroke-color: rgba(47,227,180,.5); }
+
+/* Real-photo seasons */
+.sky__photo { position: absolute; inset: 0; z-index: 0; opacity: 0; transition: opacity 1.2s var(--ease); }
+.sky__photo img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.08); transition: transform 8s linear; }
+.sky__photo.is-on { opacity: 1; }
+.sky__photo.is-on img { transform: scale(1); }
+.sky.has-photos .sky__forest, .sky.has-photos .sky__lake, .sky.has-photos .sky__orb { opacity: 0; }
+.sky.has-photos::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(6,22,49,.35) 0%, transparent 40%, rgba(6,22,49,.25) 100%); pointer-events: none; }
+.sky.has-photos .sky__word { z-index: 2; color: rgba(255,255,255,.88); text-shadow: 0 2px 24px rgba(0,0,0,.35); }
+.sky.has-photos .sky__aurora, .sky.has-photos .sky__stars, .sky.has-photos .sky__leaves { z-index: 1; }
+.sky__credit { position: absolute; right: 10px; bottom: 8px; z-index: 2; font-size: 11px; color: rgba(255,255,255,.8); text-shadow: 0 1px 4px rgba(0,0,0,.6); }
+@media (prefers-reduced-motion: reduce) { .sky__photo img { transition: none; transform: none; } }
+
+/* Belt and braces for iOS Safari, which ignores body overflow-x for panning. 'clip' keeps position: sticky working. */
+main { overflow-x: clip; }
+
+/* ================================================================ PHOTOS */
+.hero--photo .hero__photo img { opacity: .72; object-position: 50% 35%; }
+.hero--photo .hero__shade { background:
+  linear-gradient(180deg, rgba(6,22,49,.45) 0%, rgba(6,22,49,.15) 45%, var(--night) 100%),
+  linear-gradient(90deg, rgba(6,22,49,.88) 0%, rgba(6,22,49,.45) 55%, rgba(6,22,49,.15) 100%); }
+.uni__img { display: block; margin: -20px -20px 2px; aspect-ratio: 16 / 9; overflow: hidden; background: var(--ice-2); }
+.uni__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease); }
+.uni:hover .uni__img img { transform: scale(1.08); }
+.credits { margin-top: 6px; font-size: 12px; }
+.credits summary { cursor: pointer; color: #c6d4e8; font-weight: 700; width: max-content; }
+.credits ul { margin-top: 8px; display: grid; gap: 4px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.credits a { text-decoration: underline; text-underline-offset: 2px; }

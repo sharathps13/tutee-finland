@@ -415,10 +415,35 @@
     var title = $('[data-season-title]', root), text = $('[data-season-text]', root), facts = $('[data-season-facts]', root);
     var idx = 0, auto = !reduceMotion, DUR = 7000, started = 0, raf = 0, inView = false;
 
+    /* Real photographs of each season sit over the illustrated sky once they
+       load; the drawing stays as the fallback (and under the particles). */
+    var sky = $('.sky', root), photos = {}, credit = document.createElement('span');
+    credit.className = 'sky__credit';
+    order.forEach(function (key) {
+      var path = 'assets/img/seasons/' + key + '.jpg';
+      var fig = document.createElement('div');
+      fig.className = 'sky__photo';
+      fig.innerHTML = '<img src="./' + path + '" alt="" decoding="async" loading="lazy">';
+      $('img', fig).addEventListener('load', function () {
+        sky.classList.add('has-photos');
+        if (key === order[idx]) paintPhoto();
+      });
+      sky.insertBefore(fig, sky.firstChild);
+      photos[key] = { el: fig, path: path };
+    });
+    sky.appendChild(credit);
+    function paintPhoto() {
+      var key = order[idx];
+      order.forEach(function (k) { photos[k].el.classList.toggle('is-on', k === key && $('img', photos[k].el).naturalWidth > 0); });
+      var c = (window.TC_PHOTO_CREDITS || {})[photos[key].path];
+      credit.textContent = c ? c.short : '';
+    }
+
     function show(i, focus) {
       idx = (i + order.length) % order.length;
       var key = order[idx], s = SEASONS[key];
       root.setAttribute('data-season', key);
+      paintPhoto();
       tabs.forEach(function (t, j) {
         t.setAttribute('aria-selected', j === idx ? 'true' : 'false');
         t.tabIndex = j === idx ? 0 : -1;
@@ -550,6 +575,11 @@
     { n: 'Turku University of Applied Sciences', r: 11, uas: true, city: 'Turku', reg: 'coast', f: ['tech', 'health', 'arts', 'business'] },
     { n: 'Jamk University of Applied Sciences', r: 12, uas: true, city: 'Jyväskylä', reg: 'lakeland', f: ['business', 'tech', 'health'] }
   ];
+  // Directory ids (universities-data.js), in rank order, for detail-page links and the shortlist.
+  ['aalto-university', 'university-of-helsinki', 'university-of-turku', 'university-of-oulu', 'tampere-university',
+   'university-of-jyvaskyla', 'university-of-eastern-finland', 'lut-university', 'abo-akademi-university',
+   'university-of-vaasa', 'turku-university-of-applied-sciences', 'jamk-university-of-applied-sciences']
+    .forEach(function (id, i) { UNIS[i].id = id; });
   var FIELD_LABEL = { tech: 'Tech & engineering', business: 'Business', health: 'Health & life sciences', science: 'Natural sciences', arts: 'Arts & design', society: 'Education & society' };
   var REGION_LABEL = { capital: 'Helsinki region', lakeland: 'Lakeland', coast: 'Coast & archipelago', north: 'North & east' };
 
@@ -586,7 +616,7 @@
       $('[data-picks]', root).innerHTML = shortlist.map(function (p, i) {
         var why = p.reg && p.fld ? 'Field + location' : p.fld ? 'Your field' : p.reg ? 'Your location' : 'Top ranked';
         return '<li class="pick" style="--i:' + i + '"><div class="pick__top"><span class="pick__tag">' + why + '</span>' +
-          '<span class="pick__rank">QS Europe #' + p.u.r + '</span></div><h4>' + escapeHtml(p.u.n) + '</h4>' +
+          '<span class="pick__rank">QS Europe #' + p.u.r + '</span></div><h4><a href="./university.html?id=' + p.u.id + '">' + escapeHtml(p.u.n) + '</a></h4>' +
           '<span class="pick__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>' + escapeHtml(p.u.city) + '</span></li>';
       }).join('');
 
@@ -623,7 +653,11 @@
       go(0);
     });
     $('[data-quiz-send]', root).addEventListener('click', function () {
-      setDestination('Shortlist: ' + shortlist.map(function (p) { return p.u.n; }).join(', '));
+      if (window.TCShortlist) {
+        shortlist.forEach(function (p) { window.TCShortlist.add({ id: p.u.id, name: p.u.n, city: p.u.city }); });
+      } else {
+        setDestination('Shortlist: ' + shortlist.map(function (p) { return p.u.n; }).join(', '));
+      }
       var lvl = $('[data-level-select]');
       if (lvl && answers.level) lvl.value = answers.level;
       refreshStrength();
@@ -778,22 +812,26 @@
   /* ------------------------------------------------------------------ *
    * Spotlight cards, tilt, magnetic buttons
    * ------------------------------------------------------------------ */
-  function initPointerFx() {
-    $$('[data-spot]').forEach(function (el) {
+  /* Binds spotlight + tilt inside `root`; safe to call again on content
+     rendered later (the directory re-renders its cards). */
+  function bindSpot(root) {
+    $$('[data-spot]', root).forEach(function (el) {
+      if (el.__spot) return;
+      el.__spot = true;
       var s = document.createElement('span');
       s.className = 'spot'; s.setAttribute('aria-hidden', 'true');
       el.appendChild(s);
-    });
-    if (!finePointer) return;
-    $$('[data-spot]').forEach(function (el) {
+      if (!finePointer) return;
       el.addEventListener('pointermove', function (e) {
         var r = el.getBoundingClientRect();
         el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
         el.style.setProperty('--my', (e.clientY - r.top) + 'px');
       });
     });
-    if (reduceMotion) return;
-    $$('[data-tilt]').forEach(function (el) {
+    if (!finePointer || reduceMotion) return;
+    $$('[data-tilt]', root).forEach(function (el) {
+      if (el.__tilt) return;
+      el.__tilt = true;
       el.addEventListener('pointermove', function (e) {
         var r = el.getBoundingClientRect();
         var x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
@@ -805,6 +843,12 @@
         el.style.transform = '';
       });
     });
+  }
+
+  function initPointerFx() {
+    bindSpot(document);
+    window.TCFX = { spot: bindSpot, confetti: fx.confetti };
+    if (!finePointer || reduceMotion) return;
     $$('[data-magnet]').forEach(function (el) {
       el.addEventListener('pointermove', function (e) {
         var r = el.getBoundingClientRect();
@@ -932,6 +976,7 @@
         delete data.country_code;
         delete data.phone_number;
         data.page = enquiryPage();
+        Object.keys(UTM).forEach(function (k) { data[k] = UTM[k]; });
 
         if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
         fetch(ENQUIRY_ENDPOINT, {
@@ -946,7 +991,7 @@
               if (btn) { var r = btn.getBoundingClientRect(); fx.confetti(r.left + r.width / 2, r.top, 120); }
               form.reset();
               fillCountryCodes();
-              refreshStrength();
+              syncShortlist();
               setTimeout(function () { status('idle'); }, 6000);
             } else {
               status('error', (res && res.message) || 'Something went wrong. Please try again.');
@@ -960,17 +1005,46 @@
     var sf = $('[data-strength-form]');
     if (sf) { sf.addEventListener('input', refreshStrength); sf.addEventListener('change', refreshStrength); refreshStrength(); }
 
-    // University cards pre-fill the enquiry with that institution.
-    $$('[data-uni-pick]').forEach(function (a) {
-      a.addEventListener('click', function () { setDestination(a.getAttribute('data-uni-pick')); refreshStrength(); });
-    });
-
-    // A university picked on the directory page pre-fills the enquiry.
-    try {
-      var picked = localStorage.getItem('selectedUniversity');
-      if (picked) { localStorage.removeItem('selectedUniversity'); setDestination(picked); refreshStrength(); }
-    } catch (err) { /* storage unavailable */ }
+    // The shared shortlist (built on the directory, detail pages or the quiz)
+    // rides along with every enquiry and shows as removable chips.
+    syncShortlist();
+    if (window.TCShortlist) window.TCShortlist.onChange(syncShortlist);
   }
+
+  function syncShortlist() {
+    var SL = window.TCShortlist;
+    if (!SL) return;
+    var items = SL.all();
+    if (items.length) setDestination('Shortlist: ' + items.map(function (x) { return x.name; }).join(', '));
+    else if (/^Shortlist: /.test(($('[data-destination-input]') || {}).value || '')) setDestination('');
+    $$('[data-sl-chips]').forEach(function (box) {
+      box.hidden = !items.length;
+      var list = $('[data-sl-chip-list]', box);
+      if (list) list.innerHTML = items.map(function (x) {
+        return '<span class="slchip"><a href="./university.html?id=' + encodeURIComponent(x.id) + '">' + escapeHtml(x.name) + '</a>' +
+          '<button type="button" aria-label="Remove ' + escapeHtml(x.name) + '" data-chip-remove="' + escapeHtml(x.id) + '"><svg class="ico ico-sm"><use href="#i-x"/></svg></button></span>';
+      }).join('');
+    });
+    refreshStrength();
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-chip-remove]');
+    if (b && window.TCShortlist) window.TCShortlist.remove(b.getAttribute('data-chip-remove'));
+  });
+
+  /* Campaign attribution: remember UTM tags from the landing URL for the visit. */
+  var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
+  function utm() {
+    var out = {};
+    try {
+      var p = new URLSearchParams(location.search), stored = JSON.parse(sessionStorage.getItem('tcUtm') || '{}');
+      UTM_KEYS.forEach(function (k) { if (p.get(k)) stored[k] = p.get(k).slice(0, 100); });
+      sessionStorage.setItem('tcUtm', JSON.stringify(stored));
+      out = stored;
+    } catch (e) { /* storage unavailable */ }
+    return out;
+  }
+  var UTM = utm();
 
   /* ------------------------------------------------------------------ *
    * Tutee AI counsellor (scripted answers + lead capture)
@@ -1117,6 +1191,18 @@
     window.addEventListener('keydown', function (e) { if (e.key === 'Escape' && panel.classList.contains('is-open')) close(); });
   }
 
+  /* Footer credit list for the HD photos (CC BY requires visible attribution). */
+  function initCredits() {
+    var credits = window.TC_PHOTO_CREDITS || {};
+    $$('[data-photo-credits-list]').forEach(function (ul) {
+      ul.innerHTML = Object.keys(credits).map(function (k) {
+        var c = credits[k];
+        return '<li>' + escapeHtml(c.subject) + ' &mdash; <a href="' + escapeHtml(c.url) + '" target="_blank" rel="noopener">' +
+          escapeHtml(c.author) + '</a>, ' + escapeHtml(c.licence) + '</li>';
+      }).join('');
+    });
+  }
+
   /* ------------------------------------------------------------------ *
    * Boot
    * ------------------------------------------------------------------ */
@@ -1139,4 +1225,5 @@
   initForms();
   initChat();
   initClickSpark();
+  initCredits();
 })();

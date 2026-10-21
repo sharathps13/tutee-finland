@@ -9,11 +9,11 @@
   <meta name="description" content="Finland education experts. End-to-end guidance for the Finnish residence permit for studies, university and UAS admissions, the Finland Scholarship, education loans, part-time work and settlement. Free profile evaluation.">
   <meta property="og:title" content="Study in Finland with Tutee Connect">
   <meta property="og:description" content="Admissions, residence permit, scholarships, loans and settlement in Finland: one expert team, a 99% permit success rate.">
-  <meta property="og:image" content="./assets/img/photos/students-campus.jpg">
+  <meta property="og:image" content="./assets/img/photos/hero-aurora.jpg">
   <link rel="icon" href="./assets/img/logo/icon.png">
   <link rel="preload" as="font" type="font/woff2" href="./assets/fonts/quicksand-latin.woff2" crossorigin>
   <link rel="stylesheet" href="./assets/css/quicksand.css">
-  <link rel="preload" as="image" href="./assets/img/photos/students-campus.jpg">
+  <link rel="preload" as="image" href="./assets/img/photos/hero-aurora.jpg">
   <link rel="stylesheet" href="./assets/css/finland.css">
 </head>
 <body>
@@ -72,6 +72,8 @@
   <symbol id="i-in" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></symbol>
   <symbol id="i-xlogo" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4 4 20"/></symbol>
   <symbol id="i-wa" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M3 5h.01M3 12h.01M3 19h.01M8 5h13M8 12h13M8 19h13"/></symbol>
   <symbol id="flag-fi" viewBox="0 0 18 11"><rect width="18" height="11" fill="#fff"/><rect x="5" width="3" height="11" fill="#003580"/><rect y="4" width="18" height="3" fill="#003580"/></symbol>
 </svg>
 
@@ -104,13 +106,13 @@
       <a href="#why" data-nav="why">Why Finland</a>
       <a href="#services" data-nav="services">Services</a>
       <a href="#match" data-nav="match">Find my match</a>
-      <a href="#universities" data-nav="universities">Universities</a>
+      <a href="./universities.html">Universities</a>
       <a href="#scholarships" data-nav="scholarships">Funding</a>
       <a href="#relocate" data-nav="relocate">Journey</a>
       <a href="#faq" data-nav="faq">FAQ</a>
     </nav>
     <div class="header__cta">
-      <a class="btn btn-primary btn-sm" href="#contact" data-magnet>Free Evaluation<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
+      <a class="btn btn-primary btn-sm" href="#contact" data-magnet data-star-border="#ffd58f">Free Evaluation<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
     </div>
     <button class="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer" data-menu-open><svg class="ico"><use href="#i-menu"/></svg></button>
   </div>
@@ -141,19 +143,21 @@
 
 <main>
 <!-- ============================== HERO ============================== -->
-<section class="hero" id="home" data-hero>
-  <div class="hero__photo" aria-hidden="true"><img src="./assets/img/photos/students-campus.jpg" alt="" width="1200" height="1143" fetchpriority="high"></div>
+<section class="hero hero--photo" id="home" data-hero>
+  <div class="hero__photo" aria-hidden="true"><img src="./assets/img/photos/hero-aurora.jpg" alt="" width="1920" height="1281" fetchpriority="high"></div>
   <div class="hero__shade" aria-hidden="true"></div>
+  <canvas class="gl-bg" data-gl="aurora" data-stops="#003580,#2fe3b4,#6c8cff" aria-hidden="true"></canvas>
   <div class="aurora" aria-hidden="true" data-aurora><span></span><span></span><span></span></div>
+  <div class="noise-layer" data-noise aria-hidden="true"></div>
   <canvas class="snow" data-snow aria-hidden="true"></canvas>
 
   <div class="container hero__grid">
     <div class="hero__copy">
-      <span class="chip chip--glass reveal"><svg class="flag" aria-hidden="true"><use href="#flag-fi"/></svg>Finland Education Experts</span>
+      <span class="chip chip--glass reveal"><svg class="flag" aria-hidden="true"><use href="#flag-fi"/></svg><span data-shiny>Finland Education Experts</span></span>
       <h1 class="h1 reveal" style="--d:.05s">Your route map to <span class="rotator" data-rotate="studying|working|living|thriving"><span class="rotator__word text-grad">studying</span></span><br>in Finland.</h1>
       <p class="lead reveal" style="--d:.1s">Admissions to Finland's universities and UAS, your residence permit for studies, scholarships, education loans and settlement &mdash; handled by one expert team that reviews every file the way Migri does.</p>
       <div class="hero__actions reveal" style="--d:.15s">
-        <a class="btn btn-primary" href="#quick-evaluate" data-magnet>Check my eligibility<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
+        <a class="btn btn-primary" href="#quick-evaluate" data-magnet data-star-border="#2fe3b4">Check my eligibility<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
         <a class="btn btn-glass" href="#match" data-magnet><svg class="ico ico-sm"><use href="#i-spark"/></svg>Find my Finland match</a>
       </div>
       <div class="hero__trust reveal" style="--d:.2s">
@@ -191,7 +195,14 @@
         </div>
         <div class="field"><svg class="ico ico-sm"><use href="#i-mail"/></svg><input class="input" name="email" type="email" inputmode="email" placeholder="Email address *" autocomplete="email" required aria-label="Email address"></div>
         <fieldset class="fs">
-          <legend class="form-label">I want to study</legend>
+          <legend class="form-label">I am a</legend>
+          <div class="pills">
+            <label class="pill"><input type="radio" name="applicant" value="Student" checked><span>Student</span></label>
+            <label class="pill"><input type="radio" name="applicant" value="Parent"><span>Parent</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="fs">
+          <legend class="form-label">Looking to study</legend>
           <div class="pills">
             <label class="pill"><input type="radio" name="study_level" value="Bachelor's" checked><span>Bachelor's</span></label>
             <label class="pill"><input type="radio" name="study_level" value="Master's"><span>Master's</span></label>
@@ -228,12 +239,20 @@
   </div>
 </div>
 
+<!-- ============================== STATEMENT (ScrollReveal) ============================== -->
+<section class="statement" aria-label="Why study in Finland">
+  <div class="container">
+    <p class="statement__text" data-scroll-reveal>Finland gives you a residence permit for your <span class="hl">whole degree</span>, the right to work while you study, and <span class="hl">two years</span> to build a career after you graduate. We make sure you get there.</p>
+    <div class="statement__foot"><a class="btn btn-blue btn-sm" href="./universities.html">Browse 36 institutions<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a><a class="link-arrow" href="#match">or take the 3-question match quiz<svg class="ico ico-sm"><use href="#i-arrow"/></svg></a></div>
+  </div>
+</section>
+
 <!-- ============================== WHY FINLAND / SEASONS ============================== -->
 <section class="section" id="why">
   <div class="container">
     <div class="section-head section-head--split reveal">
       <div>
-        <span class="eyebrow">Why Finland</span>
+        <span class="eyebrow"><span data-decrypt="view">Why Finland</span></span>
         <h2 class="h2" style="margin-top:12px">Four seasons. One <span class="text-blue">unforgettable degree.</span></h2>
       </div>
       <p class="lead">Twelve Finnish institutions appear in the QS World University Rankings: Europe 2026. Pick a season to see what student life in Finland actually feels like.</p>
@@ -283,7 +302,7 @@
   <div class="container">
     <div class="section-head section-head--split reveal">
       <div>
-        <span class="eyebrow">What we do</span>
+        <span class="eyebrow"><span data-decrypt="view">What we do</span></span>
         <h2 class="h2" style="margin-top:12px">Nine services. One team. <span class="text-blue">Zero guesswork.</span></h2>
       </div>
       <p class="lead">We scrutinise every profile from the view of Migri case officers, then choose the right pathway &mdash; that is how we keep a 99% success rate on Finnish residence permits.</p>
@@ -328,10 +347,11 @@
 
 <!-- ============================== MATCH QUIZ ============================== -->
 <section class="section section--night match" id="match">
+  <div class="noise-layer" data-noise aria-hidden="true"></div>
   <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
   <div class="container on-dark">
     <div class="section-head section-head--center reveal">
-      <span class="eyebrow">Find your Finland match</span>
+      <span class="eyebrow"><span data-decrypt="view">Find your Finland match</span></span>
       <h2 class="h2">Three taps to your <span class="text-grad">university shortlist.</span></h2>
       <p class="lead">Tell us what you want to study and where you'd like to live. We'll suggest where to start &mdash; then a counsellor sharpens it with you.</p>
     </div>
@@ -404,7 +424,7 @@
   <div class="container">
     <div class="section-head section-head--split reveal">
       <div>
-        <span class="eyebrow">Top ranked universities</span>
+        <span class="eyebrow"><span data-decrypt="view">Top ranked universities</span></span>
         <h2 class="h2" style="margin-top:12px">Your place at Finland's <span class="text-blue">best institutions.</span></h2>
       </div>
       <div style="display:grid;gap:16px">
@@ -419,18 +439,18 @@
 
     <div class="carousel reveal">
       <div class="carousel__track" data-car="uni" data-drag tabindex="0" aria-label="Top ranked Finnish universities">
-        <a class="uni" href="#contact" data-uni-pick="Aalto University" data-spot data-tilt><div class="uni__top"><span class="uni__rank"><small>#</small><b>1</b></span><span class="uni__type">University</span></div><h3>Aalto University</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Helsinki, Uusimaa</span><span class="uni__cta">Check my chances<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="#contact" data-uni-pick="University of Helsinki" data-spot data-tilt><div class="uni__top"><span class="uni__rank"><small>#</small><b>2</b></span><span class="uni__type">University</span></div><h3>University of Helsinki</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Helsinki, Uusimaa</span><span class="uni__cta">Check my chances<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="#contact" data-uni-pick="University of Turku" data-spot data-tilt><div class="uni__top"><span class="uni__rank"><small>#</small><b>3</b></span><span class="uni__type">University</span></div><h3>University of Turku</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Turku, Varsinais-Suomi</span><span class="uni__cta">Check my chances<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="#contact" data-uni-pick="University of Oulu" data-spot data-tilt><div class="uni__top"><span class="uni__rank"><small>#</small><b>4</b></span><span class="uni__type">University</span></div><h3>University of Oulu</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Oulu, North Ostrobothnia</span><span class="uni__cta">Check my chances<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="#contact" data-uni-pick="Tampere University" data-spot data-tilt><div class="uni__top"><span class="uni__rank"><small>#</small><b>5</b></span><span class="uni__type">University</span></div><h3>Tampere University</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Tampere, Pirkanmaa</span><span class="uni__cta">Check my chances<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="#contact" data-uni-pick="University of Jyväskylä" data-spot data-tilt><div class="uni__top"><span class="uni__rank"><small>#</small><b>6</b></span><span class="uni__type">University</span></div><h3>University of Jyväskylä</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Jyväskylä, Central Finland</span><span class="uni__cta">Check my chances<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="#contact" data-uni-pick="University of Eastern Finland" data-spot data-tilt><div class="uni__top"><span class="uni__rank"><small>#</small><b>7</b></span><span class="uni__type">University</span></div><h3>University of Eastern Finland</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Joensuu, North Karelia</span><span class="uni__cta">Check my chances<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="#contact" data-uni-pick="LUT University" data-spot data-tilt><div class="uni__top"><span class="uni__rank"><small>#</small><b>8</b></span><span class="uni__type">University</span></div><h3>LUT University</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Lappeenranta, South Karelia</span><span class="uni__cta">Check my chances<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="#contact" data-uni-pick="Åbo Akademi University" data-spot data-tilt><div class="uni__top"><span class="uni__rank"><small>#</small><b>9</b></span><span class="uni__type">University</span></div><h3>Åbo Akademi University</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Turku, Varsinais-Suomi</span><span class="uni__cta">Check my chances<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="#contact" data-uni-pick="University of Vaasa" data-spot data-tilt><div class="uni__top"><span class="uni__rank"><small>#</small><b>10</b></span><span class="uni__type">University</span></div><h3>University of Vaasa</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Vaasa, Ostrobothnia</span><span class="uni__cta">Check my chances<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="#contact" data-uni-pick="Turku University of Applied Sciences" data-spot data-tilt><div class="uni__top"><span class="uni__rank"><small>#</small><b>11</b></span><span class="uni__type uni__type--uas">UAS</span></div><h3>Turku University of Applied Sciences</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Turku, Varsinais-Suomi</span><span class="uni__cta">Check my chances<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="#contact" data-uni-pick="Jamk University of Applied Sciences" data-spot data-tilt><div class="uni__top"><span class="uni__rank"><small>#</small><b>12</b></span><span class="uni__type uni__type--uas">UAS</span></div><h3>Jamk University of Applied Sciences</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Jyväskylä, Central Finland</span><span class="uni__cta">Check my chances<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
+        <a class="uni" href="./university.html?id=aalto-university" data-uni-pick="Aalto University" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/helsinki.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>1</b></span><span class="uni__type">University</span></div><h3>Aalto University</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Helsinki, Uusimaa</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
+        <a class="uni" href="./university.html?id=university-of-helsinki" data-uni-pick="University of Helsinki" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/helsinki.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>2</b></span><span class="uni__type">University</span></div><h3>University of Helsinki</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Helsinki, Uusimaa</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
+        <a class="uni" href="./university.html?id=university-of-turku" data-uni-pick="University of Turku" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/turku.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>3</b></span><span class="uni__type">University</span></div><h3>University of Turku</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Turku, Varsinais-Suomi</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
+        <a class="uni" href="./university.html?id=university-of-oulu" data-uni-pick="University of Oulu" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/oulu.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>4</b></span><span class="uni__type">University</span></div><h3>University of Oulu</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Oulu, North Ostrobothnia</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
+        <a class="uni" href="./university.html?id=tampere-university" data-uni-pick="Tampere University" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/tampere.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>5</b></span><span class="uni__type">University</span></div><h3>Tampere University</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Tampere, Pirkanmaa</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
+        <a class="uni" href="./university.html?id=university-of-jyvaskyla" data-uni-pick="University of Jyväskylä" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/jyvaskyla.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>6</b></span><span class="uni__type">University</span></div><h3>University of Jyväskylä</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Jyväskylä, Central Finland</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
+        <a class="uni" href="./university.html?id=university-of-eastern-finland" data-uni-pick="University of Eastern Finland" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/joensuu.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>7</b></span><span class="uni__type">University</span></div><h3>University of Eastern Finland</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Joensuu, North Karelia</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
+        <a class="uni" href="./university.html?id=lut-university" data-uni-pick="LUT University" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/lappeenranta.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>8</b></span><span class="uni__type">University</span></div><h3>LUT University</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Lappeenranta, South Karelia</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
+        <a class="uni" href="./university.html?id=abo-akademi-university" data-uni-pick="Åbo Akademi University" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/turku.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>9</b></span><span class="uni__type">University</span></div><h3>Åbo Akademi University</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Turku, Varsinais-Suomi</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
+        <a class="uni" href="./university.html?id=university-of-vaasa" data-uni-pick="University of Vaasa" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/vaasa.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>10</b></span><span class="uni__type">University</span></div><h3>University of Vaasa</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Vaasa, Ostrobothnia</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
+        <a class="uni" href="./university.html?id=turku-university-of-applied-sciences" data-uni-pick="Turku University of Applied Sciences" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/turku.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>11</b></span><span class="uni__type uni__type--uas">UAS</span></div><h3>Turku University of Applied Sciences</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Turku, Varsinais-Suomi</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
+        <a class="uni" href="./university.html?id=jamk-university-of-applied-sciences" data-uni-pick="Jamk University of Applied Sciences" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/jyvaskyla.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>12</b></span><span class="uni__type uni__type--uas">UAS</span></div><h3>Jamk University of Applied Sciences</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Jyväskylä, Central Finland</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
         <a class="uni uni--more" href="./universities.html"><svg class="ico ico-lg"><use href="#i-globe"/></svg><h3 style="min-height:0">Explore all 36 institutions</h3><p>Search 1,295 English-taught programme listings by field, city and type.</p><span class="link-arrow" style="color:var(--aurora)">Open the directory<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
       </div>
     </div>
@@ -442,7 +462,7 @@
 <section class="section section--ice" id="scholarships">
   <div class="container">
     <div class="section-head section-head--center reveal">
-      <span class="eyebrow">Scholarships, grants &amp; loans</span>
+      <span class="eyebrow"><span data-decrypt="view">Scholarships, grants &amp; loans</span></span>
       <h2 class="h2">Your Finnish dream <span class="text-blue">shouldn't break the bank.</span></h2>
       <p class="lead">We identify and secure the Finland Scholarship, institutional tuition-fee scholarships and EDUFI grants &mdash; and arrange education loans for whatever remains.</p>
     </div>
@@ -499,7 +519,7 @@
   <div class="journey__pin">
     <div class="container journey__head">
       <div>
-        <span class="eyebrow">Your journey</span>
+        <span class="eyebrow"><span data-decrypt="view">Your journey</span></span>
         <h2 class="h2" style="margin-top:12px">From first application to <span class="text-grad">permanent resident.</span></h2>
       </div>
       <div class="journey__meter" aria-hidden="true"><span data-journey-step>01</span> / 06</div>
@@ -545,7 +565,7 @@
   <div class="container">
     <div class="family reveal">
       <div class="family__body">
-        <span class="eyebrow">Relocating with your family?</span>
+        <span class="eyebrow"><span data-decrypt="view">Relocating with your family?</span></span>
         <h3 class="h2" style="font-size:clamp(1.4rem,1.1rem + 1.2vw,1.9rem)">Bring your partner and children &mdash; with full work rights.</h3>
         <ul class="ticks ticks--dark">
           <li><svg class="ico ico-sm"><use href="#i-check"/></svg><span><strong>Family of a student:</strong> spouse or registered partner and children under 18 of any degree student, subject to Migri's funds requirement.</span></li>
@@ -567,7 +587,7 @@
 <section class="section section--ice" id="testimonials">
   <div class="container">
     <div class="section-head section-head--center reveal">
-      <span class="eyebrow">Student stories</span>
+      <span class="eyebrow"><span data-decrypt="view">Student stories</span></span>
       <h2 class="h2">What our Finland students say</h2>
       <span class="rating"><span class="stars"><svg class="ico ico-fill"><use href="#i-star"/></svg><svg class="ico ico-fill"><use href="#i-star"/></svg><svg class="ico ico-fill"><use href="#i-star"/></svg><svg class="ico ico-fill"><use href="#i-star"/></svg><svg class="ico ico-fill"><use href="#i-star"/></svg></span>Rated 5/5 by our students &amp; parents</span>
     </div>
@@ -597,7 +617,7 @@
 <section class="section" id="faq">
   <div class="container faq">
     <div class="faq__aside reveal">
-      <span class="eyebrow">Quick answers</span>
+      <span class="eyebrow"><span data-decrypt="view">Quick answers</span></span>
       <h2 class="h2">Frequently asked questions</h2>
       <label class="faq__search field"><svg class="ico ico-sm"><use href="#i-search"/></svg><input class="input" type="search" placeholder="Search questions…" aria-label="Search questions" data-faq-search></label>
       <div class="help">
@@ -623,10 +643,11 @@
 
 <!-- ============================== CONTACT ============================== -->
 <section class="section section--night contact" id="contact">
+  <div class="noise-layer" data-noise aria-hidden="true"></div>
   <div class="aurora" aria-hidden="true" style="opacity:.3"><span></span><span></span><span></span></div>
   <div class="container contact__grid on-dark">
     <div class="contact__info reveal">
-      <span class="eyebrow">Free consultation</span>
+      <span class="eyebrow"><span data-decrypt="view">Free consultation</span></span>
       <h2 class="h2">Evaluate your <span class="text-grad">Finland profile.</span></h2>
       <p class="lead">Share a few details and get a specific route map to study in Finland &mdash; institutions, scholarships and permit timeline.</p>
       <div class="promise">
@@ -681,6 +702,10 @@
             </select>
           </div>
         </div>
+        <div class="slchips" data-sl-chips hidden>
+          <div class="slchips__top"><span class="form-label">Your shortlist</span><a href="./universities.html">+ Add universities</a></div>
+          <div class="slchips__list" data-sl-chip-list></div>
+        </div>
         <div class="dest"><svg class="ico ico-sm"><use href="#i-pin"/></svg><span>Interested in: <strong data-destination-label>General Finland Inquiry</strong></span></div>
         <div class="alert alert--ok hidden" data-form-success role="status"><svg class="ico ico-sm"><use href="#i-check"/></svg><span>Profile submitted successfully! We will contact you soon.</span></div>
         <div class="alert alert--err hidden" data-form-error role="alert"><svg class="ico ico-sm"><use href="#i-x"/></svg><span data-form-error-text>Submission failed. Please try again.</span></div>
@@ -734,8 +759,10 @@
     </div>
     <div class="footer__base">
       <span class="footer__flag"><svg class="flag" aria-hidden="true"><use href="#flag-fi"/></svg>&copy; 2026 Tutee Connect. All rights reserved.</span>
-      <p data-photo-credit>Photography: Helsinki Cathedral, the Parliament House and Töölönlahti park, all in Helsinki, by Leonhard Lenz (CC0); the Tammerkoski rapids, Tampere &copy; Pete (CC BY 2.0). Via Wikimedia Commons.</p>
+      <p data-photo-credit>Photography via Wikimedia Commons: the Parliament House and Töölönlahti park, Helsinki, by Leonhard Lenz (CC0); the Tammerkoski rapids, Tampere &copy; Pete (CC BY 2.0); and the photographers listed below.</p>
+      <details class="credits"><summary>All photo credits</summary><ul data-photo-credits-list></ul></details>
     </div>
+    <div class="wordmark" aria-hidden="true">SUOMI</div>
   </div>
 </footer>
 
@@ -776,7 +803,10 @@
   <p class="chat__fine">AI generated responses. Confirm essential info with our team.</p>
 </div>
 
+<script src="./assets/js/shortlist.js"></script>
+<script src="./assets/js/photo-credits.js"></script>
 <script src="./assets/js/services-data.js"></script>
 <script src="./assets/js/finland.js" defer></script>
+<script src="./assets/js/reactbits.js" defer></script>
 </body>
 </html>

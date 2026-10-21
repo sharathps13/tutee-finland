@@ -24,6 +24,32 @@ tooling first, or it will overwrite the page. Lead forms still post to
 `/api/enquiry`; they now also send `study_level`, `intake` and
 `form_location`, which the function forwards as extra fields.
 
+### Universities directory and detail pages (October 2026)
+
+`universities.html` and the new `university.html?id=<id>` are hand-authored
+too and share `finland.css` + `assets/css/unis.css`. `main.js` is no longer
+loaded by any page.
+
+* **Shortlist** — `assets/js/shortlist.js` keeps up to 12 institutions in
+  `localStorage` (`tcShortlist`). The directory, every detail page and the
+  landing-page quiz add to it; the landing page's evaluation form shows it as
+  removable chips and sends it as the enquiry's `destination`. Every "Apply"
+  button goes to `index.html#contact`.
+* **Directory** — `assets/js/unis.js`: search (diacritic-folded, `/` to
+  focus), type/field/city facets, sort, grid or list view, all mirrored in the
+  URL. It still exposes `window.TC_applyUniversities` for `supabase-data.js`.
+* **Detail page** — reads `FI_UNIVERSITIES` + `FI_PROGRAMMES`; no fee is ever
+  rendered (the data still carries one).
+* **Motion** — `assets/js/reactbits.js` holds vanilla ports of React Bits
+  components (Aurora WebGL2 shader, Noise, ScrollReveal, ScrollStack,
+  ShinyText, DecryptedText, StarBorder, ImageTrail). React Bits is
+  MIT + Commons Clause: keep the licence header in that file and never publish
+  the ports as a standalone library.
+* **Photos** — campus-city photos live at `assets/img/cities/<city>.jpg`
+  (slug of the city name), seasons at `assets/img/seasons/<season>.jpg`.
+  Credits are in `assets/js/photo-credits.js` and `assets/img/CREDITS-HD.md`.
+  A missing photo simply shows the card's colour panel.
+
 ## Build
 
 Everything else here is **generated**. Editing `index.html`, `universities.html`,
