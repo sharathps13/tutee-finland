@@ -1196,8 +1196,9 @@
 
   /* ------------------------------------------------------------------ *
    * Particle hero — snow gathers into the silhouette of Finland, then
-   * scrolling morphs the same particles through 36 → 2 YRS → 30 H and
-   * back into snowfall. Canvas 2D; pinned with position: sticky.
+   * scrolling moves through 36 → 2 YRS → 30 H → snowfall.
+   * Scroll only *chooses* the stage; every morph is a timed, staggered
+   * flight along a gentle curve, so the scene is never frozen half-way.
    * ------------------------------------------------------------------ */
   /* Finland's outline as [lon, lat], clockwise from Hanko. Coarse on purpose:
      it only has to read as Finland once it is filled with points. */
@@ -1219,6 +1220,7 @@
     if (!sec) return;
     var pin = $('.hp__pin', sec), canvas = $('[data-hp-canvas]', sec), tip = $('[data-hp-tip]', sec);
     var steps = $$('[data-hp-step]', sec), ticks = $$('[data-hp-tick]', sec), clock = $('[data-hp-clock]', sec);
+    var bgs = $$('[data-hp-bg]', sec);
     var ctx = canvas.getContext && canvas.getContext('2d');
 
     function tickClock() {
@@ -1230,10 +1232,14 @@
     var live = !reduceMotion;
     if (live) sec.classList.add('is-live');
 
-    var W = 0, H = 0, dpr = 1, N = 0, parts = [], shapes = [], cities = [];
-    var STAGES = 5, sf = 0, intro = live ? 0 : 1, introT0 = 0, mouse = { x: -9999, y: -9999 }, hover = -1;
+    // Season photos load after the page so they never compete with first paint.
+    function loadBgs() { bgs.forEach(function (img) { var s = img.getAttribute('data-src'); if (s) { img.src = s; img.removeAttribute('data-src'); } }); }
+    if (live) { if (document.readyState === 'complete') setTimeout(loadBgs, 300); else window.addEventListener('load', function () { setTimeout(loadBgs, 300); }); }
 
-    /* Scatter points evenly over whatever `draw` paints inside the box. */
+    var STAGES = 5;
+    var W = 0, H = 0, dpr = 1, N = 0, parts = [], shapes = [], cities = [];
+    var stage = -1, mapShown = 0, mapAt = 0, mouse = { x: -9999, y: -9999 }, hover = -1, time = 0;
+
     function sample(box, draw) {
       var w = Math.max(1, Math.round(box.w)), h = Math.max(1, Math.round(box.h));
       var c = document.createElement('canvas'); c.width = w; c.height = h;
@@ -1283,115 +1289,178 @@
       var txtBox = mobile ? { x: W * 0.05, y: H * 0.2, w: W * 0.9, h: H * 0.32 } : { x: W * 0.55, y: H * 0.26, w: W * 0.39, h: H * 0.46 };
       var n = Math.round(clamp(W * H / 430, 900, 2600));
       if (n !== N) {
-        N = n;
-        parts = [];
+        N = n; parts = [];
         for (var i = 0; i < N; i++) {
-          parts.push({ x: Math.random() * W, y: Math.random() * H, vx: 0, vy: 0,
-            sx: Math.random() * W, sy: Math.random() * H, fall: 12 + Math.random() * 30, sway: Math.random() * 6.28,
-            tw: 0.6 + Math.random() * 1.6, g: Math.random() < 0.16, r: 0.7 + Math.random() * 0.9 });
+          parts.push({ x: Math.random() * W, y: Math.random() * H, mode: 'fall',
+            fx: 0, fy: 0, tx: 0, ty: 0, cx: 0, cy: 0, t0: 0, dur: 1,
+            fall: 14 + Math.random() * 30, sway: Math.random() * 6.28,
+            tw: 0.6 + Math.random() * 1.6, g: Math.random() < 0.16, r: 0.8 + Math.random() * 0.9 });
         }
       }
       shapes = [mapShape(mapBox), textShape(txtBox, '36'), textShape(txtBox, '2 YRS'), textShape(txtBox, '30 H'), null];
-      if (!live) { parts.forEach(function (p, i) { var t = shapes[0][i % shapes[0].length]; p.x = t[0]; p.y = t[1]; }); draw(0); }
     }
 
-    function targetOf(k, p, i, out) {
-      var s = shapes[k];
-      if (!s) { out[0] = p.sx; out[1] = p.sy; return; }
-      var t = s[i % s.length];
-      // Particles beyond the shape's point count double up with a small offset.
-      var extra = i >= s.length ? 1.6 : 0;
-      out[0] = t[0] + (extra && ((i * 7) % 5 - 2) * 0.6); out[1] = t[1] + (extra && ((i * 3) % 5 - 2) * 0.6);
+    var ease = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+
+    /* Send every particle to stage k: a curved, staggered flight that
+       sweeps left to right across the shape. */
+    function goTo(k, now, quick) {
+      stage = k;
+      var s = shapes[k], minX = W, maxX = 0;
+      if (s) s.forEach(function (q) { if (q[0] < minX) minX = q[0]; if (q[0] > maxX) maxX = q[0]; });
+      var span = Math.max(1, maxX - minX);
+      for (var i = 0; i < parts.length; i++) {
+        var p = parts[i], tx, ty;
+        if (s) {
+          var q = s[i % s.length], extra = i >= s.length;
+          tx = q[0] + (extra ? ((i * 7) % 5 - 2) * 0.6 : 0); ty = q[1] + (extra ? ((i * 3) % 5 - 2) * 0.6 : 0);
+        } else { tx = Math.random() * W; ty = Math.random() * H * 0.9 - H * 0.1; }
+        p.fx = p.x; p.fy = p.y; p.tx = tx; p.ty = ty;
+        var dx = tx - p.x, dy = ty - p.y, len = Math.hypot(dx, dy) || 1, bend = (Math.random() - 0.5) * Math.min(260, len * 0.6);
+        p.cx = (p.x + tx) / 2 - dy / len * bend; p.cy = (p.y + ty) / 2 + dx / len * bend;
+        var order = s ? (tx - minX) / span : Math.random();
+        p.t0 = now + (quick ? 0 : order * 0.5 + Math.random() * 0.22) * 1000;
+        p.dur = (quick ? 0.5 : 1.05 + Math.random() * 0.45) * 1000;
+        p.mode = 'fly';
+      }
+      if (k === 0) mapAt = now + (quick ? 0 : 1500);
+      steps.forEach(function (st, i) { st.classList.toggle('is-on', i === k); });
+      ticks.forEach(function (t, i) { t.parentNode.classList.toggle('is-on', i <= k); t.parentNode.classList.toggle('is-now', i === k); });
+      bgs.forEach(function (b, i) { b.classList.toggle('is-on', i === k); });
     }
 
-    var A = [0, 0], B = [0, 0], time = 0;
-    function physics(dt) {
+    function update(now, dt) {
       time += dt;
-      var k = Math.min(STAGES - 2, Math.floor(sf)), t = sf - k;
-      var tt = clamp((t - 0.18) / 0.64, 0, 1); tt = tt * tt * (3 - 2 * tt);
-      var ei = intro < 1 ? 1 - Math.pow(1 - intro, 3) : 1;
-      var R = 110, R2 = R * R;
       for (var i = 0; i < parts.length; i++) {
         var p = parts[i];
-        // Snow keeps falling; it is the "from" for the intro and the final stage.
-        p.sy += p.fall * dt; p.sway += dt * 0.8;
-        if (p.sy > H + 10) { p.sy = -10; p.sx = Math.random() * W; }
-        var sx = p.sx + Math.sin(p.sway) * 14;
-        targetOf(k, p, i, A); targetOf(k + 1, p, i, B);
-        if (!shapes[k]) A[0] = sx;
-        if (!shapes[k + 1]) B[0] = sx;
-        var tx = A[0] + (B[0] - A[0]) * tt, ty = A[1] + (B[1] - A[1]) * tt;
-        if (ei < 1) { tx = sx + (tx - sx) * ei; ty = p.sy + (ty - p.sy) * ei; }
-        // A gentle shimmer so the shapes breathe.
-        tx += Math.sin(time * p.tw + i) * 0.6; ty += Math.cos(time * p.tw * 0.8 + i) * 0.6;
-        p.vx = (p.vx + (tx - p.x) * 0.055) * 0.84;
-        p.vy = (p.vy + (ty - p.y) * 0.055) * 0.84;
-        var dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
-        if (d2 < R2 && d2 > 0.01) {
-          var d = Math.sqrt(d2), f = (1 - d / R) * 3.2;
-          p.vx += dx / d * f; p.vy += dy / d * f;
+        if (p.mode === 'fly') {
+          var t = clamp((now - p.t0) / p.dur, 0, 1), e = ease(t), u = 1 - e;
+          p.x = u * u * p.fx + 2 * u * e * p.cx + e * e * p.tx;
+          p.y = u * u * p.fy + 2 * u * e * p.cy + e * e * p.ty;
+          if (t >= 1) p.mode = shapes[stage] ? 'hold' : 'fall';
+        } else if (p.mode === 'hold') {
+          p.x = p.tx + Math.sin(time * p.tw + i) * 0.55;
+          p.y = p.ty + Math.cos(time * p.tw * 0.8 + i) * 0.55;
+        } else {
+          p.sway += dt * 0.8;
+          p.y += p.fall * dt; p.x += Math.sin(p.sway) * 0.25;
+          if (p.y > H + 8) { p.y = -8; p.x = Math.random() * W; }
         }
-        p.x += p.vx; p.y += p.vy;
       }
+      var want = stage === 0 && now > mapAt ? 1 : 0;
+      mapShown += (want - mapShown) * Math.min(1, dt * (want ? 2.2 : 6));
     }
 
-    function draw(dt) {
+    // Lantern: snow near the cursor glows brighter and a little larger.
+    function draw() {
       ctx.clearRect(0, 0, W, H);
+      var lantern = mouse.x > -999, R = 150, R2 = R * R;
       for (var pass = 0; pass < 2; pass++) {
         ctx.fillStyle = pass ? '#7df3d3' : '#eaf2ff';
         for (var i = 0; i < parts.length; i++) {
           var p = parts[i];
           if (p.g !== !!pass) continue;
-          ctx.globalAlpha = 0.55 + 0.45 * Math.sin(time * p.tw * 2 + i);
-          var s = p.r * 1.6;
+          var a = 0.62 + 0.38 * Math.sin(time * p.tw * 2 + i), s = p.r * 1.85;
+          if (lantern) {
+            var dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
+            if (d2 < R2) { var k = 1 - Math.sqrt(d2) / R; a = Math.min(1, a + k * 0.9); s *= 1 + k * 1.1; }
+          }
+          ctx.globalAlpha = a;
           ctx.fillRect(p.x - s / 2, p.y - s / 2, s, s);
         }
       }
-      // Campus cities glow on the map stage.
-      var m = clamp(1 - sf / 0.5, 0, 1) * (intro < 1 ? Math.max(0, intro * 2 - 1) : 1);
-      if (m > 0.01) {
-        cities.forEach(function (c, i) {
-          var pulse = (time * 0.6 + i * 0.13) % 1, on = i === hover;
-          ctx.globalAlpha = m * (1 - pulse) * 0.7;
-          ctx.strokeStyle = '#2fe3b4'; ctx.lineWidth = 1.2;
-          ctx.beginPath(); ctx.arc(c.x, c.y, 4 + pulse * 16, 0, Math.PI * 2); ctx.stroke();
-          ctx.globalAlpha = m;
-          ctx.fillStyle = on ? '#ffd58f' : '#2fe3b4';
-          ctx.beginPath(); ctx.arc(c.x, c.y, on ? 5 : 3.5, 0, Math.PI * 2); ctx.fill();
-        });
+      if (lantern && mapShown < 0.99) {
+        var gl = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, R);
+        gl.addColorStop(0, 'rgba(125,243,211,.10)'); gl.addColorStop(1, 'rgba(125,243,211,0)');
+        ctx.globalAlpha = 1; ctx.fillStyle = gl; ctx.fillRect(mouse.x - R, mouse.y - R, R * 2, R * 2);
       }
+      drawNetwork();
       ctx.globalAlpha = 1;
     }
 
-    function setStage() {
-      var active = Math.round(sf);
-      steps.forEach(function (s, i) { s.classList.toggle('is-on', i === active); });
-      ticks.forEach(function (t, i) { t.classList.toggle('is-on', i <= active); t.classList.toggle('is-now', i === active); });
-      sec.style.setProperty('--hp-p', (sf / (STAGES - 1)).toFixed(4));
+    /* "Connect": lines of light trace from Helsinki to every campus city,
+       with pulses travelling along them, once the map has formed. */
+    function curve(a, b, i) {
+      var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
+      var bend = (i % 2 ? 1 : -1) * Math.min(60, len * 0.22);
+      return { cx: mx - dy / len * bend, cy: my + dx / len * bend };
     }
-    function readScroll() {
-      if (!live) return;
+    function at(a, c, b, t) {
+      var u = 1 - t;
+      return [u * u * a.x + 2 * u * t * c.cx + t * t * b.x, u * u * a.y + 2 * u * t * c.cy + t * t * b.y];
+    }
+    function drawNetwork() {
+      if (mapShown < 0.01 || !cities.length) return;
+      var hub = cities[0], grow = clamp((performance.now() - mapAt) / 1600, 0, 1);
+      ctx.lineWidth = 1.1; ctx.strokeStyle = '#2fe3b4';
+      for (var i = 1; i < cities.length; i++) {
+        var c = cities[i], ctl = curve(hub, c, i), reach = clamp(grow * 1.4 - i * 0.04, 0, 1);
+        if (reach <= 0) continue;
+        ctx.globalAlpha = 0.32 * mapShown;
+        ctx.beginPath(); ctx.moveTo(hub.x, hub.y);
+        for (var s = 1; s <= 24; s++) { var q = at(hub, ctl, c, reach * s / 24); ctx.lineTo(q[0], q[1]); }
+        ctx.stroke();
+        if (reach >= 1) {
+          var pt = at(hub, ctl, c, (time * 0.32 + i * 0.17) % 1);
+          ctx.globalAlpha = 0.95 * mapShown; ctx.fillStyle = '#c9fff0';
+          ctx.beginPath(); ctx.arc(pt[0], pt[1], 2.1, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+      cities.forEach(function (c, i) {
+        var on = i === hover, pulse = (time * 0.55 + i * 0.13) % 1;
+        ctx.globalAlpha = mapShown * (1 - pulse) * 0.6; ctx.strokeStyle = on ? '#ffd58f' : '#2fe3b4';
+        ctx.beginPath(); ctx.arc(c.x, c.y, (i ? 4 : 6) + pulse * (i ? 14 : 22), 0, Math.PI * 2); ctx.stroke();
+        ctx.globalAlpha = mapShown; ctx.fillStyle = on ? '#ffd58f' : (i ? '#2fe3b4' : '#ffffff');
+        ctx.beginPath(); ctx.arc(c.x, c.y, on ? 5 : (i ? 3.4 : 4.6), 0, Math.PI * 2); ctx.fill();
+      });
+    }
+
+    function stageForScroll() {
       var total = sec.offsetHeight - window.innerHeight;
-      var p = total > 0 ? clamp(-sec.getBoundingClientRect().top / total, 0, 1) : 0;
-      sf = p * (STAGES - 1);
-      setStage();
+      var p = total > 0 ? clamp(-sec.getBoundingClientRect().top / total, 0, 0.9999) : 0;
+      sec.style.setProperty('--hp-p', p.toFixed(4));
+      return Math.floor(p * STAGES);
     }
 
     layout();
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { layout(); });
-    var rt = 0;
-    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { layout(); readScroll(); }, 150); });
-    setStage();
-    if (!live) return;
+    if (!live) {
+      // Static: the map, fully formed, with its network drawn once.
+      parts.forEach(function (p, i) { var q = shapes[0][i % shapes[0].length]; p.x = q[0]; p.y = q[1]; p.mode = 'hold'; });
+      stage = 0; mapShown = 1; mapAt = -1e9;
+      draw();
+      window.addEventListener('resize', function () { layout(); parts.forEach(function (p, i) { var q = shapes[0][i % shapes[0].length]; p.x = q[0]; p.y = q[1]; }); draw(); });
+      return;
+    }
 
-    window.addEventListener('scroll', readScroll, { passive: true });
-    readScroll();
+    var startAt = performance.now();
+    var introDone = false;
+    function onScroll() {
+      if (!introDone) return;
+      var k = stageForScroll();
+      if (k !== stage) goTo(k, performance.now());
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    var rt = 0;
+    window.addEventListener('resize', function () {
+      clearTimeout(rt);
+      rt = setTimeout(function () { layout(); goTo(introDone ? stageForScroll() : 0, performance.now(), true); }, 150);
+    });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { layout(); if (introDone) goTo(stage, performance.now(), true); });
+
+    // Rail buttons jump to the middle of their chapter.
+    ticks.forEach(function (b, i) {
+      b.addEventListener('click', function () {
+        var total = sec.offsetHeight - window.innerHeight;
+        window.scrollTo({ top: sec.offsetTop + total * (i + 0.5) / STAGES, behavior: 'smooth' });
+      });
+    });
+
     if (finePointer) {
       pin.addEventListener('pointermove', function (e) {
         var r = pin.getBoundingClientRect();
         mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
         hover = -1;
-        if (sf < 0.4) cities.forEach(function (c, i) { if (Math.hypot(c.x - mouse.x, c.y - mouse.y) < 18) hover = i; });
+        if (mapShown > 0.5) cities.forEach(function (c, i) { if (Math.hypot(c.x - mouse.x, c.y - mouse.y) < 18) hover = i; });
         if (hover > -1) {
           tip.textContent = cities[hover].name;
           tip.style.transform = 'translate(' + (cities[hover].x + 12) + 'px,' + (cities[hover].y - 12) + 'px)';
@@ -1400,12 +1469,17 @@
       });
       pin.addEventListener('pointerleave', function () { mouse.x = mouse.y = -9999; hover = -1; tip.classList.remove('is-on'); });
     }
+
     var running = false, raf = 0, last = 0, inView = true;
     function frame(now) {
       var dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
       last = now;
-      if (intro < 1) { if (!introT0) introT0 = now; intro = clamp((now - introT0 - 350) / 2200, 0, 1); }
-      physics(dt); draw(dt);
+      // Intro: a moment of snowfall, then the snow gathers into Finland.
+      if (!introDone && now - startAt > 700) {
+        introDone = true;
+        goTo(stageForScroll(), now);
+      }
+      update(now, dt); draw();
       if (running) raf = requestAnimationFrame(frame);
     }
     function sync() {

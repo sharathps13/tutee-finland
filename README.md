@@ -27,11 +27,15 @@ tooling first, or it will overwrite the page. Lead forms still post to
 ### Particle hero
 
 `#home` is a pinned scroll scene (`initParticleHero` in `finland.js`, canvas
-2D): falling snow gathers into a dotted silhouette of Finland with glowing
-campus cities (hover for names), then scrolling morphs the same particles
-through "36" → "2 YRS" → "30 H" while matching captions swap in, and finally
-back into snowfall around the call to action. The cursor pushes particles
-aside. Finland's outline is a coarse hand-traced polygon (`FI_OUTLINE`).
+2D): falling snow gathers into a dotted silhouette of Finland, light traces
+from Helsinki to each campus city (hover for names), then the same
+particles become "36" → "2 YRS" → "30 H" and finally snowfall around the
+call to action. Scroll only chooses the stage; each morph is a timed,
+staggered flight along a curve, so it is never frozen half-way. Each stage
+crossfades its own season photo behind the particles (season photos load
+after the page). The cursor is a "lantern" that brightens nearby snow; the
+rail labels jump to a stage. Finland's outline is a coarse hand-traced
+polygon (`FI_OUTLINE`).
 With reduced motion (or no JS) it is a static full-screen hero showing the
 map and the first caption only. The clock shows live Helsinki time.
 

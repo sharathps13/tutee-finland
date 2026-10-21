@@ -150,8 +150,14 @@
 <section class="hp" id="home" data-hp>
   <div class="hp__pin" data-hero>
     <div class="hp__sky" aria-hidden="true">
-      <img class="hp__photo" src="./assets/img/photos/hero-aurora.jpg" alt="" width="1920" height="1281" fetchpriority="high" decoding="async">
-      <canvas class="gl-bg" data-gl="aurora" data-stops="#003580,#2fe3b4,#6c8cff" data-height="0.3" data-brightness="0.8" aria-hidden="true"></canvas>
+      <div class="hp__bgs">
+        <img class="hp__bg is-on" data-hp-bg src="./assets/img/photos/hero-aurora.jpg" alt="" width="1920" height="1281" fetchpriority="high" decoding="async">
+        <img class="hp__bg" data-hp-bg data-src="./assets/img/seasons/autumn.jpg" alt="" decoding="async">
+        <img class="hp__bg" data-hp-bg data-src="./assets/img/seasons/spring.jpg" alt="" decoding="async">
+        <img class="hp__bg" data-hp-bg data-src="./assets/img/seasons/summer.jpg" alt="" decoding="async">
+        <img class="hp__bg" data-hp-bg data-src="./assets/img/seasons/winter.jpg" alt="" decoding="async">
+      </div>
+      <canvas class="gl-bg" data-gl="aurora" data-stops="#003580,#2fe3b4,#6c8cff" data-height="0.28" data-brightness="0.6" aria-hidden="true"></canvas>
       <div class="aurora" data-aurora><span></span><span></span><span></span></div>
       <div class="noise-layer" data-noise></div>
       <div class="hp__vignette"></div>
@@ -174,17 +180,17 @@
         </div>
       </div>
       <div class="hp__step" data-hp-step="1">
-        <span class="hp__k">01 &mdash; Choose</span>
+        <span class="hp__k">01 &mdash; Choose &middot; Autumn intake</span>
         <h2 class="hp__h2">36 institutions.</h2>
         <p class="hp__p">Every university and university of applied sciences an international student can apply to, with 600+ degree programmes taught in English.</p>
       </div>
       <div class="hp__step" data-hp-step="2">
-        <span class="hp__k">02 &mdash; Stay</span>
+        <span class="hp__k">02 &mdash; Stay &middot; Graduation in spring</span>
         <h2 class="hp__h2">Two years to build a career.</h2>
         <p class="hp__p">After you graduate, a residence permit to look for work or start a business &mdash; no sponsor required.</p>
       </div>
       <div class="hp__step" data-hp-step="3">
-        <span class="hp__k">03 &mdash; Work</span>
+        <span class="hp__k">03 &mdash; Work &middot; Midnight-sun summers</span>
         <h2 class="hp__h2">Earn while you study.</h2>
         <p class="hp__p">Work an average of 30 hours a week in any field, averaged across the year, with no separate work permit.</p>
       </div>
@@ -197,12 +203,12 @@
     </div>
 
     <div class="hp__foot">
-      <ol class="hp__rail" aria-hidden="true">
-        <li class="is-on" data-hp-tick><span>Finland</span></li>
-        <li data-hp-tick><span>Choose</span></li>
-        <li data-hp-tick><span>Stay</span></li>
-        <li data-hp-tick><span>Work</span></li>
-        <li data-hp-tick><span>Begin</span></li>
+      <ol class="hp__rail" aria-label="Hero chapters">
+        <li class="is-on"><button type="button" data-hp-tick tabindex="-1">Finland</button></li>
+        <li><button type="button" data-hp-tick tabindex="-1">Choose</button></li>
+        <li><button type="button" data-hp-tick tabindex="-1">Stay</button></li>
+        <li><button type="button" data-hp-tick tabindex="-1">Work</button></li>
+        <li><button type="button" data-hp-tick tabindex="-1">Begin</button></li>
       </ol>
       <a class="hp__scroll" href="#why" aria-label="Scroll to explore"><span>Scroll</span><i></i></a>
     </div>
