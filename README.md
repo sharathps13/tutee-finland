@@ -5,9 +5,28 @@ The eleventh destination page. A faithful clone of the deployed reference site
 classes, same compiled stylesheet, same scroll and hover animations. Only the
 copy, the dataset, the photographs and the currency glyph differ.
 
+## Landing page redesign (October 2026)
+
+`index.html` is now **hand-authored** and no longer a clone of the reference
+DOM. It uses its own Nordic design system — `assets/css/finland.css` (Finnish
+flag blue, snow white, aurora accents, Tutee maroon for every conversion
+action) and `assets/js/finland.js` (seasons scene, services tabs, "Find my
+Finland match" quiz, pinned horizontal journey, scroll-velocity rails,
+spotlight/tilt/magnet effects, FAQ search, lead forms, Tutee AI chat). **The
+landing page shows no monetary values** — fees, funds, insurance, wages and
+grant amounts were removed from the page, the chat replies and the service
+descriptions in `assets/js/services-data.js` (hand-edited, so a re-run of
+`localise_fi.py` would put them back). The README tables below still record
+the figures for reference. It no longer
+loads `main.css` or `main.js`; `universities.html` still does and is unchanged.
+**Do not re-run `assemble.py finland`** without porting this design into the
+tooling first, or it will overwrite the page. Lead forms still post to
+`/api/enquiry`; they now also send `study_level`, `intake` and
+`form_location`, which the function forwards as extra fields.
+
 ## Build
 
-Everything here is **generated**. Editing `index.html`, `universities.html`,
+Everything else here is **generated**. Editing `index.html`, `universities.html`,
 `assets/js/main.js`, `assets/js/services-data.js` or
 `assets/js/universities-data.js` by hand gets overwritten on the next build.
 

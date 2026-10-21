@@ -473,11 +473,11 @@
   function cannedReply(text) {
     var q = text.toLowerCase();
     if (/visa|permit|migri|enter finland|interview|refus/.test(q))
-      return 'Finland issues a **residence permit for studies**, not a student visa \u2014 and a degree student at a higher education institution gets a **continuous A permit for the whole length of the studies**. You apply on **Enter Finland** (\u20ac600 online), show **\u20ac800 a month**, take out insurance and identify yourself at a Finnish mission. Ask for the **D visa** in the same application and you can fly before the card arrives. There is **no credibility interview**. Tutee Connect boasts a **99% Finnish permit success rate** on rigorous documentation support.';
+      return 'Finland issues a **residence permit for studies**, not a student visa \u2014 and a degree student at a higher education institution gets a **continuous A permit for the whole length of the studies**. You apply on **Enter Finland**, show that you have **the funds Migri requires**, take out insurance and identify yourself at a Finnish mission. Ask for the **D visa** in the same application and you can fly before the card arrives. There is **no credibility interview**. Tutee Connect boasts a **99% Finnish permit success rate** on rigorous documentation support.';
     if (/scholarship|fund|financial|aid|bursar/.test(q))
-      return 'Finland funds international students well. The **Finland Scholarship** covers **100% of the first year\u2019s tuition plus a \u20ac5,000 relocation grant** for non-EU/EEA master\u2019s entrants at participating institutions, most universities award **50\u2013100% tuition-fee scholarships** in the admission decision, and **doctoral study carries no tuition fee at all**. We analyse your academic profile and help you apply where you have the highest chance of securing funding.';
+      return 'Finland funds international students well. The **Finland Scholarship** covers **100% of the first year\u2019s tuition plus a relocation grant** for non-EU/EEA master\u2019s entrants at participating institutions, most universities award **50\u2013100% tuition-fee scholarships** in the admission decision, and **doctoral study carries no tuition fee at all**. We analyse your academic profile and help you apply where you have the highest chance of securing funding.';
     if (/cost|fee|tuition|money|expense/.test(q))
-      return 'Tuition for non-EU/EEA students typically ranges from **\u20ac8,000 to \u20ac20,000 per year** depending on the institution and programme \u2014 and **doctoral study is free of tuition**. On top of that, Migri asks you to show **\u20ac800 a month**, and Helsinki costs roughly **\u20ac900\u2013\u20ac1,250 a month** to live in. We help students secure **non-collateral education loans**, apply for the **Finland Scholarship**, and find part-time work.';
+      return 'Tuition depends on the institution and programme, and **doctoral study is free of tuition**. Migri also asks you to show that you can cover your living costs. Your counsellor builds an exact budget with you, and we help with **non-collateral education loans**, the **Finland Scholarship** and part-time work.';
     if (/job|work|earn|part.?time|job.?search|permanent residence/.test(q))
       return "Absolutely! A Finnish study permit lets you work an **average of 30 hours a week** in any field, with **no separate work permit** \u2014 and the average is taken **across the calendar year**, so you can work full time over the summer. After graduating you can take a **permit to look for work or start a business for up to two years**, and a **Finnish degree removes the period-of-residence requirement for permanent residence** once your Finnish or Swedish is good enough. Our 'Earn While You Learn' initiative guides our students on securing these jobs immediately upon arrival.";
     if (/ielts|pte|duolingo|gmat|exam|english/.test(q))
@@ -884,7 +884,6 @@
                     (p.fld  ? '<span>' + esc(p.fld) + '</span>' : '') +
                     (p.city ? '<span>' + esc(p.city) + '</span>' : '') +
                     (p.dur  ? '<span>' + esc(p.dur) + '</span>' : '') +
-                    '<span>' + (p.fee ? esc(p.fee) : 'Fee not published') + '</span>' +
                     (p.sch  ? '<span class="text-primary font-semibold">Scholarship available</span>' : '') +
                   '</div>' +
                 '</div>';
