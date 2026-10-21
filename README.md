@@ -24,15 +24,16 @@ tooling first, or it will overwrite the page. Lead forms still post to
 `/api/enquiry`; they now also send `study_level`, `intake` and
 `form_location`, which the function forwards as extra fields.
 
-### Cinematic hero
+### Particle hero
 
-`#home` is a pinned scroll scene (`initCinematicHero` in `finland.js`):
-FINLAND is cut out of a night veil with an SVG mask over the full-resolution
-aurora photo, so it stays sharp while scrolling zooms through the "L"; the
-Nordic cross then draws out and thickens into the Finnish flag, ending on
-"Tervetuloa." Phones stack the word as FIN / LAND. With reduced motion (or
-no JS) it is a plain full-screen hero with no pinning. The clock shows live
-Helsinki time from the visitor's browser.
+`#home` is a pinned scroll scene (`initParticleHero` in `finland.js`, canvas
+2D): falling snow gathers into a dotted silhouette of Finland with glowing
+campus cities (hover for names), then scrolling morphs the same particles
+through "36" → "2 YRS" → "30 H" while matching captions swap in, and finally
+back into snowfall around the call to action. The cursor pushes particles
+aside. Finland's outline is a coarse hand-traced polygon (`FI_OUTLINE`).
+With reduced motion (or no JS) it is a static full-screen hero showing the
+map and the first caption only. The clock shows live Helsinki time.
 
 ### Universities directory and detail pages (October 2026)
 

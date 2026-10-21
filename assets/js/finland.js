@@ -119,8 +119,8 @@
       var y = window.scrollY || window.pageYOffset;
       var max = document.documentElement.scrollHeight - window.innerHeight;
       // Stay transparent over the night-sky hero; turn solid once the flag (or the page) shows.
-      var hx = $('[data-hx].is-live');
-      var overNight = hx && hx.getBoundingClientRect().bottom > 80 && !document.body.classList.contains('hx-flag');
+      var hx = $('[data-hp].is-live');
+      var overNight = hx && hx.getBoundingClientRect().bottom > 80;
       if (header) header.classList.toggle('is-scrolled', y > 40 && !overNight);
       if (bar) bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, y / max) : 0) + ')';
 
@@ -1195,120 +1195,228 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * Cinematic hero — FINLAND is cut out of a night veil (an SVG mask over
-   * the full-resolution aurora photo). Scrolling zooms through the "L"
-   * until the photograph fills the screen, then the Nordic cross grows
-   * into the Finnish flag. Vector mask + unscaled photo = sharp at any zoom.
+   * Particle hero — snow gathers into the silhouette of Finland, then
+   * scrolling morphs the same particles through 36 → 2 YRS → 30 H and
+   * back into snowfall. Canvas 2D; pinned with position: sticky.
    * ------------------------------------------------------------------ */
-  function initCinematicHero() {
-    var sec = $('[data-hx]');
+  /* Finland's outline as [lon, lat], clockwise from Hanko. Coarse on purpose:
+     it only has to read as Finland once it is filled with points. */
+  var FI_OUTLINE = [[22.95, 59.82], [23.43, 59.97], [24.94, 60.15], [25.66, 60.3], [26.95, 60.45], [27.8, 60.55],
+    [28.85, 61.17], [29.55, 61.55], [30.65, 62.2], [31.3, 62.75], [31.58, 62.9], [30.9, 63.4], [30.55, 64.1],
+    [29.95, 64.9], [29.65, 65.6], [29.6, 66.05], [29.1, 66.85], [28.6, 67.7], [28.75, 68.15], [28.45, 68.5],
+    [28.7, 68.85], [28.93, 69.05], [29.1, 69.65], [28.5, 69.85], [27.95, 70.09], [27.0, 69.9], [25.85, 69.4],
+    [25.0, 68.95], [24.0, 68.65], [22.9, 68.7], [21.7, 69.25], [21.27, 69.31], [20.55, 69.06], [21.6, 68.75],
+    [22.5, 68.45], [23.55, 67.95], [23.8, 67.35], [23.95, 66.78], [23.65, 66.3], [24.15, 65.85], [24.55, 65.73],
+    [25.35, 65.3], [25.45, 65.0], [24.45, 64.68], [24.0, 64.25], [23.1, 63.85], [22.7, 63.68], [21.6, 63.1],
+    [21.3, 62.45], [21.35, 62.27], [21.45, 61.5], [21.45, 61.13], [21.35, 60.8], [22.2, 60.45], [23.1, 60.37]];
+  var FI_CITIES = [['Helsinki', 24.94, 60.17], ['Turku', 22.27, 60.45], ['Tampere', 23.76, 61.5], ['Lappeenranta', 28.19, 61.06],
+    ['Jyväskylä', 25.75, 62.24], ['Kuopio', 27.68, 62.89], ['Joensuu', 29.76, 62.6], ['Vaasa', 21.62, 63.1],
+    ['Oulu', 25.47, 65.01], ['Rovaniemi', 25.73, 66.5]];
+  var LON0 = 20.4, LAT0 = 70.2, KX = 0.438;   // equirectangular, squeezed for ~64°N
+
+  function initParticleHero() {
+    var sec = $('[data-hp]');
     if (!sec) return;
-    var svg = $('[data-hx-svg]', sec), groups = $$('[data-hx-g]', sec), texts = $$('.hx__t', sec);
-    var space = $('[data-hx-space]', sec), veil = $('[data-hx-veil]', sec);
-    var fades = $$('[data-hx-fade]', sec), photo = $('[data-hx-photo]', sec), flag = $('[data-hx-flag]', sec);
-    var cross = $('[data-hx-cross]', sec), clock = $('[data-hx-clock]', sec), pin = $('.hx__pin', sec);
-    var tspans = texts.map(function (t) { return $$('tspan', t); });
+    var pin = $('.hp__pin', sec), canvas = $('[data-hp-canvas]', sec), tip = $('[data-hp-tip]', sec);
+    var steps = $$('[data-hp-step]', sec), ticks = $$('[data-hp-tick]', sec), clock = $('[data-hp-clock]', sec);
+    var ctx = canvas.getContext && canvas.getContext('2d');
 
     function tickClock() {
       try { clock.textContent = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Helsinki', hour: '2-digit', minute: '2-digit' }).format(new Date()); }
-      catch (e) { /* old browser: keep the placeholder */ }
+      catch (e) { /* keep the placeholder */ }
     }
     if (clock) { tickClock(); setInterval(tickClock, 20000); }
+    if (!ctx) return;
+    var live = !reduceMotion;
+    if (live) sec.classList.add('is-live');
 
-    var fs = 0, cx = 0, base = 0, ox = 0, oy = 0, scale = 1, px = 0, py = 0;
-    /* Size the word to the stage and park it where the placeholder sits. */
-    function layout() {
-      var W = pin.clientWidth, H = pin.clientHeight;
-      // Narrow screens stack FIN / LAND so the letters can be twice as large.
-      var stacked = W < 640;
-      fs = stacked ? Math.min(W * 0.37, H * 0.21) : Math.min(W * 0.205, H * 0.4, 380);
-      var gap = fs * 0.9;
-      space.style.setProperty('--hx-h', (fs * 0.78 + (stacked ? gap : 0)) + 'px');
-      var sr = space.getBoundingClientRect(), pr = pin.getBoundingClientRect();
-      cx = W / 2;
-      base = sr.top - pr.top + fs * 0.74;
-      texts.forEach(function (t, k) {
-        t.setAttribute('x', cx); t.setAttribute('y', base); t.setAttribute('font-size', fs);
-        var L = tspans[k][3];
-        if (stacked) { L.setAttribute('x', cx); L.setAttribute('y', base + gap); }
-        else { L.removeAttribute('x'); L.removeAttribute('y'); }
+    var W = 0, H = 0, dpr = 1, N = 0, parts = [], shapes = [], cities = [];
+    var STAGES = 5, sf = 0, intro = live ? 0 : 1, introT0 = 0, mouse = { x: -9999, y: -9999 }, hover = -1;
+
+    /* Scatter points evenly over whatever `draw` paints inside the box. */
+    function sample(box, draw) {
+      var w = Math.max(1, Math.round(box.w)), h = Math.max(1, Math.round(box.h));
+      var c = document.createElement('canvas'); c.width = w; c.height = h;
+      var x = c.getContext('2d'); x.fillStyle = '#fff'; draw(x, w, h);
+      var data = x.getImageData(0, 0, w, h).data, area = 0;
+      for (var yy = 0; yy < h; yy += 2) for (var xx = 0; xx < w; xx += 2) if (data[(yy * w + xx) * 4 + 3] > 128) area += 4;
+      var step = Math.max(2, Math.sqrt(area / N) * 0.97), pts = [];
+      for (var gy = step / 2; gy < h; gy += step) {
+        for (var gx = step / 2; gx < w; gx += step) {
+          var jx = gx + (Math.random() - 0.5) * step * 0.6, jy = gy + (Math.random() - 0.5) * step * 0.6;
+          var ix = clamp(Math.round(jx), 0, w - 1), iy = clamp(Math.round(jy), 0, h - 1);
+          if (data[(iy * w + ix) * 4 + 3] > 128) pts.push([box.x + jx, box.y + jy]);
+        }
+      }
+      for (var i = pts.length - 1; i > 0; i--) { var j = (Math.random() * (i + 1)) | 0, t = pts[i]; pts[i] = pts[j]; pts[j] = t; }
+      return pts.length ? pts : [[box.x + w / 2, box.y + h / 2]];
+    }
+    function mapShape(box) {
+      var mw = (31.7 - LON0) * KX, mh = LAT0 - 59.7;
+      var s = Math.min(box.w / mw, box.h / mh), ox = box.x + (box.w - mw * s) / 2, oy = box.y + (box.h - mh * s) / 2;
+      var P = function (lon, lat) { return [ox + (lon - LON0) * KX * s, oy + (LAT0 - lat) * s]; };
+      cities = FI_CITIES.map(function (c) { var q = P(c[1], c[2]); return { name: c[0], x: q[0], y: q[1] }; });
+      return sample(box, function (x) {
+        x.beginPath();
+        FI_OUTLINE.forEach(function (pt, i) { var q = P(pt[0], pt[1]); x[i ? 'lineTo' : 'moveTo'](q[0] - box.x, q[1] - box.y); });
+        x.closePath(); x.fill();
       });
-      // Zoom origin: the stem of the central "L".
-      try {
-        var start = texts[0].getStartPositionOfChar(3);
-        ox = start.x + fs * 0.07; oy = start.y - fs * 0.32;
-      } catch (e) { ox = cx; oy = base - fs * 0.35; }
-      sec.classList.add('is-ready');
-      paint();
     }
-    function paint() {
-      var t = 'translate(' + (ox + px).toFixed(2) + ' ' + (oy + py).toFixed(2) + ') scale(' + scale.toFixed(4) + ') translate(' + (-ox).toFixed(2) + ' ' + (-oy).toFixed(2) + ')';
-      groups.forEach(function (g) { g.setAttribute('transform', t); });
+    function textShape(box, text) {
+      return sample(box, function (x, w, h) {
+        x.font = '700 100px Quicksand, system-ui, sans-serif';
+        var tw = x.measureText(text).width, fsz = Math.min(100 * (w * 0.96) / tw, h * 0.78);
+        x.font = '700 ' + fsz + 'px Quicksand, system-ui, sans-serif';
+        x.textAlign = 'center'; x.textBaseline = 'middle';
+        x.fillText(text, w / 2, h / 2 + fsz * 0.04);
+      });
     }
-    layout();
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
-    window.addEventListener('load', layout);
-    if (reduceMotion) { window.addEventListener('resize', layout); return; }
 
-    sec.classList.add('is-live');
-    var ticking = false;
-    function update() {
-      ticking = false;
+    function layout() {
+      var r = pin.getBoundingClientRect();
+      W = r.width; H = r.height; dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var mobile = W < 860;
+      var mapBox = mobile ? { x: W * 0.12, y: H * 0.1, w: W * 0.76, h: H * 0.44 } : { x: W * 0.52, y: H * 0.11, w: W * 0.4, h: H * 0.78 };
+      var txtBox = mobile ? { x: W * 0.05, y: H * 0.2, w: W * 0.9, h: H * 0.32 } : { x: W * 0.55, y: H * 0.26, w: W * 0.39, h: H * 0.46 };
+      var n = Math.round(clamp(W * H / 430, 900, 2600));
+      if (n !== N) {
+        N = n;
+        parts = [];
+        for (var i = 0; i < N; i++) {
+          parts.push({ x: Math.random() * W, y: Math.random() * H, vx: 0, vy: 0,
+            sx: Math.random() * W, sy: Math.random() * H, fall: 12 + Math.random() * 30, sway: Math.random() * 6.28,
+            tw: 0.6 + Math.random() * 1.6, g: Math.random() < 0.16, r: 0.7 + Math.random() * 0.9 });
+        }
+      }
+      shapes = [mapShape(mapBox), textShape(txtBox, '36'), textShape(txtBox, '2 YRS'), textShape(txtBox, '30 H'), null];
+      if (!live) { parts.forEach(function (p, i) { var t = shapes[0][i % shapes[0].length]; p.x = t[0]; p.y = t[1]; }); draw(0); }
+    }
+
+    function targetOf(k, p, i, out) {
+      var s = shapes[k];
+      if (!s) { out[0] = p.sx; out[1] = p.sy; return; }
+      var t = s[i % s.length];
+      // Particles beyond the shape's point count double up with a small offset.
+      var extra = i >= s.length ? 1.6 : 0;
+      out[0] = t[0] + (extra && ((i * 7) % 5 - 2) * 0.6); out[1] = t[1] + (extra && ((i * 3) % 5 - 2) * 0.6);
+    }
+
+    var A = [0, 0], B = [0, 0], time = 0;
+    function physics(dt) {
+      time += dt;
+      var k = Math.min(STAGES - 2, Math.floor(sf)), t = sf - k;
+      var tt = clamp((t - 0.18) / 0.64, 0, 1); tt = tt * tt * (3 - 2 * tt);
+      var ei = intro < 1 ? 1 - Math.pow(1 - intro, 3) : 1;
+      var R = 110, R2 = R * R;
+      for (var i = 0; i < parts.length; i++) {
+        var p = parts[i];
+        // Snow keeps falling; it is the "from" for the intro and the final stage.
+        p.sy += p.fall * dt; p.sway += dt * 0.8;
+        if (p.sy > H + 10) { p.sy = -10; p.sx = Math.random() * W; }
+        var sx = p.sx + Math.sin(p.sway) * 14;
+        targetOf(k, p, i, A); targetOf(k + 1, p, i, B);
+        if (!shapes[k]) A[0] = sx;
+        if (!shapes[k + 1]) B[0] = sx;
+        var tx = A[0] + (B[0] - A[0]) * tt, ty = A[1] + (B[1] - A[1]) * tt;
+        if (ei < 1) { tx = sx + (tx - sx) * ei; ty = p.sy + (ty - p.sy) * ei; }
+        // A gentle shimmer so the shapes breathe.
+        tx += Math.sin(time * p.tw + i) * 0.6; ty += Math.cos(time * p.tw * 0.8 + i) * 0.6;
+        p.vx = (p.vx + (tx - p.x) * 0.055) * 0.84;
+        p.vy = (p.vy + (ty - p.y) * 0.055) * 0.84;
+        var dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
+        if (d2 < R2 && d2 > 0.01) {
+          var d = Math.sqrt(d2), f = (1 - d / R) * 3.2;
+          p.vx += dx / d * f; p.vy += dy / d * f;
+        }
+        p.x += p.vx; p.y += p.vy;
+      }
+    }
+
+    function draw(dt) {
+      ctx.clearRect(0, 0, W, H);
+      for (var pass = 0; pass < 2; pass++) {
+        ctx.fillStyle = pass ? '#7df3d3' : '#eaf2ff';
+        for (var i = 0; i < parts.length; i++) {
+          var p = parts[i];
+          if (p.g !== !!pass) continue;
+          ctx.globalAlpha = 0.55 + 0.45 * Math.sin(time * p.tw * 2 + i);
+          var s = p.r * 1.6;
+          ctx.fillRect(p.x - s / 2, p.y - s / 2, s, s);
+        }
+      }
+      // Campus cities glow on the map stage.
+      var m = clamp(1 - sf / 0.5, 0, 1) * (intro < 1 ? Math.max(0, intro * 2 - 1) : 1);
+      if (m > 0.01) {
+        cities.forEach(function (c, i) {
+          var pulse = (time * 0.6 + i * 0.13) % 1, on = i === hover;
+          ctx.globalAlpha = m * (1 - pulse) * 0.7;
+          ctx.strokeStyle = '#2fe3b4'; ctx.lineWidth = 1.2;
+          ctx.beginPath(); ctx.arc(c.x, c.y, 4 + pulse * 16, 0, Math.PI * 2); ctx.stroke();
+          ctx.globalAlpha = m;
+          ctx.fillStyle = on ? '#ffd58f' : '#2fe3b4';
+          ctx.beginPath(); ctx.arc(c.x, c.y, on ? 5 : 3.5, 0, Math.PI * 2); ctx.fill();
+        });
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function setStage() {
+      var active = Math.round(sf);
+      steps.forEach(function (s, i) { s.classList.toggle('is-on', i === active); });
+      ticks.forEach(function (t, i) { t.classList.toggle('is-on', i <= active); t.classList.toggle('is-now', i === active); });
+      sec.style.setProperty('--hp-p', (sf / (STAGES - 1)).toFixed(4));
+    }
+    function readScroll() {
+      if (!live) return;
       var total = sec.offsetHeight - window.innerHeight;
       var p = total > 0 ? clamp(-sec.getBoundingClientRect().top / total, 0, 1) : 0;
-      var z = clamp(p / 0.5, 0, 1), ez = Math.pow(z, 3);
-      scale = 1 + ez * 70;
-      if (z > 0) { px = py = 0; }
-      paint();
-      // The veil thins as the letters open up, so the photo takes over.
-      veil.style.opacity = (0.9 * (1 - clamp((z - 0.55) / 0.45, 0, 1))).toFixed(3);
-      texts[1].style.opacity = (1 - clamp(z / 0.25, 0, 1)).toFixed(3);
-      var fo = 1 - clamp(p / 0.12, 0, 1);
-      fades.forEach(function (el) {
-        el.style.opacity = fo.toFixed(3);
-        el.style.transform = fo < 1 ? 'translateY(' + (-(1 - fo) * 24).toFixed(1) + 'px)' : '';
-        el.style.visibility = fo <= 0 ? 'hidden' : '';
-      });
-      photo.style.setProperty('--hx-ps', (1.12 - ez * 0.08).toFixed(3));
-      var f = clamp((p - 0.5) / 0.25, 0, 1);
-      // Bars first draw out as thin lines, then thicken into the flag.
-      var bars = clamp((p - 0.5) / 0.2, 0, 1), eb = 1 - Math.pow(1 - bars, 3);
-      var thick = clamp((p - 0.66) / 0.18, 0, 1), et = 0.012 + 0.988 * (1 - Math.pow(1 - thick, 3));
-      var wo = clamp((p - 0.8) / 0.14, 0, 1);
-      flag.style.setProperty('--f', f.toFixed(3));
-      flag.style.setProperty('--bx', eb.toFixed(4));
-      flag.style.setProperty('--by', eb.toFixed(4));
-      flag.style.setProperty('--bt', et.toFixed(4));
-      flag.style.setProperty('--wo', wo.toFixed(3));
-      cross.style.opacity = (1 - Math.max(f, z)).toFixed(3);
-      document.body.classList.toggle('hx-flag', f > 0.6);
+      sf = p * (STAGES - 1);
+      setStage();
     }
-    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
-    window.addEventListener('resize', function () { layout(); update(); });
-    update();
 
-    // VariableProximity: letters thicken towards the cursor; the word drifts with it.
-    if (!finePointer) return;
-    var raf = 0, mx = 0, my = 0;
-    function proximity() {
-      raf = 0;
-      if (scale > 1.001) return;
-      var pr = pin.getBoundingClientRect();
-      tspans[0].forEach(function (span, i) {
-        var b;
-        try { b = span.getBBox(); } catch (e) { return; }
-        var d = Math.hypot(mx - pr.left - (b.x + b.width / 2), my - pr.top - (b.y + b.height / 2));
-        var w = Math.round(380 + 320 * Math.max(0, 1 - d / (fs * 1.4)));
-        tspans.forEach(function (set) { set[i].style.setProperty('--w', w); });
+    layout();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { layout(); });
+    var rt = 0;
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { layout(); readScroll(); }, 150); });
+    setStage();
+    if (!live) return;
+
+    window.addEventListener('scroll', readScroll, { passive: true });
+    readScroll();
+    if (finePointer) {
+      pin.addEventListener('pointermove', function (e) {
+        var r = pin.getBoundingClientRect();
+        mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
+        hover = -1;
+        if (sf < 0.4) cities.forEach(function (c, i) { if (Math.hypot(c.x - mouse.x, c.y - mouse.y) < 18) hover = i; });
+        if (hover > -1) {
+          tip.textContent = cities[hover].name;
+          tip.style.transform = 'translate(' + (cities[hover].x + 12) + 'px,' + (cities[hover].y - 12) + 'px)';
+          tip.classList.add('is-on');
+        } else tip.classList.remove('is-on');
       });
-      px = (mx - pr.left - pr.width / 2) * 0.015; py = (my - pr.top - pr.height / 2) * 0.012;
-      paint();
+      pin.addEventListener('pointerleave', function () { mouse.x = mouse.y = -9999; hover = -1; tip.classList.remove('is-on'); });
     }
-    pin.addEventListener('pointermove', function (e) { mx = e.clientX; my = e.clientY; if (!raf) raf = requestAnimationFrame(proximity); });
-    pin.addEventListener('pointerleave', function () {
-      tspans.forEach(function (set) { set.forEach(function (s) { s.style.removeProperty('--w'); }); });
-      px = py = 0; paint();
-    });
+    var running = false, raf = 0, last = 0, inView = true;
+    function frame(now) {
+      var dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
+      last = now;
+      if (intro < 1) { if (!introT0) introT0 = now; intro = clamp((now - introT0 - 350) / 2200, 0, 1); }
+      physics(dt); draw(dt);
+      if (running) raf = requestAnimationFrame(frame);
+    }
+    function sync() {
+      var want = inView && !document.hidden;
+      if (want === running) return;
+      running = want; last = 0;
+      if (running) raf = requestAnimationFrame(frame); else cancelAnimationFrame(raf);
+    }
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (e) { inView = e[0].isIntersecting; sync(); }).observe(pin);
+    document.addEventListener('visibilitychange', sync);
+    sync();
   }
 
   /* Footer credit list for the HD photos (CC BY requires visible attribution). */
@@ -1327,7 +1435,7 @@
    * Boot
    * ------------------------------------------------------------------ */
   initMarquees();
-  initCinematicHero();
+  initParticleHero();
   initScrollUi();
   initDrawer();
   initReveal();

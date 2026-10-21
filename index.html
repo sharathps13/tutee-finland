@@ -142,66 +142,69 @@
 </div>
 
 <main>
-<!-- ============================== HERO (cinematic) ==============================
-     A pinned scroll scene: night sky over Lapland, a giant FINLAND filled with
-     the aurora photograph. Scrolling zooms through the word while the Nordic
-     cross grows into the Finnish flag and lands on "Tervetuloa". -->
-<section class="hx" id="home" data-hx>
-  <div class="hx__pin" data-hero>
-    <div class="hx__sky" aria-hidden="true">
-      <img class="hx__photo" src="./assets/img/photos/hero-aurora.jpg" alt="" width="1920" height="1281" fetchpriority="high" decoding="async" data-hx-photo>
-      <svg class="hx__svg" data-hx-svg aria-hidden="true" focusable="false">
-        <defs>
-          <mask id="hx-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
-            <rect x="0" y="0" width="100%" height="100%" fill="#fff"/>
-            <g data-hx-g><text class="hx__t hx__t--hole" text-anchor="middle" fill="#000"><tspan>F</tspan><tspan>I</tspan><tspan>N</tspan><tspan>L</tspan><tspan>A</tspan><tspan>N</tspan><tspan>D</tspan></text></g>
-          </mask>
-        </defs>
-        <rect class="hx__veil" x="0" y="0" width="100%" height="100%" mask="url(#hx-mask)" data-hx-veil/>
-        <g data-hx-g><text class="hx__t hx__t--edge" text-anchor="middle"><tspan>F</tspan><tspan>I</tspan><tspan>N</tspan><tspan>L</tspan><tspan>A</tspan><tspan>N</tspan><tspan>D</tspan></text></g>
-      </svg>
-      <canvas class="gl-bg" data-gl="aurora" data-stops="#003580,#2fe3b4,#6c8cff" data-height="0.36" data-brightness="0.85" aria-hidden="true"></canvas>
+<!-- ============================== HERO (particle morph) ==============================
+     Snow over a Lapland night sky gathers into the silhouette of Finland.
+     Scrolling morphs the same particles through the reasons to come
+     (36 → 2 YRS → 30 H) and back into snowfall around the call to action.
+     Engine: initParticleHero() in finland.js. -->
+<section class="hp" id="home" data-hp>
+  <div class="hp__pin" data-hero>
+    <div class="hp__sky" aria-hidden="true">
+      <img class="hp__photo" src="./assets/img/photos/hero-aurora.jpg" alt="" width="1920" height="1281" fetchpriority="high" decoding="async">
+      <canvas class="gl-bg" data-gl="aurora" data-stops="#003580,#2fe3b4,#6c8cff" data-height="0.3" data-brightness="0.8" aria-hidden="true"></canvas>
       <div class="aurora" data-aurora><span></span><span></span><span></span></div>
-      <canvas class="snow" data-snow></canvas>
       <div class="noise-layer" data-noise></div>
-      <div class="hx__vignette"></div>
+      <div class="hp__vignette"></div>
+    </div>
+    <canvas class="hp__canvas" data-hp-canvas aria-hidden="true"></canvas>
+    <div class="hp__tip" data-hp-tip aria-hidden="true"></div>
+
+    <div class="hp__meta">
+      <span class="hp__tag"><svg class="flag" aria-hidden="true"><use href="#flag-fi"/></svg><span data-shiny>Study in Finland</span></span>
+      <span class="hp__clock"><span class="hp__dot" aria-hidden="true"></span>Now in Helsinki <b data-hp-clock>--:--</b></span>
     </div>
 
-    <div class="hx__cross" aria-hidden="true" data-hx-cross><i class="hx__line hx__line--v"></i><i class="hx__line hx__line--h"></i></div>
-
-    <div class="hx__meta hx__meta--top" data-hx-fade>
-      <span class="hx__tag"><svg class="flag" aria-hidden="true"><use href="#flag-fi"/></svg><span data-shiny>Study in Finland</span></span>
-      <span class="hx__clock"><span class="hx__dot" aria-hidden="true"></span>Now in Helsinki <b data-hx-clock>--:--</b><span class="hx__coords">60.17&deg; N &middot; 24.94&deg; E</span></span>
-    </div>
-
-    <div class="hx__stage">
-      <h1 class="hx__title">
-        <span class="sr-only">Study in Finland with Tutee Connect</span>
-        <span class="hx__space" aria-hidden="true" data-hx-space></span>
-      </h1>
-      <div class="hx__under" data-hx-fade>
-        <p class="hx__line-text"><span class="rotator" data-rotate="Study|Work|Live|Belong"><span class="rotator__word text-grad">Study</span></span> in the land of a thousand lakes.</p>
-        <div class="hx__cta">
+    <div class="hp__copy">
+      <div class="hp__step is-on" data-hp-step="0">
+        <h1 class="hp__h1">Your future has<br>a <span class="text-grad">shape.</span></h1>
+        <p class="hp__p">Admissions, residence permit, scholarships and settlement in Finland &mdash; one expert team from first application to your first job.</p>
+        <div class="hp__cta">
           <a class="btn btn-primary" href="#contact" data-magnet data-star-border="#2fe3b4">Start my free evaluation<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
-          <a class="btn btn-glass" href="#why" data-magnet>Explore Finland<svg class="ico ico-sm"><use href="#i-down"/></svg></a>
+          <a class="btn btn-glass" href="./universities.html" data-magnet>Explore universities</a>
         </div>
+      </div>
+      <div class="hp__step" data-hp-step="1">
+        <span class="hp__k">01 &mdash; Choose</span>
+        <h2 class="hp__h2">36 institutions.</h2>
+        <p class="hp__p">Every university and university of applied sciences an international student can apply to, with 600+ degree programmes taught in English.</p>
+      </div>
+      <div class="hp__step" data-hp-step="2">
+        <span class="hp__k">02 &mdash; Stay</span>
+        <h2 class="hp__h2">Two years to build a career.</h2>
+        <p class="hp__p">After you graduate, a residence permit to look for work or start a business &mdash; no sponsor required.</p>
+      </div>
+      <div class="hp__step" data-hp-step="3">
+        <span class="hp__k">03 &mdash; Work</span>
+        <h2 class="hp__h2">Earn while you study.</h2>
+        <p class="hp__p">Work an average of 30 hours a week in any field, averaged across the year, with no separate work permit.</p>
+      </div>
+      <div class="hp__step" data-hp-step="4">
+        <span class="hp__k">04 &mdash; Begin</span>
+        <h2 class="hp__h2">It starts with one conversation.</h2>
+        <p class="hp__p">Tell us about yourself and a Finland counsellor will map your route &mdash; free, within one working day.</p>
+        <div class="hp__cta"><a class="btn btn-primary" href="#contact" data-magnet>Get my free route map<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a></div>
       </div>
     </div>
 
-    <div class="hx__meta hx__meta--bottom" data-hx-fade>
-      <ul class="hx__facts">
-        <li><b data-count="99">99</b>% permit success</li>
-        <li><b data-count="36">36</b> institutions</li>
-        <li><b>2 yrs</b> to find work after you graduate</li>
-      </ul>
-      <a class="hx__scroll" href="#why" aria-label="Scroll to explore"><span>Scroll</span><i></i></a>
-    </div>
-
-    <div class="hx__flag" aria-hidden="true" data-hx-flag>
-      <span class="hx__field"></span>
-      <span class="hx__bar hx__bar--v"></span>
-      <span class="hx__bar hx__bar--h"></span>
-      <div class="hx__welcome"><b>Tervetuloa.</b><span>Welcome to Finland. Your next chapter starts below.</span></div>
+    <div class="hp__foot">
+      <ol class="hp__rail" aria-hidden="true">
+        <li class="is-on" data-hp-tick><span>Finland</span></li>
+        <li data-hp-tick><span>Choose</span></li>
+        <li data-hp-tick><span>Stay</span></li>
+        <li data-hp-tick><span>Work</span></li>
+        <li data-hp-tick><span>Begin</span></li>
+      </ol>
+      <a class="hp__scroll" href="#why" aria-label="Scroll to explore"><span>Scroll</span><i></i></a>
     </div>
   </div>
 </section>
