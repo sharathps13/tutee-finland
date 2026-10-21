@@ -24,6 +24,16 @@ tooling first, or it will overwrite the page. Lead forms still post to
 `/api/enquiry`; they now also send `study_level`, `intake` and
 `form_location`, which the function forwards as extra fields.
 
+### Cinematic hero
+
+`#home` is a pinned scroll scene (`initCinematicHero` in `finland.js`):
+FINLAND is cut out of a night veil with an SVG mask over the full-resolution
+aurora photo, so it stays sharp while scrolling zooms through the "L"; the
+Nordic cross then draws out and thickens into the Finnish flag, ending on
+"Tervetuloa." Phones stack the word as FIN / LAND. With reduced motion (or
+no JS) it is a plain full-screen hero with no pinning. The clock shows live
+Helsinki time from the visitor's browser.
+
 ### Universities directory and detail pages (October 2026)
 
 `universities.html` and the new `university.html?id=<id>` are hand-authored

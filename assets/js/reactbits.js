@@ -389,8 +389,10 @@
    * ------------------------------------------------------------------ */
   function shiny(el) {
     el.classList.add('shiny-text');
-    if (reduce) return;
     var base = el.getAttribute('data-shiny') || 'rgba(255,255,255,.62)', shine = '#ffffff';
+    // The text fill is transparent, so it always needs a painted background.
+    el.style.backgroundImage = 'linear-gradient(' + base + ',' + base + ')';
+    if (reduce) return;
     var speed = 2.4, delay = 1.6, t = -delay;
     visibleLoop(el, function (dt) {
       t += dt;

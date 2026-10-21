@@ -118,7 +118,10 @@
       ticking = false;
       var y = window.scrollY || window.pageYOffset;
       var max = document.documentElement.scrollHeight - window.innerHeight;
-      if (header) header.classList.toggle('is-scrolled', y > 40);
+      // Stay transparent over the night-sky hero; turn solid once the flag (or the page) shows.
+      var hx = $('[data-hx].is-live');
+      var overNight = hx && hx.getBoundingClientRect().bottom > 80 && !document.body.classList.contains('hx-flag');
+      if (header) header.classList.toggle('is-scrolled', y > 40 && !overNight);
       if (bar) bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, y / max) : 0) + ')';
 
       if (mbar && hero && contact) {
@@ -1191,6 +1194,123 @@
     window.addEventListener('keydown', function (e) { if (e.key === 'Escape' && panel.classList.contains('is-open')) close(); });
   }
 
+  /* ------------------------------------------------------------------ *
+   * Cinematic hero — FINLAND is cut out of a night veil (an SVG mask over
+   * the full-resolution aurora photo). Scrolling zooms through the "L"
+   * until the photograph fills the screen, then the Nordic cross grows
+   * into the Finnish flag. Vector mask + unscaled photo = sharp at any zoom.
+   * ------------------------------------------------------------------ */
+  function initCinematicHero() {
+    var sec = $('[data-hx]');
+    if (!sec) return;
+    var svg = $('[data-hx-svg]', sec), groups = $$('[data-hx-g]', sec), texts = $$('.hx__t', sec);
+    var space = $('[data-hx-space]', sec), veil = $('[data-hx-veil]', sec);
+    var fades = $$('[data-hx-fade]', sec), photo = $('[data-hx-photo]', sec), flag = $('[data-hx-flag]', sec);
+    var cross = $('[data-hx-cross]', sec), clock = $('[data-hx-clock]', sec), pin = $('.hx__pin', sec);
+    var tspans = texts.map(function (t) { return $$('tspan', t); });
+
+    function tickClock() {
+      try { clock.textContent = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Helsinki', hour: '2-digit', minute: '2-digit' }).format(new Date()); }
+      catch (e) { /* old browser: keep the placeholder */ }
+    }
+    if (clock) { tickClock(); setInterval(tickClock, 20000); }
+
+    var fs = 0, cx = 0, base = 0, ox = 0, oy = 0, scale = 1, px = 0, py = 0;
+    /* Size the word to the stage and park it where the placeholder sits. */
+    function layout() {
+      var W = pin.clientWidth, H = pin.clientHeight;
+      // Narrow screens stack FIN / LAND so the letters can be twice as large.
+      var stacked = W < 640;
+      fs = stacked ? Math.min(W * 0.37, H * 0.21) : Math.min(W * 0.205, H * 0.4, 380);
+      var gap = fs * 0.9;
+      space.style.setProperty('--hx-h', (fs * 0.78 + (stacked ? gap : 0)) + 'px');
+      var sr = space.getBoundingClientRect(), pr = pin.getBoundingClientRect();
+      cx = W / 2;
+      base = sr.top - pr.top + fs * 0.74;
+      texts.forEach(function (t, k) {
+        t.setAttribute('x', cx); t.setAttribute('y', base); t.setAttribute('font-size', fs);
+        var L = tspans[k][3];
+        if (stacked) { L.setAttribute('x', cx); L.setAttribute('y', base + gap); }
+        else { L.removeAttribute('x'); L.removeAttribute('y'); }
+      });
+      // Zoom origin: the stem of the central "L".
+      try {
+        var start = texts[0].getStartPositionOfChar(3);
+        ox = start.x + fs * 0.07; oy = start.y - fs * 0.32;
+      } catch (e) { ox = cx; oy = base - fs * 0.35; }
+      sec.classList.add('is-ready');
+      paint();
+    }
+    function paint() {
+      var t = 'translate(' + (ox + px).toFixed(2) + ' ' + (oy + py).toFixed(2) + ') scale(' + scale.toFixed(4) + ') translate(' + (-ox).toFixed(2) + ' ' + (-oy).toFixed(2) + ')';
+      groups.forEach(function (g) { g.setAttribute('transform', t); });
+    }
+    layout();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
+    window.addEventListener('load', layout);
+    if (reduceMotion) { window.addEventListener('resize', layout); return; }
+
+    sec.classList.add('is-live');
+    var ticking = false;
+    function update() {
+      ticking = false;
+      var total = sec.offsetHeight - window.innerHeight;
+      var p = total > 0 ? clamp(-sec.getBoundingClientRect().top / total, 0, 1) : 0;
+      var z = clamp(p / 0.5, 0, 1), ez = Math.pow(z, 3);
+      scale = 1 + ez * 70;
+      if (z > 0) { px = py = 0; }
+      paint();
+      // The veil thins as the letters open up, so the photo takes over.
+      veil.style.opacity = (0.9 * (1 - clamp((z - 0.55) / 0.45, 0, 1))).toFixed(3);
+      texts[1].style.opacity = (1 - clamp(z / 0.25, 0, 1)).toFixed(3);
+      var fo = 1 - clamp(p / 0.12, 0, 1);
+      fades.forEach(function (el) {
+        el.style.opacity = fo.toFixed(3);
+        el.style.transform = fo < 1 ? 'translateY(' + (-(1 - fo) * 24).toFixed(1) + 'px)' : '';
+        el.style.visibility = fo <= 0 ? 'hidden' : '';
+      });
+      photo.style.setProperty('--hx-ps', (1.12 - ez * 0.08).toFixed(3));
+      var f = clamp((p - 0.5) / 0.25, 0, 1);
+      // Bars first draw out as thin lines, then thicken into the flag.
+      var bars = clamp((p - 0.5) / 0.2, 0, 1), eb = 1 - Math.pow(1 - bars, 3);
+      var thick = clamp((p - 0.66) / 0.18, 0, 1), et = 0.012 + 0.988 * (1 - Math.pow(1 - thick, 3));
+      var wo = clamp((p - 0.8) / 0.14, 0, 1);
+      flag.style.setProperty('--f', f.toFixed(3));
+      flag.style.setProperty('--bx', eb.toFixed(4));
+      flag.style.setProperty('--by', eb.toFixed(4));
+      flag.style.setProperty('--bt', et.toFixed(4));
+      flag.style.setProperty('--wo', wo.toFixed(3));
+      cross.style.opacity = (1 - Math.max(f, z)).toFixed(3);
+      document.body.classList.toggle('hx-flag', f > 0.6);
+    }
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    window.addEventListener('resize', function () { layout(); update(); });
+    update();
+
+    // VariableProximity: letters thicken towards the cursor; the word drifts with it.
+    if (!finePointer) return;
+    var raf = 0, mx = 0, my = 0;
+    function proximity() {
+      raf = 0;
+      if (scale > 1.001) return;
+      var pr = pin.getBoundingClientRect();
+      tspans[0].forEach(function (span, i) {
+        var b;
+        try { b = span.getBBox(); } catch (e) { return; }
+        var d = Math.hypot(mx - pr.left - (b.x + b.width / 2), my - pr.top - (b.y + b.height / 2));
+        var w = Math.round(380 + 320 * Math.max(0, 1 - d / (fs * 1.4)));
+        tspans.forEach(function (set) { set[i].style.setProperty('--w', w); });
+      });
+      px = (mx - pr.left - pr.width / 2) * 0.015; py = (my - pr.top - pr.height / 2) * 0.012;
+      paint();
+    }
+    pin.addEventListener('pointermove', function (e) { mx = e.clientX; my = e.clientY; if (!raf) raf = requestAnimationFrame(proximity); });
+    pin.addEventListener('pointerleave', function () {
+      tspans.forEach(function (set) { set.forEach(function (s) { s.style.removeProperty('--w'); }); });
+      px = py = 0; paint();
+    });
+  }
+
   /* Footer credit list for the HD photos (CC BY requires visible attribution). */
   function initCredits() {
     var credits = window.TC_PHOTO_CREDITS || {};
@@ -1207,6 +1327,7 @@
    * Boot
    * ------------------------------------------------------------------ */
   initMarquees();
+  initCinematicHero();
   initScrollUi();
   initDrawer();
   initReveal();

@@ -142,81 +142,68 @@
 </div>
 
 <main>
-<!-- ============================== HERO ============================== -->
-<section class="hero hero--photo" id="home" data-hero>
-  <div class="hero__photo" aria-hidden="true"><img src="./assets/img/photos/hero-aurora.jpg" alt="" width="1920" height="1281" fetchpriority="high"></div>
-  <div class="hero__shade" aria-hidden="true"></div>
-  <canvas class="gl-bg" data-gl="aurora" data-stops="#003580,#2fe3b4,#6c8cff" aria-hidden="true"></canvas>
-  <div class="aurora" aria-hidden="true" data-aurora><span></span><span></span><span></span></div>
-  <div class="noise-layer" data-noise aria-hidden="true"></div>
-  <canvas class="snow" data-snow aria-hidden="true"></canvas>
+<!-- ============================== HERO (cinematic) ==============================
+     A pinned scroll scene: night sky over Lapland, a giant FINLAND filled with
+     the aurora photograph. Scrolling zooms through the word while the Nordic
+     cross grows into the Finnish flag and lands on "Tervetuloa". -->
+<section class="hx" id="home" data-hx>
+  <div class="hx__pin" data-hero>
+    <div class="hx__sky" aria-hidden="true">
+      <img class="hx__photo" src="./assets/img/photos/hero-aurora.jpg" alt="" width="1920" height="1281" fetchpriority="high" decoding="async" data-hx-photo>
+      <svg class="hx__svg" data-hx-svg aria-hidden="true" focusable="false">
+        <defs>
+          <mask id="hx-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+            <rect x="0" y="0" width="100%" height="100%" fill="#fff"/>
+            <g data-hx-g><text class="hx__t hx__t--hole" text-anchor="middle" fill="#000"><tspan>F</tspan><tspan>I</tspan><tspan>N</tspan><tspan>L</tspan><tspan>A</tspan><tspan>N</tspan><tspan>D</tspan></text></g>
+          </mask>
+        </defs>
+        <rect class="hx__veil" x="0" y="0" width="100%" height="100%" mask="url(#hx-mask)" data-hx-veil/>
+        <g data-hx-g><text class="hx__t hx__t--edge" text-anchor="middle"><tspan>F</tspan><tspan>I</tspan><tspan>N</tspan><tspan>L</tspan><tspan>A</tspan><tspan>N</tspan><tspan>D</tspan></text></g>
+      </svg>
+      <canvas class="gl-bg" data-gl="aurora" data-stops="#003580,#2fe3b4,#6c8cff" data-height="0.36" data-brightness="0.85" aria-hidden="true"></canvas>
+      <div class="aurora" data-aurora><span></span><span></span><span></span></div>
+      <canvas class="snow" data-snow></canvas>
+      <div class="noise-layer" data-noise></div>
+      <div class="hx__vignette"></div>
+    </div>
 
-  <div class="container hero__grid">
-    <div class="hero__copy">
-      <span class="chip chip--glass reveal"><svg class="flag" aria-hidden="true"><use href="#flag-fi"/></svg><span data-shiny>Finland Education Experts</span></span>
-      <h1 class="h1 reveal" style="--d:.05s">Your route map to <span class="rotator" data-rotate="studying|working|living|thriving"><span class="rotator__word text-grad">studying</span></span><br>in Finland.</h1>
-      <p class="lead reveal" style="--d:.1s">Admissions to Finland's universities and UAS, your residence permit for studies, scholarships, education loans and settlement &mdash; handled by one expert team that reviews every file the way Migri does.</p>
-      <div class="hero__actions reveal" style="--d:.15s">
-        <a class="btn btn-primary" href="#quick-evaluate" data-magnet data-star-border="#2fe3b4">Check my eligibility<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
-        <a class="btn btn-glass" href="#match" data-magnet><svg class="ico ico-sm"><use href="#i-spark"/></svg>Find my Finland match</a>
-      </div>
-      <div class="hero__trust reveal" style="--d:.2s">
-        <div class="avatars" aria-hidden="true">
-          <span style="background:#1d5fc1">PK</span><span style="background:#7a0f14">VM</span><span style="background:#0b8f6c">SR</span><span style="background:#6c4bd1">AD</span>
+    <div class="hx__cross" aria-hidden="true" data-hx-cross><i class="hx__line hx__line--v"></i><i class="hx__line hx__line--h"></i></div>
+
+    <div class="hx__meta hx__meta--top" data-hx-fade>
+      <span class="hx__tag"><svg class="flag" aria-hidden="true"><use href="#flag-fi"/></svg><span data-shiny>Study in Finland</span></span>
+      <span class="hx__clock"><span class="hx__dot" aria-hidden="true"></span>Now in Helsinki <b data-hx-clock>--:--</b><span class="hx__coords">60.17&deg; N &middot; 24.94&deg; E</span></span>
+    </div>
+
+    <div class="hx__stage">
+      <h1 class="hx__title">
+        <span class="sr-only">Study in Finland with Tutee Connect</span>
+        <span class="hx__space" aria-hidden="true" data-hx-space></span>
+      </h1>
+      <div class="hx__under" data-hx-fade>
+        <p class="hx__line-text"><span class="rotator" data-rotate="Study|Work|Live|Belong"><span class="rotator__word text-grad">Study</span></span> in the land of a thousand lakes.</p>
+        <div class="hx__cta">
+          <a class="btn btn-primary" href="#contact" data-magnet data-star-border="#2fe3b4">Start my free evaluation<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
+          <a class="btn btn-glass" href="#why" data-magnet>Explore Finland<svg class="ico ico-sm"><use href="#i-down"/></svg></a>
         </div>
-        <div><div class="stars" aria-label="Rated 5 out of 5"><svg class="ico ico-fill"><use href="#i-star"/></svg><svg class="ico ico-fill"><use href="#i-star"/></svg><svg class="ico ico-fill"><use href="#i-star"/></svg><svg class="ico ico-fill"><use href="#i-star"/></svg><svg class="ico ico-fill"><use href="#i-star"/></svg></div>Trusted by 5,000+ students and families</div>
-      </div>
-      <div class="stats reveal" style="--d:.25s">
-        <div class="stat"><b><span data-count="99">99</span>%</b><span>Permit success rate</span></div>
-        <div class="stat"><b data-count="35">35</b><span>FI institutions</span></div>
-        <div class="stat"><b><span data-count="5">5</span>k+</b><span>Students guided</span></div>
-        <div class="stat"><b><span data-count="2">2</span> yrs</b><span>Post-study permit</span></div>
       </div>
     </div>
 
-    <div class="lead-card reveal" style="--d:.15s" id="quick-evaluate">
-      <div class="lead-card__head">
-        <div>
-          <h2 class="h3">Get your free Finland route map</h2>
-          <p>A counsellor calls you within one working day.</p>
-        </div>
-        <span class="badge-free">Free</span>
-      </div>
-      <form class="form" data-lead-form novalidate>
-        <input type="hidden" name="subject" value="New Lead from Tutee Connect Landing Page!">
-        <input type="hidden" name="from_name" value="Tutee Connect Notification System">
-        <input type="hidden" name="form_location" value="Hero quick form">
-        <input type="hidden" name="destination" value="General Finland Inquiry" data-destination-input>
-        <input type="checkbox" name="botcheck" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <div class="field"><svg class="ico ico-sm"><use href="#i-user"/></svg><input class="input" name="name" type="text" placeholder="Full name *" autocomplete="name" required aria-label="Full name"></div>
-        <div class="phone">
-          <select class="select" name="country_code" aria-label="Country code" data-cc><option value="+91" selected>IN +91</option></select>
-          <div class="field"><svg class="ico ico-sm"><use href="#i-phone"/></svg><input class="input" name="phone_number" type="tel" inputmode="tel" placeholder="Phone number *" autocomplete="tel-national" required aria-label="Phone number"></div>
-        </div>
-        <div class="field"><svg class="ico ico-sm"><use href="#i-mail"/></svg><input class="input" name="email" type="email" inputmode="email" placeholder="Email address *" autocomplete="email" required aria-label="Email address"></div>
-        <fieldset class="fs">
-          <legend class="form-label">I am a</legend>
-          <div class="pills">
-            <label class="pill"><input type="radio" name="applicant" value="Student" checked><span>Student</span></label>
-            <label class="pill"><input type="radio" name="applicant" value="Parent"><span>Parent</span></label>
-          </div>
-        </fieldset>
-        <fieldset class="fs">
-          <legend class="form-label">Looking to study</legend>
-          <div class="pills">
-            <label class="pill"><input type="radio" name="study_level" value="Bachelor's" checked><span>Bachelor's</span></label>
-            <label class="pill"><input type="radio" name="study_level" value="Master's"><span>Master's</span></label>
-            <label class="pill"><input type="radio" name="study_level" value="Doctoral"><span>PhD</span></label>
-          </div>
-        </fieldset>
-        <div class="alert alert--ok hidden" data-form-success role="status"><svg class="ico ico-sm"><use href="#i-check"/></svg><span>Profile submitted! A Finland counsellor will contact you shortly.</span></div>
-        <div class="alert alert--err hidden" data-form-error role="alert"><svg class="ico ico-sm"><use href="#i-x"/></svg><span data-form-error-text>Submission failed. Please try again.</span></div>
-        <button class="btn btn-primary btn-block" type="submit" data-submit-btn>Get my free evaluation</button>
-      </form>
-      <div class="lead-card__foot"><svg class="ico ico-sm"><use href="#i-shield"/></svg>No spam. Your details go only to our counselling team.</div>
+    <div class="hx__meta hx__meta--bottom" data-hx-fade>
+      <ul class="hx__facts">
+        <li><b data-count="99">99</b>% permit success</li>
+        <li><b data-count="36">36</b> institutions</li>
+        <li><b>2 yrs</b> to find work after you graduate</li>
+      </ul>
+      <a class="hx__scroll" href="#why" aria-label="Scroll to explore"><span>Scroll</span><i></i></a>
+    </div>
+
+    <div class="hx__flag" aria-hidden="true" data-hx-flag>
+      <span class="hx__field"></span>
+      <span class="hx__bar hx__bar--v"></span>
+      <span class="hx__bar hx__bar--h"></span>
+      <div class="hx__welcome"><b>Tervetuloa.</b><span>Welcome to Finland. Your next chapter starts below.</span></div>
     </div>
   </div>
-  <a class="scroll-cue" href="#why" aria-label="Scroll to explore"><span></span></a>
 </section>
 
 <!-- ============================== VELOCITY RAILS ============================== -->
