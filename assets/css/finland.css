@@ -1238,7 +1238,12 @@ main { overflow-x: clip; }
 @media (min-width: 760px) { .fv__steps ol { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; } }
 .fv__steps li { position: relative; display: flex; gap: 12px; align-items: flex-start; }
 .fv__steps li > b { flex: none; width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; font-size: 13px; font-weight: 800; color: #fff; background: linear-gradient(135deg, var(--fi-blue), #1f6fd6); }
-@media (min-width: 760px) { .fv__steps li:not(:last-child)::after { content: ""; position: absolute; left: 44px; right: -10px; top: 17px; height: 2px; z-index: -1; background: repeating-linear-gradient(90deg, #c9d6e8 0 6px, transparent 6px 12px); } .fv__steps li { isolation: isolate; } .fv__steps li > div { background: #fff; padding-right: 6px; } }
+/* Wide: badge on top, text below; a dotted connector runs from each badge to the next. */
+@media (min-width: 760px) {
+  .fv__steps li { flex-direction: column; gap: 10px; }
+  .fv__steps li:not(:last-child)::after { content: ""; position: absolute; left: 46px; right: -12px; top: 17px; height: 2px;
+    background: repeating-linear-gradient(90deg, #c9d6e8 0 6px, transparent 6px 12px); }
+}
 .fv__steps h4 { font-size: 15px; color: var(--ink); margin-bottom: 2px; }
 .fv__steps p { font-size: 13.5px; line-height: 1.5; color: var(--muted); }
 .fv__steps .btn { justify-self: start; }
