@@ -89,6 +89,7 @@
   <a href="#universities" data-dot="universities"><span>Universities</span></a>
   <a href="#scholarships" data-dot="scholarships"><span>Funding</span></a>
   <a href="#relocate" data-dot="relocate"><span>Your journey</span></a>
+  <a href="#family" data-dot="family"><span>Family</span></a>
   <a href="#testimonials" data-dot="testimonials"><span>Stories</span></a>
   <a href="#faq" data-dot="faq"><span>FAQ</span></a>
   <a href="#contact" data-dot="contact"><span>Evaluate</span></a>
@@ -130,6 +131,7 @@
       <a href="./universities.html">All 36 institutions <svg class="ico ico-sm"><use href="#i-up"/></svg></a>
       <a href="#scholarships">Scholarships &amp; loans <svg class="ico ico-sm"><use href="#i-right"/></svg></a>
       <a href="#relocate">Your journey <svg class="ico ico-sm"><use href="#i-right"/></svg></a>
+      <a href="#family">Moving with family <svg class="ico ico-sm"><use href="#i-right"/></svg></a>
       <a href="#testimonials">Student stories <svg class="ico ico-sm"><use href="#i-right"/></svg></a>
       <a href="#faq">FAQ <svg class="ico ico-sm"><use href="#i-right"/></svg></a>
       <a href="https://tuteeconnect.com/about.html" target="_blank" rel="noopener">About Tutee Connect <svg class="ico ico-sm"><use href="#i-up"/></svg></a>
@@ -630,24 +632,65 @@
   </div>
 </section>
 
-<section class="section section--tight" aria-label="Relocating with family">
+<!-- ============================== FAMILY ==============================
+     Family move planner: choose who is moving (partner, children under 18)
+     and the plan card lists the permits, rights and documents for exactly
+     that family; the button carries the family make-up into the form.
+     Four highlight tiles say why families choose Finland. initFamilyPlanner(). -->
+<section class="section fam-sec" id="family">
   <div class="container">
-    <div class="family reveal">
-      <div class="family__body">
+    <div class="section-head section-head--split reveal">
+      <div>
         <span class="eyebrow"><span data-decrypt="view">Relocating with your family?</span></span>
-        <h3 class="h2" style="font-size:clamp(1.4rem,1.1rem + 1.2vw,1.9rem)">Bring your partner and children &mdash; with full work rights.</h3>
-        <ul class="ticks ticks--dark">
-          <li><svg class="ico ico-sm"><use href="#i-check"/></svg><span><strong>Family of a student:</strong> spouse or registered partner and children under 18 of any degree student, subject to Migri's funds requirement.</span></li>
-          <li><svg class="ico ico-sm"><use href="#i-check"/></svg><span><strong>Unrestricted work rights:</strong> a permit on the basis of family ties lets your partner work in any job from day one.</span></li>
-          <li><svg class="ico ico-sm"><use href="#i-check"/></svg><span><strong>Expert guidance:</strong> family permit applications, documentation and evidence of funds handled with you.</span></li>
-        </ul>
-        <a class="btn btn-primary" href="#contact" style="justify-self:start" data-magnet>Get family permit help<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
+        <h2 class="h2" style="margin-top:12px">Bring your family. <span class="text-blue">Finland is built for them.</span></h2>
       </div>
-      <div class="family__img"><img src="./assets/img/photos/family.jpg" alt="Töölönlahti park in Helsinki" loading="lazy" width="1920" height="1440"></div>
+      <p class="lead">Your partner and children under 18 can join you while you study &mdash; and your partner can work in any job from day one. Tell us who's coming and see your family's plan.</p>
     </div>
-    <div class="photo-band reveal">
-      <figure><img src="./assets/img/photos/team-working.jpg" alt="The Parliament House of Finland in Helsinki" loading="lazy" width="1920" height="1280"><figcaption>Helsinki</figcaption></figure>
-      <figure><img src="./assets/img/photos/finland-city.jpg" alt="The Tammerkoski rapids and red-brick mills of Tampere" loading="lazy" width="1920" height="1280"><figcaption>Tampere</figcaption></figure>
+
+    <div class="fam reveal" data-fam>
+      <div class="fam__left">
+        <div class="fam__composer">
+          <span class="fam__label">1 &middot; Who's moving with you?</span>
+          <div class="fam__avatars" data-fam-avatars aria-hidden="true"></div>
+          <div class="fam__controls">
+            <button class="fam__switch is-on" type="button" role="switch" aria-checked="true" data-fam-partner>
+              <span class="fam__swico"><svg class="ico"><use href="#i-heart"/></svg></span>
+              <span class="fam__swtxt"><b>Partner or spouse</b><small>Married or in a registered partnership</small></span>
+              <span class="fam__toggle" aria-hidden="true"><i></i></span>
+            </button>
+            <div class="fam__stepper">
+              <span class="fam__swico"><svg class="ico"><use href="#i-sprout"/></svg></span>
+              <span class="fam__swtxt"><b>Children under 18</b><small data-fam-kidsnote>One child joining you</small></span>
+              <div class="fam__step">
+                <button type="button" aria-label="One fewer child" data-fam-minus>&minus;</button>
+                <output data-fam-kids aria-live="polite">1</output>
+                <button type="button" aria-label="One more child" data-fam-plus>+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ul class="fam__facts">
+          <li><b>Day 1</b><span>Your partner can work in any job</span></li>
+          <li><b>Under 18</b><span>Children join you on a family permit</span></li>
+          <li><b>Free</b><span>Basic education and school meals</span></li>
+          <li><b>#1</b><span>World Happiness Report, 2018&ndash;2025</span></li>
+        </ul>
+      </div>
+
+      <article class="fam__plan" aria-live="polite">
+        <div class="fam__hero">
+          <img src="./assets/img/services/family.jpg" alt="" loading="lazy" decoding="async">
+          <div>
+            <span class="fam__label fam__label--light">2 &middot; Your family's plan</span>
+            <b class="fam__summary" data-fam-summary>3 permits &middot; 4 documents</b>
+          </div>
+        </div>
+        <div class="fam__groups" data-fam-groups></div>
+        <div class="fam__foot">
+          <p>Migri asks for a set monthly amount of funds for each family member on top of your own &mdash; we build it into your budget from the start.</p>
+          <a class="btn btn-primary" href="#contact" data-fam-cta data-magnet>Get my family plan<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
+        </div>
+      </article>
     </div>
   </div>
 </section>
