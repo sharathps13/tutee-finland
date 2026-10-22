@@ -1078,7 +1078,7 @@
       set('[data-pc-where]', u.where.replace('&amp;', '&') + ', ' + u.region.replace('&amp;', '&'));
       set('[data-pc-kind]', u.uas ? 'University of applied sciences' : 'University');
       set('[data-pc-note]', u.name + ' is ranked #' + (u.i + 1) + ' in Finland. Its broad strengths:');
-      $('[data-pc-link]', root).setAttribute('href', './university.html?id=' + u.id);
+      $('[data-pc-link]', root).setAttribute('href', './universities.html?open=' + encodeURIComponent(u.id));
       $('[data-pc-snap]', root).setAttribute('src', u.img);
       set('[data-pc-snapcap]', u.big);
       $('[data-pc-mini]', root).style.backgroundImage = 'url(' + u.img + ')';
@@ -1751,7 +1751,7 @@
       box.hidden = !items.length;
       var list = $('[data-sl-chip-list]', box);
       if (list) list.innerHTML = items.map(function (x) {
-        return '<span class="slchip"><a href="./university.html?id=' + encodeURIComponent(x.id) + '">' + escapeHtml(x.name) + '</a>' +
+        return '<span class="slchip"><a href="./universities.html?open=' + encodeURIComponent(x.id) + '" target="_blank" rel="noopener">' + escapeHtml(x.name) + '</a>' +
           '<button type="button" aria-label="Remove ' + escapeHtml(x.name) + '" data-chip-remove="' + escapeHtml(x.id) + '"><svg class="ico ico-sm"><use href="#i-x"/></svg></button></span>';
       }).join('');
     });

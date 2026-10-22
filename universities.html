@@ -6,14 +6,14 @@
   <meta name="color-scheme" content="light">
   <meta name="theme-color" content="#061631">
   <title>Finnish Universities &amp; UAS Directory | Tutee Connect</title>
-  <meta name="description" content="Search all 36 Finnish higher education institutions by name, study field and city. Open any university for its English-taught programmes, shortlist your favourites and get a free profile evaluation from Tutee Connect.">
+  <meta name="description" content="Search all 36 Finnish higher education institutions by name, study field and city. Open any university for its English-taught courses, shortlist your favourites and get a free profile evaluation from Tutee Connect.">
   <link rel="icon" href="./assets/img/logo/icon.png">
   <link rel="preload" as="font" type="font/woff2" href="./assets/fonts/quicksand-latin.woff2" crossorigin>
   <link rel="stylesheet" href="./assets/css/quicksand.css">
   <link rel="stylesheet" href="./assets/css/finland.css">
   <link rel="stylesheet" href="./assets/css/unis.css">
 </head>
-<body class="page-dir">
+<body class="page-dir has-dock">
 <!-- Icon sprite (Lucide, ISC licence) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
@@ -119,37 +119,41 @@
 </div>
 
 <main>
-<section class="dir-hero" data-hero data-image-trail="./assets/img/cities/helsinki.jpg|./assets/img/cities/turku.jpg|./assets/img/cities/tampere.jpg|./assets/img/cities/rovaniemi.jpg|./assets/img/cities/oulu.jpg|./assets/img/cities/hameenlinna.jpg|./assets/img/cities/jyvaskyla.jpg|./assets/img/cities/mariehamn.jpg|./assets/img/cities/lappeenranta.jpg|./assets/img/cities/kuopio.jpg">
-  <canvas class="gl-bg" data-gl="aurora" data-stops="#003580,#2fe3b4,#6c8cff" aria-hidden="true"></canvas>
-  <div class="noise-layer" data-noise aria-hidden="true"></div>
-  <div class="aurora" aria-hidden="true" data-aurora><span></span><span></span><span></span></div>
-  <canvas class="snow" data-snow aria-hidden="true"></canvas>
-  <div class="container dir-hero__grid">
-    <nav class="crumbs reveal" aria-label="Breadcrumb"><a href="./index.html">Study in Finland</a><span aria-hidden="true">/</span><span>Universities</span></nav>
-    <h1 class="dir-title reveal" style="--d:.05s">Find your place <span class="text-grad">in Finland.</span></h1>
-    <p class="lead reveal" style="--d:.1s">Every university and university of applied sciences an international student can apply to &mdash; the whole of Finnish higher education. Open any institution for the full picture, tap <svg class="ico ico-sm" style="display:inline;vertical-align:-3px"><use href="#i-heart"/></svg> to shortlist it, and we'll carry your shortlist straight into your free evaluation.</p>
-    <label class="bigsearch reveal" style="--d:.15s">
-      <svg class="ico"><use href="#i-search"/></svg>
-      <input type="search" placeholder="Search a name, field or city…" aria-label="Search institutions" autocomplete="off" data-search data-typewriter="Try “Aalto”…|Try “nursing”…|Try “Tampere”…|Try “game design”…|Try “Rovaniemi”…">
-      <kbd aria-hidden="true">/</kbd>
-      <button type="button" aria-label="Clear search" data-clear hidden><svg class="ico ico-sm"><use href="#i-x"/></svg></button>
-    </label>
-    <div class="quick reveal" style="--d:.2s" aria-label="Popular searches">
-      <button type="button" data-quick="Helsinki">Helsinki</button>
-      <button type="button" data-quick="Engineering">Engineering</button>
-      <button type="button" data-quick="Business">Business</button>
-      <button type="button" data-quick="ICT">ICT</button>
-      <button type="button" data-quick="Health">Health</button>
-      <button type="button" data-quick="Arts">Arts</button>
-      <button type="button" data-quick="Lapland">Lapland</button>
+<section class="ux-hero">
+  <div class="container ux-hero__grid">
+    <div class="ux-hero__copy">
+      <nav class="crumbs reveal" aria-label="Breadcrumb"><a href="./index.html">Study in Finland</a><span aria-hidden="true">/</span><span>Universities</span></nav>
+      <span class="ux-eyebrow reveal" style="--d:.05s"><svg class="flag" aria-hidden="true"><use href="#flag-fi"/></svg>Finnish higher education directory</span>
+      <h1 class="ux-title reveal" style="--d:.1s">Find your place <span class="text-blue">in Finland.</span></h1>
+      <p class="ux-lead reveal" style="--d:.15s">Every university and university of applied sciences you can apply to. Open any institution to see its English-taught courses, tap <svg class="ico ico-sm ux-inline-ico" aria-hidden="true"><use href="#i-heart"/></svg> to shortlist it, and carry your shortlist straight into your free evaluation.</p>
+      <label class="ux-search reveal" style="--d:.2s">
+        <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+        <input type="search" placeholder="Search a university, course or city…" aria-label="Search institutions" autocomplete="off" data-search data-typewriter="Try “Aalto”…|Try “nursing”…|Try “Tampere”…|Try “game design”…|Try “Rovaniemi”…">
+        <kbd aria-hidden="true">/</kbd>
+        <button type="button" aria-label="Clear search" data-clear hidden><svg class="ico ico-sm"><use href="#i-x"/></svg></button>
+      </label>
+      <div class="ux-fields reveal" style="--d:.25s" aria-label="Popular study fields" data-field-chips></div>
     </div>
-    <div class="ribbon reveal" style="--d:.25s">
-      <div><b data-count="36">36</b>institutions listed</div>
-      <div><b data-count="13">13</b>universities</div>
-      <div><b data-count="22">22</b>universities of applied sciences</div>
-      <div><b><span data-count="600">600</span>+</b>English-taught degree programmes</div>
+    <aside class="ux-stats reveal" style="--d:.2s" aria-label="Directory at a glance">
+      <div class="ux-stat ux-stat--big"><b data-stat="all">36</b><span>institutions you can apply to</span></div>
+      <div class="ux-stat"><b data-stat="uni">13</b><span>research universities</span></div>
+      <div class="ux-stat"><b data-stat="uas">23</b><span>universities of applied sciences</span></div>
+      <div class="ux-stat ux-stat--wide"><b data-stat="progs">1,295</b><span>English-taught programme listings</span></div>
+    </aside>
+  </div>
+</section>
+
+<section class="ux-cities" aria-labelledby="ux-cities-h">
+  <div class="container">
+    <div class="ux-cities__head">
+      <h2 id="ux-cities-h">Browse by campus city</h2>
+      <div class="ux-cities__nav">
+        <button class="icon-btn" type="button" aria-label="Scroll cities left" data-rail="-1"><svg class="ico ico-sm"><use href="#i-left"/></svg></button>
+        <button class="icon-btn" type="button" aria-label="Scroll cities right" data-rail="1"><svg class="ico ico-sm"><use href="#i-right"/></svg></button>
+      </div>
     </div>
   </div>
+  <div class="ux-rail" data-city-rail></div>
 </section>
 
 <div class="dir-bar">
@@ -166,8 +170,6 @@
       <option value="name">Sort: A–Z</option>
       <option value="programmes">Sort: Most English options</option>
     </select>
-    <button class="icon-toggle" type="button" aria-label="Grid view" data-view="grid" aria-pressed="true"><svg class="ico ico-sm"><use href="#i-grid"/></svg></button>
-    <button class="icon-toggle" type="button" aria-label="List view" data-view="list" aria-pressed="false"><svg class="ico ico-sm"><use href="#i-list"/></svg></button>
     <button class="link-btn" type="button" data-reset hidden>Reset filters</button>
     <span class="dir-bar__count" data-count-out aria-live="polite"></span>
   </div>
@@ -182,15 +184,13 @@
       <button class="btn btn-blue btn-sm" type="button" data-reset>Reset filters</button>
     </div>
 
-    <div class="match-cta reveal">
+    <div class="ux-cta reveal">
       <div>
-        <span class="eyebrow"><span data-decrypt="view">Not sure where to start?</span></span>
-        <h2 class="h2" style="margin-top:10px">Let a counsellor build your <span class="text-blue">shortlist with you.</span></h2>
-        <p class="lead" style="margin-top:10px">Book a free evaluation and we'll match your profile to programmes you can realistically get into.</p>
+        <span class="eyebrow">Not sure where to start?</span>
+        <h2 class="h2">Let a counsellor build your <span class="text-blue">shortlist with you.</span></h2>
+        <p class="lead">Book a free evaluation and we'll match your profile to programmes you can realistically get into.</p>
       </div>
-      <div class="match-cta__btns">
-        <a class="btn btn-primary" href="./index.html#contact" data-magnet data-star-border="#2fe3b4">Get my free evaluation<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
-      </div>
+      <a class="btn btn-primary" href="./index.html#contact" data-magnet>Get my free evaluation<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
     </div>
 
     <p class="dir-note">Ranked positions are shown for the 12 Finnish institutions in the QS World University Rankings: Europe 2026 &mdash; the world table reaches only nine. Two of the twelve are universities of applied sciences, and three universities are not covered at all; every institution no published ranking reaches is listed without a position. Source: every institution and programme comes from <a href="https://opintopolku.fi/konfo/en/" target="_blank" rel="noopener">Studyinfo (Opintopolku)</a>, the national application service, and the <a href="https://www.oph.fi/en" target="_blank" rel="noopener">Finnish National Agency for Education</a> organisation register, with national context from <a href="https://www.studyinfinland.fi/" target="_blank" rel="noopener">Study in Finland</a>. The Ministry of Education and Culture's own structure is 13 universities and 22 universities of applied sciences &mdash; 35 institutions. This directory lists 36: those 35 plus Högskolan på Åland, which awards Finnish degrees but answers to the Government of Åland rather than to the Ministry. Photos show each institution's campus city.</p>
@@ -230,12 +230,15 @@
     </div>
   </div>
 </footer>
-<div class="sldock" data-dock aria-live="polite">
-  <span class="sldock__count" data-dock-count>0</span>
-  <div class="sldock__stack" data-dock-stack aria-hidden="true"></div>
-  <span class="sldock__label" data-dock-label></span>
-  <button class="btn btn-glass" type="button" data-sl-open>Review</button>
-  <a class="btn btn-primary" href="./index.html#contact" data-sl-apply>Apply<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
+<div class="slbar" data-dock>
+  <div class="container slbar__row">
+    <button class="slbar__info" type="button" data-sl-open aria-label="Review your shortlist">
+      <span class="slbar__heart"><svg class="ico ico-sm"><use href="#i-heart"/></svg><span class="slbar__count" data-dock-count>0</span></span>
+      <span class="slbar__text"><b>Your shortlist</b><small data-dock-label>Tap the heart on any university to add it</small></span>
+      <span class="slbar__stack" data-dock-stack aria-hidden="true"></span>
+    </button>
+    <a class="btn btn-primary slbar__go" href="./index.html#contact" data-sl-apply>Continue to the form<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
+  </div>
 </div>
 <div class="sldrawer" data-sldrawer>
   <div class="sldrawer__bg" data-sl-close></div>
@@ -246,13 +249,63 @@
     </div>
     <div class="sldrawer__list" data-sl-list></div>
     <div class="sldrawer__foot">
-      <a class="btn btn-primary btn-block" href="./index.html#contact" data-sl-apply>Apply with my shortlist<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
+      <a class="btn btn-primary btn-block" href="./index.html#contact" data-sl-apply>Continue to the form<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
       <button class="link-btn" type="button" data-sl-clear style="justify-self:center">Clear shortlist</button>
     </div>
   </aside>
 </div>
+<div class="um" data-um hidden>
+  <div class="um__bg" data-um-close></div>
+  <div class="um__panel" role="dialog" aria-modal="true" aria-labelledby="um-name" tabindex="-1">
+    <header class="um__hero">
+      <span class="um__mono" data-um-mono aria-hidden="true"></span>
+      <img data-um-photo alt="">
+      <div class="um__tools">
+        <button class="um__iconbtn" type="button" data-um-sl aria-pressed="false" aria-label="Add to shortlist"><svg class="ico ico-sm"><use href="#i-heart"/></svg></button>
+        <button class="um__iconbtn" type="button" data-um-close aria-label="Close"><svg class="ico ico-sm"><use href="#i-x"/></svg></button>
+      </div>
+      <div class="um__title">
+        <div class="um__badges" data-um-badges></div>
+        <h2 id="um-name" data-um-name></h2>
+        <p data-um-where></p>
+      </div>
+    </header>
+    <div class="um__body" data-um-body>
+      <div class="um__stats" data-um-stats></div>
+      <div class="um__cols">
+        <section class="um__main" aria-labelledby="um-courses-h">
+          <div class="um__sechead"><h3 id="um-courses-h">Courses taught in English</h3><span data-um-count></span></div>
+          <div class="um__tools2">
+            <label class="um__search"><svg class="ico ico-sm" aria-hidden="true"><use href="#i-search"/></svg><input type="search" placeholder="Search courses" aria-label="Search courses" data-um-q></label>
+            <div class="segment" role="group" aria-label="Study level" data-um-lvls></div>
+          </div>
+          <div class="um__fchips" data-um-fields aria-label="Filter by study field"></div>
+          <div class="um__list" data-um-list></div>
+          <button class="btn btn-ghost btn-sm um__more" type="button" data-um-more hidden>Show more courses</button>
+        </section>
+        <aside class="um__aside">
+          <div class="um__card">
+            <h3>At a glance</h3>
+            <dl>
+              <div><dt>Type</dt><dd data-um-type></dd></div>
+              <div><dt>Main campus</dt><dd data-um-loc></dd></div>
+              <div><dt>Teaches in</dt><dd class="um__cities" data-um-cities></dd></div>
+              <div><dt>Website</dt><dd data-um-site></dd></div>
+              <div><dt>Also known as</dt><dd data-um-names></dd></div>
+            </dl>
+            <p class="um__aland" data-um-aland hidden>Högskolan på Åland awards Finnish degrees but answers to the Government of Åland rather than to Finland's Ministry of Education and Culture.</p>
+          </div>
+          <p class="um__src">Courses as published by the institution in <a href="https://opintopolku.fi/konfo/en/" target="_blank" rel="noopener">Studyinfo</a>. Open a course for its official page.<small class="um__credit" data-um-credit></small></p>
+        </aside>
+      </div>
+    </div>
+    <footer class="um__foot">
+      <button class="btn btn-ghost um__slbtn" type="button" data-um-sl aria-pressed="false"><svg class="ico ico-sm"><use href="#i-heart"/></svg><span data-um-sl-label>Add to shortlist</span></button>
+      <a class="btn btn-primary" href="./index.html#contact" data-um-apply>Continue to the form<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
+    </footer>
+  </div>
+</div>
 <div class="toast" data-toast role="status" aria-live="polite"></div>
-<div class="cursor-preview" data-cursor-preview aria-hidden="true"><img alt=""></div>
 <div class="fab-stack">
   <button class="fab fab--ai" type="button" aria-label="Ask Tutee AI" data-chat-open data-chat-launcher><img src="./assets/img/logo/icon.png" alt=""><span class="fab__tip">Ask Tutee AI</span></button>
   <a class="fab fab--wa" href="https://wa.me/917358364959" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><svg class="ico ico-lg ico-fill"><use href="#i-wa"/></svg><span class="fab__tip">Chat with us</span></a>
@@ -290,6 +343,7 @@
 <script src="./assets/js/universities-data.js"></script>
 <!-- Supabase is the source of truth for the directory; the bundled dataset
      above is the fallback that renders instantly and works offline. -->
+<script src="./assets/js/programmes-data.js"></script>
 <script src="./assets/js/supabase-config.js"></script>
 <script src="./assets/js/supabase-data.js"></script>
 <script src="./assets/js/finland.js" defer></script>

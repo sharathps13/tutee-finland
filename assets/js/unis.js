@@ -1,6 +1,7 @@
 /* ==========================================================================
-   Tutee Connect — universities directory (universities.html) and
-   university detail page (university.html?id=…).
+   Tutee Connect — universities directory (universities.html).
+   Each institution opens in a popup with its details and English-taught
+   courses; ?open=<id> deep-links straight to one.
    Data: FI_UNIVERSITIES (universities-data.js, optionally refreshed from
    Supabase via supabase-data.js) and FI_PROGRAMMES (programmes-data.js).
    No fees or other monetary values are ever rendered.
@@ -12,9 +13,9 @@
   var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
   var mq = function (q) { return !!(window.matchMedia && window.matchMedia(q).matches); };
   var reduceMotion = mq('(prefers-reduced-motion: reduce)');
-  var finePointer = mq('(hover: hover) and (pointer: fine)');
   var SL = window.TCShortlist;
   var APPLY_URL = './index.html#contact';
+  var all = (window.FI_UNIVERSITIES || []).slice();
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -28,13 +29,14 @@
   function cityOf(u) { return u.city || String(u.location || '').split(',')[0].trim(); }
   function fieldsOf(u) { return String(u.fields || u.programs || '').split(/\s*[|,]\s*/).filter(Boolean); }
   function isUas(u) { return /applied/i.test(u.type || ''); }
+  function progsOf(u) { return (window.FI_PROGRAMMES || {})[u.id] || []; }
+  function byId(id) { return all.filter(function (u) { return u.id === id; })[0]; }
   function initials(name) {
     return String(name).replace(/\(.*?\)/g, '').split(/\s+/).filter(function (w) { return /^[A-ZÅÄÖ]/.test(w); })
       .slice(0, 2).map(function (w) { return w[0]; }).join('');
   }
   function cityPhoto(city) { return './assets/img/cities/' + slug(city) + '.jpg'; }
-  function detailUrl(u) { return './university.html?id=' + encodeURIComponent(u.id); }
-  /* Region tint shown behind a card until (or instead of) its photo. */
+  /* Region tint shown behind a photo until (or instead of) it loads. */
   var TINTS = ['#0a2147,#1d5fc1', '#073b3a,#13a884', '#3b0a2e,#7a0f14', '#1a1446,#6c4bd1', '#0b2a4a,#0e7490'];
   function tint(city) {
     var h = 0, s = slug(city);
@@ -52,18 +54,20 @@
       img.addEventListener('error', function () { img.classList.add('is-missing'); });
     });
   }
+  function num(n) { return Number(n || 0).toLocaleString('en-GB'); }
 
   var ICON = {
-    heart: '<svg class="ico"><use href="#i-heart"/></svg>',
+    heart: '<svg class="ico ico-sm"><use href="#i-heart"/></svg>',
     pin: '<svg class="ico ico-sm"><use href="#i-pin"/></svg>',
     arrow: '<svg class="ico ico-sm"><use href="#i-arrow"/></svg>',
     up: '<svg class="ico ico-sm"><use href="#i-up"/></svg>',
     x: '<svg class="ico ico-sm"><use href="#i-x"/></svg>',
-    check: '<svg class="ico ico-sm"><use href="#i-check"/></svg>'
+    check: '<svg class="ico ico-sm"><use href="#i-check"/></svg>',
+    award: '<svg class="ico ico-sm"><use href="#i-award"/></svg>'
   };
 
   /* ------------------------------------------------------------------ *
-   * Toast + shortlist dock + drawer (both pages)
+   * Toast + shortlist
    * ------------------------------------------------------------------ */
   var toastTimer = 0;
   function toast(msg) {
@@ -74,7 +78,6 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { t.classList.remove('is-on'); }, 2200);
   }
-
   function toggleShortlist(u, btn) {
     if (!SL) return;
     var was = SL.has(u.id);
@@ -83,7 +86,12 @@
     if (btn) { btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop'); }
     toast(was ? 'Removed from your shortlist' : 'Added to your shortlist');
   }
+  function syncHearts() {
+    $$('[data-sl-id]').forEach(function (b) { b.setAttribute('aria-pressed', SL && SL.has(b.getAttribute('data-sl-id')) ? 'true' : 'false'); });
+  }
 
+  /* The bar at the bottom is always there: it shows the shortlist and
+     takes the visitor to the evaluation form, which reads the same store. */
   function initDock() {
     var dock = $('[data-dock]'), drawer = $('[data-sldrawer]');
     if (!dock || !SL) return;
@@ -92,114 +100,126 @@
 
     function render(items) {
       var n = items.length;
-      dock.classList.toggle('is-on', n > 0);
-      document.body.classList.toggle('has-dock', n > 0);
+      dock.classList.toggle('has-items', n > 0);
       count.textContent = n;
       count.classList.remove('pop'); void count.offsetWidth; count.classList.add('pop');
-      label.textContent = n === 1 ? items[0].name : n + ' universities shortlisted';
-      stack.innerHTML = items.slice(-3).map(function (x) { return '<span>' + esc(initials(x.name)) + '</span>'; }).join('');
+      label.textContent = !n ? 'Tap the heart on any university to add it'
+        : n === 1 ? items[0].name : n + ' universities saved';
+      stack.innerHTML = items.slice(-4).map(function (x) { return '<span>' + esc(initials(x.name)) + '</span>'; }).join('');
       $$('[data-sl-n]').forEach(function (el) { el.textContent = n; });
       if (list) {
         list.innerHTML = n ? items.map(function (x) {
-          return '<div class="slitem"><a href="./university.html?id=' + encodeURIComponent(x.id) + '">' + esc(x.name) +
-            (x.city ? '<span>' + esc(x.city) + '</span>' : '') + '</a>' +
+          return '<div class="slitem"><button type="button" class="slitem__open" data-open-uni="' + esc(x.id) + '">' + esc(x.name) +
+            (x.city ? '<span>' + esc(x.city) + '</span>' : '') + '</button>' +
             '<button type="button" aria-label="Remove ' + esc(x.name) + '" data-sl-remove="' + esc(x.id) + '">' + ICON.x + '</button></div>';
         }).join('') : '<p class="sldrawer__empty">Your shortlist is empty. Tap the heart on any university to add it.</p>';
       }
-      $$('[data-sl-id]').forEach(function (b) { b.setAttribute('aria-pressed', SL.has(b.getAttribute('data-sl-id')) ? 'true' : 'false'); });
+      syncHearts();
     }
     SL.onChange(render);
     render(SL.all());
 
     if (!drawer) return;
     function open() { drawer.classList.add('is-open'); document.body.style.overflow = 'hidden'; }
-    function close() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; }
+    function close() { drawer.classList.remove('is-open'); if (!modalOpen()) document.body.style.overflow = ''; }
     $$('[data-sl-open]').forEach(function (b) { b.addEventListener('click', open); });
     $$('[data-sl-close]', drawer).forEach(function (b) { b.addEventListener('click', close); });
     drawer.addEventListener('click', function (e) {
       var rm = e.target.closest && e.target.closest('[data-sl-remove]');
       if (rm) SL.remove(rm.getAttribute('data-sl-remove'));
+      var op = e.target.closest && e.target.closest('[data-open-uni]');
+      if (op) { close(); openUni(op.getAttribute('data-open-uni')); }
     });
     var clear = $('[data-sl-clear]', drawer);
     if (clear) clear.addEventListener('click', function () { SL.clear(); });
-    window.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    window.addEventListener('keydown', function (e) { if (e.key === 'Escape' && drawer.classList.contains('is-open')) close(); });
   }
 
   /* ------------------------------------------------------------------ *
    * Directory
    * ------------------------------------------------------------------ */
   function cardHtml(u, i) {
-    var city = cityOf(u), img = cityPhoto(city), on = SL && SL.has(u.id);
-    var fields = fieldsOf(u).slice(0, 3);
-    return '<article class="ucard" style="--i:' + i + '" data-spot>' +
-      '<a class="ucard__link" href="' + detailUrl(u) + '" aria-label="' + esc(u.name) + ' — view details"></a>' +
+    var city = cityOf(u), on = SL && SL.has(u.id), f = fieldsOf(u), progs = progsOf(u), seen = {};
+    progs.forEach(function (p) { if (p.city) seen[p.city] = 1; });
+    var nCities = Object.keys(seen).length || 1;
+    return '<article class="uc" style="--i:' + i + '">' +
+      '<button class="uc__open" type="button" data-open-uni="' + esc(u.id) + '" aria-label="' + esc(u.name) + ': view details and courses"></button>' +
       '<div class="ph" style="--ph-bg:' + tint(city) + '">' +
         '<span class="ph__mono" aria-hidden="true">' + esc(initials(u.name)) + '</span>' +
-        '<img data-ph src="' + img + '" alt="" loading="lazy" decoding="async">' +
-        (u.ranked ? '<span class="rankpill"><small>QS EU</small>#' + esc(u.rank) + '</span>' : '') +
+        '<img data-ph src="' + cityPhoto(city) + '" alt="" loading="lazy" decoding="async">' +
+        '<span class="uc__type' + (isUas(u) ? ' uc__type--uas' : '') + '">' + (isUas(u) ? 'Applied Sciences' : 'University') + '</span>' +
         '<button class="slbtn" type="button" data-sl-id="' + esc(u.id) + '" aria-pressed="' + (on ? 'true' : 'false') + '" aria-label="Shortlist ' + esc(u.name) + '">' + ICON.heart + '</button>' +
         '<span class="ph__city">' + ICON.pin + esc(city) + '</span>' +
+        (u.ranked ? '<span class="rankpill">' + ICON.award + '#' + esc(u.rank) + ' in Finland</span>' : '') +
       '</div>' +
-      '<div class="ucard__body">' +
-        '<span class="ucard__type' + (isUas(u) ? ' ucard__type--uas' : '') + '">' + (isUas(u) ? 'Applied Sciences' : 'University') + '</span>' +
+      '<div class="uc__body">' +
         '<h3>' + esc(u.name) + '</h3>' +
-        '<p class="ucard__meta"><b>' + esc(u.programmes) + '</b> English-taught study options</p>' +
-        '<div class="ucard__fields">' + fields.map(function (f) { return '<span>' + esc(f) + '</span>'; }).join('') + '</div>' +
-        '<span class="ucard__foot">View details' + ICON.arrow + '</span>' +
+        '<dl class="uc__nums">' +
+          '<div><dt>Courses in English</dt><dd>' + (progs.length || '&ndash;') + '</dd></div>' +
+          '<div><dt>Study fields</dt><dd>' + f.length + '</dd></div>' +
+          '<div><dt>' + (nCities === 1 ? 'Campus city' : 'Campus cities') + '</dt><dd>' + nCities + '</dd></div>' +
+        '</dl>' +
+        '<div class="uc__fields">' + f.slice(0, 3).map(function (x) { return '<span>' + esc(x) + '</span>'; }).join('') +
+          (f.length > 3 ? '<span class="uc__more">+' + (f.length - 3) + '</span>' : '') + '</div>' +
+        '<span class="uc__foot">View details &amp; courses' + ICON.arrow + '</span>' +
       '</div></article>';
   }
-  function rowHtml(u, i) {
-    var city = cityOf(u), on = SL && SL.has(u.id), img = cityPhoto(city);
-    var flow = fieldsOf(u).concat([city]).map(function (f) { return '<span>' + esc(f) + '<i style="background-image:url(' + img + ')"></i></span>'; }).join('');
-    return '<article class="urow" style="--i:' + i + '" data-preview="' + img + '">' +
-      '<a class="ucard__link" href="' + detailUrl(u) + '" aria-label="' + esc(u.name) + ' — view details"></a>' +
-      '<span class="urow__rank">' + (u.ranked ? '#' + esc(u.rank) : '&middot;') + '</span>' +
-      '<div><div class="urow__name">' + esc(u.name) + '</div><div class="urow__sub">' + esc(city) + ' &middot; ' +
-        (isUas(u) ? 'Applied Sciences' : 'University') + ' &middot; ' + esc(u.programmes) + ' English-taught options</div></div>' +
-      '<div class="urow__actions"><button class="slbtn" type="button" data-sl-id="' + esc(u.id) + '" aria-pressed="' + (on ? 'true' : 'false') + '" aria-label="Shortlist ' + esc(u.name) + '">' + ICON.heart + '</button></div>' +
-      '<div class="urow__flow" aria-hidden="true"><div class="urow__flow-track">' + flow + flow + '</div></div>' +
-      '</article>';
-  }
+
+  var dir = null;   // set by initDirectory: { setCity }
 
   function initDirectory() {
     var grid = $('[data-uni-grid]');
     if (!grid) return;
-    var all = (window.FI_UNIVERSITIES || []).slice();
     var search = $('[data-search]'), clearBtn = $('[data-clear]');
     var typeBtns = $$('[data-type]'), fieldSel = $('[data-field]'), citySel = $('[data-city]'), sortSel = $('[data-sort]');
-    var viewBtns = $$('[data-view]'), countEl = $('[data-count-out]'), empty = $('[data-empty]'), resetBtns = $$('[data-reset]');
-    var quick = $$('[data-quick]');
-    var state = { q: '', type: '', field: '', city: '', sort: 'rank', view: 'grid' };
-    var byId = {};
+    var countEl = $('[data-count-out]'), empty = $('[data-empty]'), resetBtns = $$('[data-reset]');
+    var chipBox = $('[data-field-chips]'), rail = $('[data-city-rail]');
+    var state = { q: '', type: '', field: '', city: '', sort: 'rank' };
 
-    try { state.view = localStorage.getItem('tcDirView') || 'grid'; } catch (e) { /* ignore */ }
     var params = new URLSearchParams(location.search);
     ['q', 'type', 'field', 'city', 'sort'].forEach(function (k) { if (params.get(k)) state[k] = params.get(k); });
 
     function hay(u) {
-      if (u.__hay === undefined) u.__hay = fold([u.name, u.location, u.programs, u.fields, u.type, u.alt].join(' '));
+      if (u.__hay === undefined) {
+        u.__hay = fold([u.name, u.location, u.programs, u.fields, u.type, u.alt].join(' ') + ' ' +
+          progsOf(u).map(function (p) { return p.n; }).join(' '));
+      }
       return u.__hay;
+    }
+    function stats() {
+      var uas = all.filter(isUas).length, progs = 0;
+      all.forEach(function (u) { progs += progsOf(u).length; });
+      var set = function (k, v) { $$('[data-stat="' + k + '"]').forEach(function (el) { el.textContent = v; }); };
+      set('all', all.length); set('uni', all.length - uas); set('uas', uas); set('progs', num(progs));
     }
     function fillFacets() {
       var fields = {}, cities = {};
-      all.forEach(function (u) { fieldsOf(u).forEach(function (f) { fields[f] = 1; }); cities[cityOf(u)] = 1; });
-      if (fieldSel) fieldSel.innerHTML = '<option value="">All study fields</option>' + Object.keys(fields).sort().map(function (f) {
+      all.forEach(function (u) { fieldsOf(u).forEach(function (f) { fields[f] = (fields[f] || 0) + 1; }); var c = cityOf(u); cities[c] = (cities[c] || 0) + 1; });
+      var fieldNames = Object.keys(fields).sort();
+      if (fieldSel) fieldSel.innerHTML = '<option value="">All study fields</option>' + fieldNames.map(function (f) {
         return '<option value="' + esc(f) + '">' + esc(f) + '</option>'; }).join('');
       if (citySel) citySel.innerHTML = '<option value="">All cities</option>' + Object.keys(cities).sort().map(function (c) {
         return '<option value="' + esc(c) + '">' + esc(c) + '</option>'; }).join('');
       if (fieldSel) fieldSel.value = state.field;
       if (citySel) citySel.value = state.city;
+      if (chipBox) chipBox.innerHTML = Object.keys(fields).sort(function (a, b) { return fields[b] - fields[a]; }).slice(0, 7).map(function (f) {
+        return '<button type="button" data-field-chip="' + esc(f) + '">' + esc(f) + '</button>';
+      }).join('');
+      if (rail) rail.innerHTML = Object.keys(cities).sort(function (a, b) { return cities[b] - cities[a] || a.localeCompare(b); }).map(function (c) {
+        return '<button type="button" class="ux-city" data-city-tile="' + esc(c) + '" aria-pressed="false" style="--ph-bg:' + tint(c) + '">' +
+          '<img data-ph src="' + cityPhoto(c) + '" alt="" loading="lazy" decoding="async">' +
+          '<span class="ux-city__txt"><b>' + esc(c) + '</b><small>' + cities[c] + (cities[c] === 1 ? ' institution' : ' institutions') + '</small></span></button>';
+      }).join('');
+      guardImages(rail);
     }
     function syncUrl() {
-      var p = new URLSearchParams();
-      ['q', 'type', 'field', 'city'].forEach(function (k) { if (state[k]) p.set(k, state[k]); });
-      if (state.sort !== 'rank') p.set('sort', state.sort);
+      var p = new URLSearchParams(location.search);
+      ['q', 'type', 'field', 'city'].forEach(function (k) { if (state[k]) p.set(k, state[k]); else p.delete(k); });
+      if (state.sort !== 'rank') p.set('sort', state.sort); else p.delete('sort');
       var qs = p.toString();
-      try { history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '')); } catch (e) { /* file:// */ }
+      try { history.replaceState(history.state, '', location.pathname + (qs ? '?' + qs : '')); } catch (e) { /* file:// */ }
     }
     function render() {
-      byId = {};
-      all.forEach(function (u) { byId[u.id] = u; });
       var q = fold(state.q);
       var rows = all.filter(function (u) {
         if (state.type === 'uni' && isUas(u)) return false;
@@ -213,26 +233,24 @@
         if (state.sort === 'programmes') return Number(b.programmes) - Number(a.programmes);
         return (a.rank || 999) - (b.rank || 999);
       });
-      var list = state.view === 'list';
-      grid.classList.toggle('is-list', list);
-      grid.innerHTML = rows.map(list ? rowHtml : cardHtml).join('');
+      grid.innerHTML = rows.map(cardHtml).join('');
       guardImages(grid);
-      if (window.TCFX) window.TCFX.spot(grid);
-      if (countEl) countEl.innerHTML = '<b>' + rows.length + '</b> / ' + all.length + ' shown';
+      if (countEl) countEl.innerHTML = '<b>' + rows.length + '</b> of ' + all.length + ' shown';
       if (empty) empty.hidden = rows.length > 0;
       var filtered = !!(state.q || state.type || state.field || state.city);
-      resetBtns.forEach(function (b) { b.hidden = !filtered; });
+      resetBtns.forEach(function (b) { b.hidden = !filtered && !!b.closest('.dir-bar'); });
       typeBtns.forEach(function (b) { b.setAttribute('aria-pressed', (b.getAttribute('data-type') || '') === state.type ? 'true' : 'false'); });
-      viewBtns.forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-view') === state.view ? 'true' : 'false'); });
-      quick.forEach(function (b) { b.classList.toggle('is-on', b.getAttribute('data-quick') === state.q); });
+      $$('[data-field-chip]').forEach(function (b) { b.classList.toggle('is-on', b.getAttribute('data-field-chip') === state.field); });
+      $$('[data-city-tile]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-city-tile') === state.city ? 'true' : 'false'); });
       if (clearBtn) clearBtn.hidden = !state.q;
       syncUrl();
     }
+    function toResults() { $('[data-results]').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }); }
 
     // Supabase hand-off (supabase-data.js calls this with fresher rows).
     window.TC_applyUniversities = function (rows) {
       if (!Array.isArray(rows) || !rows.length) return false;
-      all = rows; fillFacets(); render(); return true;
+      all = rows; fillFacets(); stats(); render(); return true;
     };
     if (Array.isArray(window.TC_pendingUniversities) && window.TC_pendingUniversities.length) {
       all = window.TC_pendingUniversities; window.TC_pendingUniversities = null;
@@ -242,8 +260,9 @@
       search.value = state.q;
       var t = 0;
       search.addEventListener('input', function () { clearTimeout(t); t = setTimeout(function () { state.q = search.value.trim(); render(); }, 90); });
+      search.addEventListener('keydown', function (e) { if (e.key === 'Enter') toResults(); });
       window.addEventListener('keydown', function (e) {
-        if (e.key === '/' && document.activeElement !== search && !/input|textarea|select/i.test(document.activeElement.tagName)) {
+        if (e.key === '/' && document.activeElement !== search && !/input|textarea|select/i.test(document.activeElement.tagName) && !modalOpen()) {
           e.preventDefault(); search.focus();
         }
       });
@@ -253,20 +272,25 @@
     if (fieldSel) fieldSel.addEventListener('change', function () { state.field = fieldSel.value; render(); });
     if (citySel) citySel.addEventListener('change', function () { state.city = citySel.value; render(); });
     if (sortSel) { sortSel.value = state.sort; sortSel.addEventListener('change', function () { state.sort = sortSel.value; render(); }); }
-    viewBtns.forEach(function (b) {
-      b.addEventListener('click', function () {
-        state.view = b.getAttribute('data-view');
-        try { localStorage.setItem('tcDirView', state.view); } catch (e) { /* ignore */ }
-        render();
-      });
+    if (chipBox) chipBox.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-field-chip]');
+      if (!b) return;
+      var f = b.getAttribute('data-field-chip');
+      state.field = state.field === f ? '' : f;
+      if (fieldSel) fieldSel.value = state.field;
+      render(); toResults();
     });
-    quick.forEach(function (b) {
+    if (rail) rail.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-city-tile]');
+      if (!b) return;
+      var c = b.getAttribute('data-city-tile');
+      state.city = state.city === c ? '' : c;
+      if (citySel) citySel.value = state.city;
+      render(); toResults();
+    });
+    $$('[data-rail]').forEach(function (b) {
       b.addEventListener('click', function () {
-        var v = b.getAttribute('data-quick');
-        state.q = state.q === v ? '' : v;
-        if (search) search.value = state.q;
-        render();
-        $('[data-results]').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+        rail.scrollBy({ left: Number(b.getAttribute('data-rail')) * rail.clientWidth * 0.8, behavior: reduceMotion ? 'auto' : 'smooth' });
       });
     });
     resetBtns.forEach(function (b) {
@@ -279,55 +303,29 @@
       });
     });
 
-    // Shortlist buttons inside cards (delegated: cards re-render).
+    // Cards: heart toggles the shortlist, anywhere else opens the popup.
     grid.addEventListener('click', function (e) {
       var b = e.target.closest && e.target.closest('[data-sl-id]');
-      if (!b) return;
-      e.preventDefault(); e.stopPropagation();
-      var u = byId[b.getAttribute('data-sl-id')];
-      if (u) toggleShortlist(u, b);
+      if (b) {
+        e.preventDefault(); e.stopPropagation();
+        var u = byId(b.getAttribute('data-sl-id'));
+        if (u) toggleShortlist(u, b);
+        return;
+      }
+      var o = e.target.closest && e.target.closest('[data-open-uni]');
+      if (o) openUni(o.getAttribute('data-open-uni'));
     });
 
-    // ChromaGrid spotlight across the whole grid.
-    if (finePointer && !reduceMotion) {
-      grid.classList.add('is-chroma');
-      grid.addEventListener('pointermove', function (e) {
-        var r = grid.getBoundingClientRect();
-        grid.style.setProperty('--gx', (e.clientX - r.left + 40) + 'px');
-        grid.style.setProperty('--gy', (e.clientY - r.top + 40) + 'px');
-        grid.style.setProperty('--chroma-o', grid.classList.contains('is-list') ? 0 : 1);
-      });
-      grid.addEventListener('pointerleave', function () { grid.style.setProperty('--chroma-o', 0); });
-
-      // List view: a photo of the campus city follows the cursor.
-      var prev = $('[data-cursor-preview]'), img = prev && $('img', prev), cx = 0, cy = 0, tx = 0, ty = 0, raf = 0;
-      if (prev) {
-        var loop = function () {
-          cx += (tx - cx) * 0.18; cy += (ty - cy) * 0.18;
-          prev.style.left = cx + 'px'; prev.style.top = cy + 'px';
-          raf = prev.classList.contains('is-on') ? requestAnimationFrame(loop) : 0;
-        };
-        grid.addEventListener('pointermove', function (e) {
-          var row = e.target.closest && e.target.closest('.urow');
-          tx = e.clientX + 150; ty = e.clientY;
-          if (!row) { prev.classList.remove('is-on'); return; }
-          var src = row.getAttribute('data-preview');
-          if (img.getAttribute('src') !== src) img.setAttribute('src', src);
-          if (!prev.classList.contains('is-on')) { cx = tx; cy = ty; prev.classList.add('is-on'); }
-          if (!raf) raf = requestAnimationFrame(loop);
-        });
-        grid.addEventListener('pointerleave', function () { prev.classList.remove('is-on'); });
-        img.addEventListener('error', function () { prev.classList.remove('is-on'); });
-      }
-    }
-
     fillFacets();
+    stats();
     render();
   }
 
   /* ------------------------------------------------------------------ *
-   * Detail page
+   * University popup
    * ------------------------------------------------------------------ */
+  var um = $('[data-um]'), current = null, lastFocus = null;
+  function modalOpen() { return !!(um && !um.hidden); }
   function years(dur) {
     var m = parseInt(dur, 10);
     if (!m || m > 96) return '';
@@ -336,182 +334,189 @@
     return m + ' months';
   }
   function progFields(p) { return String(p.fld || '').split(/\s*,\s*/).filter(Boolean); }
+  var LEVELS = [['', 'All'], ['bachelor', "Bachelor's"], ['master', "Master's"], ['doctoral', 'Doctoral']];
+  function lvlOf(p, k) {
+    if (!k) return true;
+    if (k === 'bachelor') return /bachelor/i.test(p.lvl);
+    if (k === 'master') return /master/i.test(p.lvl);
+    return /doctoral/i.test(p.lvl);
+  }
+  var st = { q: '', lvl: '', fld: '', shown: 12 };
 
-  function initDetail() {
-    var root = $('[data-detail]');
-    if (!root) return;
-    var id = new URLSearchParams(location.search).get('id') || '';
-    var all = window.FI_UNIVERSITIES || [];
-    var u = all.filter(function (x) { return x.id === id; })[0];
-    if (!u) {
-      root.hidden = true;
-      $('[data-notfound]').hidden = false;
-      document.title = 'University not found | Tutee Connect';
-      return;
+  function renderCourses() {
+    if (!current) return;
+    var progs = progsOf(current), q = fold(st.q);
+    var rows = progs.filter(function (p) {
+      return lvlOf(p, st.lvl) && (!st.fld || progFields(p).indexOf(st.fld) > -1) && (!q || fold(p.n + ' ' + p.fld + ' ' + p.city).indexOf(q) > -1);
+    });
+    var list = $('[data-um-list]', um);
+    $('[data-um-count]', um).textContent = progs.length ? rows.length + ' of ' + progs.length : '';
+    if (!progs.length) {
+      list.innerHTML = '<p class="um__empty">Studyinfo lists no English-taught course for this institution right now. Our counsellors can check current intakes with you.</p>';
+    } else if (!rows.length) {
+      list.innerHTML = '<p class="um__empty">No courses match those filters.</p>';
+    } else {
+      list.innerHTML = rows.slice(0, st.shown).map(function (p, i) {
+        var meta = [progFields(p).join(', '), p.city, years(p.dur)].filter(Boolean).map(function (m) { return '<span>' + esc(m) + '</span>'; }).join('');
+        var name = String(p.n).replace(/\s*\((\d+(?:[.,]\d+)?)\s*yrs?\)\s*$/, '');
+        return '<div class="umc" style="animation-delay:' + Math.min(i, 12) * 25 + 'ms">' +
+          '<span class="umc__lvl">' + esc(p.lvl) + '</span>' +
+          (p.url ? '<a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(name) + ICON.up + '</a>' : '<b>' + esc(name) + '</b>') +
+          '<div class="umc__meta">' + meta + (p.sch ? '<span class="umc__sch">Scholarship available</span>' : '') + '</div></div>';
+      }).join('');
     }
-    var city = cityOf(u), progs = (window.FI_PROGRAMMES || {})[u.id] || [];
-    var set = function (sel, html) { $$(sel).forEach(function (el) { el.innerHTML = html; }); };
-    var text = function (sel, t) { $$(sel).forEach(function (el) { el.textContent = t; }); };
+    var more = $('[data-um-more]', um);
+    more.hidden = rows.length <= st.shown;
+    more.textContent = 'Show ' + Math.min(24, rows.length - st.shown) + ' more courses';
+    $$('[data-um-lvl]', um).forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-um-lvl') === st.lvl ? 'true' : 'false'); });
+    $$('[data-um-fld]', um).forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-um-fld') === st.fld ? 'true' : 'false'); });
+  }
 
-    document.title = u.name + ' | Study in Finland | Tutee Connect';
-    var md = $('meta[name="description"]');
-    if (md) md.setAttribute('content', u.name + ' in ' + city + ', Finland: English-taught programmes, study fields and campus cities. Shortlist it and get a free profile evaluation from Tutee Connect.');
+  function fillModal(u) {
+    var city = cityOf(u), progs = progsOf(u);
+    var text = function (sel, t) { $$(sel, um).forEach(function (el) { el.textContent = t; }); };
+    var html = function (sel, h) { $$(sel, um).forEach(function (el) { el.innerHTML = h; }); };
+    current = u;
+    st = { q: '', lvl: '', fld: '', shown: 12 };
+    $('[data-um-q]', um).value = '';
 
-    text('[data-u-name]', u.name);
-    text('[data-u-city]', city);
-    text('[data-u-location]', u.location);
-    text('[data-u-type]', isUas(u) ? 'University of Applied Sciences' : 'University');
-    set('[data-u-rank]', u.ranked
-      ? '<svg class="ico ico-sm"><use href="#i-award"/></svg>QS Europe 2026 &middot; #' + esc(u.rank) + ' in Finland'
-      : 'Not ranked in QS Europe 2026');
-    $$('[data-u-rank]').forEach(function (el) { el.classList.toggle('chip--gold', !!u.ranked); });
-
-    // Photo
-    var img = $('[data-u-photo]'), path = cityPhoto(city);
-    if (img) { img.src = path; img.alt = 'Campus city: ' + city; guardImages(img.parentNode); }
-    text('[data-u-mono]', initials(u.name));
+    var img = $('[data-um-photo]', um), path = cityPhoto(city);
+    $('.um__hero', um).style.setProperty('--ph-bg', tint(city));
+    img.classList.remove('is-missing');
+    img.onerror = function () { img.classList.add('is-missing'); };
+    img.src = path; img.alt = 'Campus city: ' + city;
+    text('[data-um-mono]', initials(u.name));
     var credit = photoCredit(path);
-    text('[data-u-credit]', credit ? city + ' · ' + credit : '');
+    text('[data-um-credit]', credit ? 'Header: ' + city + '. ' + credit : '');
+    text('[data-um-name]', u.name);
+    html('[data-um-where]', ICON.pin + esc(u.location || city) + ', Finland');
+    html('[data-um-badges]', '<span class="um__badge">' + (isUas(u) ? 'University of Applied Sciences' : 'University') + '</span>' +
+      (u.ranked ? '<span class="um__badge um__badge--gold">' + ICON.award + '#' + esc(u.rank) + ' in Finland &middot; QS Europe 2026</span>' : ''));
 
-    // Stats
-    var cities = {};
-    progs.forEach(function (p) { if (p.city) cities[p.city] = (cities[p.city] || 0) + 1; });
+    // Numbers
+    var cities = {}, fieldCount = {};
+    progs.forEach(function (p) {
+      if (p.city) cities[p.city] = (cities[p.city] || 0) + 1;
+      progFields(p).forEach(function (f) { fieldCount[f] = (fieldCount[f] || 0) + 1; });
+    });
     if (!Object.keys(cities).length) cities[city] = 1;
-    var fieldCount = {};
-    progs.forEach(function (p) { progFields(p).forEach(function (f) { fieldCount[f] = (fieldCount[f] || 0) + 1; }); });
     var fieldNames = Object.keys(fieldCount).sort(function (a, b) { return fieldCount[b] - fieldCount[a]; });
-    if (!fieldNames.length) fieldsOf(u).forEach(function (f) { fieldCount[f] = 0; fieldNames.push(f); });
-    set('[data-u-stats]', [
-      [u.programmes, 'English-taught study options'],
-      [u.degrees || progs.length, 'Degree programmes in English'],
-      [fieldNames.length, 'Study fields'],
-      [Object.keys(cities).length, Object.keys(cities).length === 1 ? 'Campus city' : 'Campus cities']
-    ].map(function (s) {
-      return '<div class="uni-stat"><b data-count="' + esc(s[0]) + '">' + esc(s[0]) + '</b><span>' + esc(s[1]) + '</span></div>';
-    }).join(''));
+    if (!fieldNames.length) fieldsOf(u).forEach(function (f) { fieldNames.push(f); });
+    var cityNames = Object.keys(cities).sort(function (a, b) { return cities[b] - cities[a]; });
+    var nLvl = function (k) { return progs.filter(function (p) { return lvlOf(p, k); }).length; };
+    html('[data-um-stats]', [
+      [progs.length, 'Courses taught in English'],
+      [nLvl('bachelor'), "Bachelor's courses"],
+      [nLvl('master'), "Master's courses"],
+      [nLvl('doctoral'), 'Doctoral courses']
+    ].map(function (s) { return '<div><b>' + esc(s[0]) + '</b><span>' + esc(s[1]) + '</span></div>'; }).join(''));
 
-    // Facts aside
-    set('[data-u-site]', u.url ? '<a href="' + esc(u.url) + '" target="_blank" rel="noopener">' + esc(u.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')) + ' ' + ICON.up + '</a>' : 'Not published');
-    text('[data-u-names]', String(u.alt || '').split(/\s*,\s*/).filter(function (n) { return n && n !== city; }).slice(0, 8).join(' · ') || '—');
-    var aland = $('[data-u-aland]');
-    if (aland) aland.hidden = u.branch !== 'aland';
-    $$('[data-u-site-btn]').forEach(function (a) { if (u.url) a.href = u.url; else a.hidden = true; });
+    // Level + field filters (only levels this institution offers)
+    var levels = LEVELS.filter(function (l) { return !l[0] || progs.some(function (p) { return lvlOf(p, l[0]); }); });
+    html('[data-um-lvls]', levels.length > 2 || !progs.length ? levels.map(function (l) {
+      var n = progs.filter(function (p) { return lvlOf(p, l[0]); }).length;
+      return '<button type="button" data-um-lvl="' + l[0] + '" aria-pressed="false">' + l[1] + ' <small>' + n + '</small></button>';
+    }).join('') : '');
+    html('[data-um-fields]', fieldNames.length > 1 ? fieldNames.map(function (f) {
+      return '<button type="button" data-um-fld="' + esc(f) + '" aria-pressed="false">' + esc(f) + (fieldCount[f] ? ' <small>' + fieldCount[f] + '</small>' : '') + '</button>';
+    }).join('') : '');
 
-    // Fields as interactive bars (click one to filter the programme list)
-    var maxF = Math.max.apply(null, fieldNames.map(function (f) { return fieldCount[f]; }).concat([1]));
-    set('[data-u-fields]', fieldNames.map(function (f, i) {
-      return '<button type="button" class="fieldbar" data-fieldbar="' + esc(f) + '" aria-pressed="false" style="--i:' + i + '">' +
-        '<span>' + esc(f) + '</span><span class="fieldbar__track"><span class="fieldbar__fill" data-w="' + (fieldCount[f] / maxF * 100) + '"></span></span>' +
-        '<span class="fieldbar__n">' + (fieldCount[f] || '') + '</span></button>';
-    }).join(''));
+    // Facts
+    text('[data-um-type]', isUas(u) ? 'University of Applied Sciences' : 'University');
+    text('[data-um-loc]', u.location || city);
+    html('[data-um-cities]', cityNames.map(function (c) { return '<span>' + esc(c) + '</span>'; }).join(''));
+    html('[data-um-site]', u.url ? '<a href="' + esc(u.url) + '" target="_blank" rel="noopener">' + esc(u.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')) + ' ' + ICON.up + '</a>' : 'Not published');
+    text('[data-um-names]', String(u.alt || '').split(/\s*,\s*/).filter(function (n) { return n && cityNames.indexOf(n) < 0 && n !== city; }).slice(0, 6).join(' · ') || '—');
+    $('[data-um-aland]', um).hidden = u.branch !== 'aland';
+    syncModalHeart();
+    renderCourses();
+  }
+  function syncModalHeart() {
+    if (!current) return;
+    var on = !!(SL && SL.has(current.id));
+    $$('[data-um-sl]', um).forEach(function (b) { b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.setAttribute('aria-label', on ? 'Remove from shortlist' : 'Add to shortlist'); });
+    var l = $('[data-um-sl-label]', um); if (l) l.textContent = on ? 'Shortlisted' : 'Add to shortlist';
+  }
 
-    // Campus cities
-    set('[data-u-cities]', Object.keys(cities).sort(function (a, b) { return cities[b] - cities[a]; }).map(function (c) {
-      return '<span>' + ICON.pin + esc(c) + '</span>';
-    }).join(''));
-
-    // Programme explorer
-    var listEl = $('[data-prog-list]'), searchEl = $('[data-prog-search]'), lvlBtns = $$('[data-lvl]'), moreBtn = $('[data-prog-more]');
-    var countOut = $('[data-prog-count]');
-    var st = { q: '', lvl: '', fld: '', shown: 10 };
-    function lvlMatch(p) {
-      if (!st.lvl) return true;
-      if (st.lvl === 'bachelor') return /bachelor/i.test(p.lvl);
-      if (st.lvl === 'master') return /master/i.test(p.lvl);
-      return /doctoral/i.test(p.lvl);
+  function openUni(id, fromHistory) {
+    var u = byId(id);
+    if (!um || !u) return;
+    var wasOpen = modalOpen();
+    if (!wasOpen) lastFocus = document.activeElement;
+    fillModal(u);
+    um.hidden = false;
+    $('[data-um-body]', um).scrollTop = 0;
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(function () { um.classList.add('is-open'); });
+    $('.um__panel', um).focus({ preventScroll: true });
+    document.title = u.name + ' | Finnish universities | Tutee Connect';
+    if (!fromHistory) {
+      var p = new URLSearchParams(location.search); p.set('open', u.id);
+      try { history[wasOpen ? 'replaceState' : 'pushState']({ open: u.id }, '', location.pathname + '?' + p.toString()); } catch (e) { /* file:// */ }
     }
-    function renderProgs() {
-      var q = fold(st.q);
-      var rows = progs.filter(function (p) {
-        return lvlMatch(p) && (!st.fld || progFields(p).indexOf(st.fld) > -1) && (!q || fold(p.n + ' ' + p.fld + ' ' + p.city).indexOf(q) > -1);
-      });
-      if (countOut) countOut.textContent = rows.length + ' of ' + progs.length;
-      if (!progs.length) {
-        listEl.innerHTML = '<p class="prog-empty">Studyinfo lists no English-taught programme for this institution right now. Our counsellors can check current intakes with you.</p>';
-      } else if (!rows.length) {
-        listEl.innerHTML = '<p class="prog-empty">No programmes match those filters.</p>';
-      } else {
-        listEl.innerHTML = rows.slice(0, st.shown).map(function (p, i) {
-          var meta = [progFields(p).join(', '), p.city, years(p.dur)].filter(Boolean).map(function (m) { return '<span>' + esc(m) + '</span>'; }).join('');
-          return '<div class="prog" style="animation-delay:' + Math.min(i, 10) * 30 + 'ms"><div><span class="prog__lvl">' + esc(p.lvl) + '</span></div>' +
-            (p.url ? '<a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.n) + ICON.up + '</a>' : '<b>' + esc(p.n) + '</b>') +
-            '<div class="prog__meta">' + meta + (p.sch ? '<span class="prog__sch">Scholarship available</span>' : '') + '</div></div>';
-        }).join('');
+  }
+  var BASE_TITLE = document.title;
+  function closeUni(fromHistory) {
+    if (!modalOpen()) return;
+    um.classList.remove('is-open');
+    setTimeout(function () { if (!um.classList.contains('is-open')) um.hidden = true; }, reduceMotion ? 0 : 280);
+    document.body.style.overflow = '';
+    document.title = BASE_TITLE;
+    current = null;
+    if (!fromHistory) {
+      // Step back over the entry openUni pushed; a deep link has none.
+      if (history.state && history.state.open && !history.state.landed) history.back();
+      else {
+        var p = new URLSearchParams(location.search); p.delete('open');
+        var qs = p.toString();
+        try { history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '')); } catch (e) { /* file:// */ }
       }
-      if (moreBtn) moreBtn.hidden = rows.length <= st.shown;
-      lvlBtns.forEach(function (b) { b.setAttribute('aria-pressed', (b.getAttribute('data-lvl') || '') === st.lvl ? 'true' : 'false'); });
-      $$('[data-fieldbar]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-fieldbar') === st.fld ? 'true' : 'false'); });
     }
-    if (searchEl) searchEl.addEventListener('input', function () { st.q = searchEl.value; st.shown = 10; renderProgs(); });
-    lvlBtns.forEach(function (b) { b.addEventListener('click', function () { st.lvl = b.getAttribute('data-lvl') || ''; st.shown = 10; renderProgs(); }); });
-    if (moreBtn) moreBtn.addEventListener('click', function () { st.shown += 20; renderProgs(); });
-    $$('[data-fieldbar]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        var f = b.getAttribute('data-fieldbar');
-        st.fld = st.fld === f ? '' : f; st.shown = 10; renderProgs();
-        var target = $('#programmes');
-        if (st.fld && target) target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
-      });
-    });
-    renderProgs();
+    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+  }
 
-    // Animate field bars when they scroll into view.
-    var bars = $$('.fieldbar__fill');
-    var grow = function () { bars.forEach(function (b) { b.style.width = b.getAttribute('data-w') + '%'; }); };
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { grow(); io.disconnect(); } }, { threshold: 0.3 });
-      var fb = $('[data-u-fields]'); if (fb) io.observe(fb); else grow();
-    } else grow();
-
-    // Shortlist + apply
-    $$('[data-u-sl]').forEach(function (b) {
-      b.setAttribute('data-sl-id', u.id);
-      b.setAttribute('aria-pressed', SL && SL.has(u.id) ? 'true' : 'false');
-      b.addEventListener('click', function () { toggleShortlist(u, b); });
+  function initModal() {
+    if (!um) return;
+    $$('[data-um-close]', um).forEach(function (b) { b.addEventListener('click', function () { closeUni(); }); });
+    $$('[data-um-sl]', um).forEach(function (b) { b.addEventListener('click', function () { if (current) toggleShortlist(current, b); }); });
+    $('[data-um-apply]', um).addEventListener('click', function () {
+      if (current && SL && !SL.has(current.id)) SL.add({ id: current.id, name: current.name, city: cityOf(current) });
     });
-    if (SL) SL.onChange(function () {
-      var on = SL.has(u.id);
-      $$('[data-u-sl]').forEach(function (b) {
-        b.setAttribute('aria-pressed', on ? 'true' : 'false');
-        var l = $('[data-sl-label]', b); if (l) l.textContent = on ? 'Shortlisted' : 'Add to shortlist';
-      });
+    $('[data-um-q]', um).addEventListener('input', function (e) { st.q = e.target.value; st.shown = 12; renderCourses(); });
+    um.addEventListener('click', function (e) {
+      var l = e.target.closest('[data-um-lvl]');
+      if (l) { st.lvl = l.getAttribute('data-um-lvl'); st.shown = 12; renderCourses(); return; }
+      var f = e.target.closest('[data-um-fld]');
+      if (f) { var v = f.getAttribute('data-um-fld'); st.fld = st.fld === v ? '' : v; st.shown = 12; renderCourses(); }
     });
-    $$('[data-u-sl]').forEach(function (b) { var l = $('[data-sl-label]', b); if (l) l.textContent = SL && SL.has(u.id) ? 'Shortlisted' : 'Add to shortlist'; });
-    $$('[data-u-apply]').forEach(function (a) {
-      a.addEventListener('click', function () { if (SL) SL.add({ id: u.id, name: u.name, city: city }); });
+    $('[data-um-more]', um).addEventListener('click', function () { st.shown += 24; renderCourses(); });
+    window.addEventListener('keydown', function (e) {
+      if (!modalOpen()) return;
+      if (e.key === 'Escape') { closeUni(); return; }
+      if (e.key !== 'Tab') return;   // keep focus inside the dialog
+      var f = $$('a[href], button:not([disabled]), input', um).filter(function (el) { return el.offsetParent !== null; });
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     });
+    window.addEventListener('popstate', function () {
+      var id = new URLSearchParams(location.search).get('open');
+      if (id && byId(id)) openUni(id, true); else closeUni(true);
+    });
+    if (SL) SL.onChange(syncModalHeart);
 
-    // Similar institutions: same city first, then same type, by rank.
-    var sim = all.filter(function (x) { return x.id !== u.id; }).map(function (x) {
-      return { x: x, s: (cityOf(x) === city ? 3 : 0) + (isUas(x) === isUas(u) ? 1 : 0) - (x.rank || 99) / 100 };
-    }).sort(function (a, b) { return b.s - a.s; }).slice(0, 3).map(function (o) { return o.x; });
-    var simEl = $('[data-u-similar]');
-    if (simEl) {
-      simEl.innerHTML = sim.map(cardHtml).join('');
-      guardImages(simEl);
-      simEl.addEventListener('click', function (e) {
-        var b = e.target.closest && e.target.closest('[data-sl-id]');
-        if (!b) return;
-        e.preventDefault(); e.stopPropagation();
-        var x = sim.filter(function (s) { return s.id === b.getAttribute('data-sl-id'); })[0];
-        if (x) toggleShortlist(x, b);
-      });
-      if (window.TCFX) window.TCFX.spot(simEl);
-    }
-
-    // Hero photo parallax.
-    var photo = $('.uni-photo img');
-    if (photo && !reduceMotion) {
-      window.addEventListener('scroll', function () {
-        photo.style.setProperty('--py', Math.min(80, window.scrollY * 0.12) + 'px');
-      }, { passive: true });
+    var start = new URLSearchParams(location.search).get('open');
+    if (start && byId(start)) {
+      try { history.replaceState({ open: start, landed: true }, '', location.href); } catch (e) { /* file:// */ }
+      openUni(start, true);
     }
   }
 
-  // Apply buttons on the dock/drawer carry the shortlist to the main form.
+  // Every apply link carries the shortlist to the main page's form.
   $$('[data-sl-apply]').forEach(function (a) { a.setAttribute('href', APPLY_URL); });
 
   initDock();
   initDirectory();
-  initDetail();
+  initModal();
 })();
