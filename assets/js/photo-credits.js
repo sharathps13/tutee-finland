@@ -2,18 +2,18 @@
    photo download; CC BY photos must keep their credit visible. */
 window.TC_PHOTO_CREDITS = {
  "assets/video/winter.webm": {
-  "subject": "Aurora borealis timelapse, Finnish and Swedish Lapland (video, trimmed)",
+  "subject": "Aurora borealis timelapse, Finnish and Swedish Lapland (video, trimmed and slowed)",
   "author": "Harriniva Hotels & Safaris",
   "licence": "CC BY 3.0",
   "url": "https://commons.wikimedia.org/wiki/File:Aurora_borealis_timelapse.webm",
   "short": "Video: Harriniva Hotels & Safaris, CC BY 3.0"
  },
  "assets/video/summer.webm": {
-  "subject": "Polar day's night at the Arctic Circle, Rovaniemi (video)",
-  "author": "Denis Despair",
-  "licence": "CC BY 3.0",
-  "url": "https://commons.wikimedia.org/wiki/File:Polar_Day's_Night-HD.webm",
-  "short": "Video: Denis Despair, CC BY 3.0"
+  "subject": "Summer sunset over a Finnish lake (video, trimmed)",
+  "author": "postcardtrip",
+  "licence": "Pixabay Content License",
+  "url": "https://pixabay.com/videos/sunset-lake-water-nature-evening-26107/",
+  "short": "Video: postcardtrip, Pixabay"
  },
  "assets/img/photos/hero-aurora.jpg": {
   "subject": "Aurora borealis over Lapland",

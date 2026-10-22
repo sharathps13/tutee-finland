@@ -31,8 +31,8 @@ All files are 1920px versions from Wikimedia Commons. CC BY licences require the
 
 Trimmed and re-encoded with ffmpeg (no audio): WebM VP9 plus MP4 H.264, with a poster frame each.
 
-- `assets/video/winter.{webm,mp4}` + `winter-poster.jpg` — 18 s cut (72–90 s) of "Aurora borealis timelapse", 1920x1080. Harriniva Hotels & Safaris, CC BY 3.0. <https://commons.wikimedia.org/wiki/File:Aurora_borealis_timelapse.webm>
-- `assets/video/summer.{webm,mp4}` + `summer-poster.jpg` — "Polar Day's Night", Arctic Circle, Rovaniemi, 1280x720 (the only free Finnish midnight-sun clip found). Denis Despair, CC BY 3.0. <https://commons.wikimedia.org/wiki/File:Polar_Day's_Night-HD.webm>
+- `assets/video/winter.{webm,mp4}` + `winter-poster.jpg` — 6 s cut (76–82 s) of "Aurora borealis timelapse", slowed 4x with blended frames to a gentle ~24 s loop, 1920x1080. Harriniva Hotels & Safaris, CC BY 3.0. <https://commons.wikimedia.org/wiki/File:Aurora_borealis_timelapse.webm>
+- `assets/video/summer.{webm,mp4}` + `summer-poster.jpg` — real-time "Sunset, lake, water" (tagged Finland), 19 s cut (1–20 s) scaled from 4K to 1920x1080. postcardtrip, Pixabay Content License. <https://pixabay.com/videos/sunset-lake-water-nature-evening-26107/>
 
 ## Landmark photos re-exported at 1920px
 
