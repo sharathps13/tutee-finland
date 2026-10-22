@@ -415,15 +415,15 @@
     '    vec2 q = uv - r.xy; q.x *= asp; float dist = length(q);',
     '    float front = age * .32, band = exp(-pow((dist - front) * 14., 2.));',
     '    float w = sin((dist - front) * 70.) * band * exp(-age * 1.15) * (1. - smoothstep(.0, .9, dist));',
-    '    d += (q / max(dist, .0001)) * w * .026; shine += w;',
+    '    d += (q / max(dist, .0001)) * w * .007; shine += w;',
     '  }',
-    '  d += vec2(sin(uv.y * 38. + uTime * 1.3), cos(uv.x * 30. + uTime * 1.1)) * .0009;',
-    '  d += vec2(sin(uv.y * 16. + uTime * 5.), cos(uv.x * 13. + uTime * 4.)) * .028 * uWave;',
+    '  d += vec2(sin(uv.y * 38. + uTime * 1.3), cos(uv.x * 30. + uTime * 1.1)) * .0004;',
+    '  d += vec2(sin(uv.y * 16. + uTime * 5.), cos(uv.x * 13. + uTime * 4.)) * .012 * uWave;',
     '  vec4 a = texture2D(uA, cover(uv + d, uSa)), b = texture2D(uB, cover(uv + d, uSb));',
     '  float edge = n(uv * 3.2 + uTime * .04) * .65 + uv.x * .35;',
     '  float t = smoothstep(edge - .12, edge + .12, uMix * 1.24 - .12);',
     '  float rim = t * (1. - t) * 4. * step(.001, uMix) * step(uMix, .999);',
-    '  vec3 c = mix(a.rgb, b.rgb, t) + vec3(.55, .85, 1.) * max(shine, 0.) * .3 + vec3(.18, .89, .71) * rim * .9;',
+    '  vec3 c = mix(a.rgb, b.rgb, t) + vec3(.55, .85, 1.) * max(shine, 0.) * .06 + vec3(.18, .89, .71) * rim * .55;',
     '  gl_FragColor = vec4(c, 1.);',
     '}'
   ].join('\n');
@@ -547,7 +547,7 @@
     var lastX = -1, lastY = -1, lastT = 0, touched = false;
     pin.addEventListener('pointermove', function (e) {
       var r = pin.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = 1 - (e.clientY - r.top) / r.height, now = performance.now();
-      if (Math.hypot((x - lastX) * r.width, (y - lastY) * r.height) > 42 || now - lastT > 160) {
+      if (Math.hypot((x - lastX) * r.width, (y - lastY) * r.height) > 110 || now - lastT > 450) {
         addRipple(x, y); lastX = x; lastY = y; lastT = now;
       }
       touched = true;
@@ -563,7 +563,7 @@
     function frame(now) {
       // Without a pointer (phones), the odd raindrop keeps the lake alive.
       if (!touched || !finePointer) {
-        if (now > nextDrop) { addRipple(0.45 + Math.random() * 0.5, 0.15 + Math.random() * 0.5); nextDrop = now + 1400 + Math.random() * 1600; }
+        if (now > nextDrop) { addRipple(0.45 + Math.random() * 0.5, 0.15 + Math.random() * 0.5); nextDrop = now + 4000 + Math.random() * 3000; }
       }
       draw(now);
       if (running) raf = requestAnimationFrame(frame);
