@@ -560,7 +560,10 @@
       var o = lastPointer || (i > prev ? [8, 100] : [92, 0]);
       fig.style.setProperty('--ox', o[0] + '%'); fig.style.setProperty('--oy', o[1] + '%');
       if (quick) fig.style.transition = 'none';
-      void fig.offsetWidth;               // commit the origin first so only the radius animates
+      // Close the incoming photo first (it may still be fully open underneath as the
+      // previous season), so the wipe replays on every change, then commit the origin.
+      fig.classList.remove('is-prev', 'is-on');
+      void fig.offsetWidth;
       figs.forEach(function (f, k) { f.classList.toggle('is-prev', k === prev); f.classList.toggle('is-on', k === i); });
       if (quick) { void fig.offsetWidth; fig.style.transition = ''; }
       if (bar) bar.style.width = ((i + 1) / N * 100) + '%';
