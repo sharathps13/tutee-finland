@@ -514,7 +514,7 @@
     if (!sec) return;
     var tabs = $$('[data-ws-tab]', sec), panels = $$('[data-ws-panel]', sec), figs = $$('[data-ws-fig]', sec);
     var win = $('[data-ws-window]', sec), tilt = $('[data-ws-tilt]', sec), bar = $('[data-ws-bar]', sec);
-    var N = tabs.length, STEP = 200, stage = -1, seen = false, lastPointer = null;
+    var N = tabs.length, STEP = 360, stage = -1, seen = false, lastPointer = null;
     var pinMq = window.matchMedia ? window.matchMedia('(min-width: 900px) and (min-height: 620px)') : null;
     function pinned() { return !reduceMotion && !!pinMq && pinMq.matches; }
     function syncLive() { sec.classList.toggle('is-live', pinned()); }
@@ -592,6 +592,22 @@
     });
     show(0, true);
     window.addEventListener('scroll', function () { if (pinned()) show(stageForScroll()); }, { passive: true });
+    // While the stage is pinned, one wheel gesture moves exactly one season
+    // (a fast flick or trackpad swipe can't skip ahead); past the first or
+    // last season the page scrolls on as normal.
+    var wheelLock = 0;
+    window.addEventListener('wheel', function (e) {
+      if (!pinned() || e.ctrlKey || Math.abs(e.deltaY) < 2) return;
+      var r = sec.getBoundingClientRect();
+      if (r.top > 1 || r.bottom < window.innerHeight - 1) return;
+      var dir = e.deltaY > 0 ? 1 : -1, cur = stageForScroll(), next = cur + dir;
+      if (next < 0 || next > N - 1) return;
+      e.preventDefault();
+      var now = performance.now();
+      if (now < wheelLock) return;
+      wheelLock = now + 650;
+      window.scrollTo({ top: sec.offsetTop + STEP * (next + 0.5), behavior: 'smooth' });
+    }, { passive: false });
     if (pinned()) show(stageForScroll(), true);
 
     // Swipe the window (touch) to move through the year.

@@ -912,7 +912,7 @@ main { overflow-x: clip; }
 .ws__grid { display: grid; gap: clamp(24px, 4vw, 56px); align-items: center; }
 @media (min-width: 900px) { .ws__grid { grid-template-columns: .92fr 1.08fr; } }
 @media (min-width: 900px) and (min-height: 620px) {
-  .ws.is-live { height: calc(100vh + 800px); height: calc(100svh + 800px); }
+  .ws.is-live { height: calc(100vh + 1440px); height: calc(100svh + 1440px); }
   .ws.is-live .ws__pin { position: sticky; top: 0; height: 100vh; height: 100svh; display: grid; align-items: center; padding: calc(var(--header-h) + 12px) 0 24px; }
 }
 .ws__copy { display: grid; gap: 18px; align-content: center; min-width: 0; }
