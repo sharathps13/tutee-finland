@@ -1134,89 +1134,103 @@
 
 
   /* ------------------------------------------------------------------ *
-   * Journey — story player. While in view, each step plays for STEP_MS
-   * and the segment bar fills; hover, focus or the Pause button stops it.
-   * Segments, arrows and swipes jump between steps. Reduced motion never
-   * autoplays.
+   * Journey — roadmap. The route is a smooth curve through the six node
+   * centres (horizontal zigzag on desktop, a gentle S down the left on
+   * phones). It draws in on view, a pulse flows along it, and a marker
+   * tours the milestones while in view; hover or focus a card to send
+   * the marker there (the tour pauses meanwhile).
    * ------------------------------------------------------------------ */
-  function initJourneyStories() {
-    var root = $('[data-js2]');
+  function initJourneyRoute() {
+    var root = $('[data-rm]');
     if (!root) return;
-    var segs = $$('[data-js2-seg]', root), panes = $$('[data-js2-pane]', root), imgs = $$('[data-js2-img]', root);
-    var big = $('[data-js2-big]', root), count = $('[data-js2-count]', root), playBtn = $('[data-js2-play]', root), card = $('.js2__card', root);
-    var N = segs.length, STEP_MS = 6500, idx = 0, t = 0, last = 0, raf = 0;
-    var inView = false, hovering = false, paused = reduceMotion, finished = false;
-    function pad(n) { return ('0' + n).slice(-2); }
-    function go(i, user) {
-      i = (i + N) % N;
-      var dir = i >= idx ? 1 : -1;
-      idx = i; t = 0;
-      if (user) finished = false;
-      segs.forEach(function (s, k) {
-        s.classList.toggle('is-on', k === i); s.classList.toggle('is-past', k < i);
-        s.setAttribute('aria-selected', String(k === i));
-      });
-      imgs.forEach(function (im, k) { im.classList.toggle('is-on', k === i); });
-      panes.forEach(function (p, k) {
-        var on = k === i;
-        p.classList.toggle('is-on', on); p.setAttribute('aria-hidden', String(!on));
-        $$('a', p).forEach(function (l) { l.tabIndex = on ? 0 : -1; });
-        if (on && !reduceMotion && p.animate) p.animate([{ opacity: 0, transform: 'translateX(' + (16 * dir) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' });
-      });
-      big.textContent = pad(i + 1); count.textContent = pad(i + 1);
-      root.style.setProperty('--t', 0);
+    var svg = $('[data-rm-svg]', root), steps = $$('[data-rm-step]', root), nodes = $$('[data-rm-node]', root);
+    var NS = 'http://www.w3.org/2000/svg', line, flow, dot, halo, stops = [], L = 0;
+    var active = -1, pos = 0, raf = 0, timer = 0, inView = false, hover = false, drawn = false;
+    function centre(n) {
+      var r = n.getBoundingClientRect(), b = root.getBoundingClientRect();
+      return [r.left + r.width / 2 - b.left, r.top + r.height / 2 - b.top];
     }
-    function playing() { return inView && !hovering && !paused && !finished && !document.hidden; }
-    function frame(now) {
-      raf = 0;
-      if (!playing()) return;
-      t += (now - last) / STEP_MS; last = now;
-      if (t >= 1) {
-        if (idx === N - 1) { t = 1; finished = true; root.style.setProperty('--t', 1); syncBtn(); return; }   // stop on the last step
-        go(idx + 1);
+    function build() {
+      var pts = nodes.map(centre), d = 'M' + pts[0][0] + ' ' + pts[0][1], segs = [];
+      for (var i = 1; i < pts.length; i++) {
+        var a = pts[i - 1], b = pts[i], dx = b[0] - a[0], dy = b[1] - a[1], seg;
+        if (Math.abs(dx) > Math.abs(dy)) seg = 'C' + (a[0] + dx / 2) + ' ' + a[1] + ' ' + (b[0] - dx / 2) + ' ' + b[1] + ' ' + b[0] + ' ' + b[1];
+        else { var w = (i % 2 ? 1 : -1) * 22; seg = 'C' + (a[0] + w) + ' ' + (a[1] + dy / 2) + ' ' + (b[0] + w) + ' ' + (b[1] - dy / 2) + ' ' + b[0] + ' ' + b[1]; }
+        segs.push(seg); d += seg;
       }
-      root.style.setProperty('--t', t.toFixed(4));
-      raf = requestAnimationFrame(frame);
+      svg.innerHTML = '<defs><linearGradient id="rmGrad" gradientUnits="userSpaceOnUse" x1="' + pts[0][0] + '" y1="' + pts[0][1] + '" x2="' + pts[5][0] + '" y2="' + pts[5][1] + '">' +
+        '<stop offset="0" stop-color="#2fe3b4"/><stop offset=".55" stop-color="#8fb8ff"/><stop offset="1" stop-color="#ffd36e"/></linearGradient></defs>' +
+        '<path class="rm__base" d="' + d + '"/><path class="rm__line" d="' + d + '"/><path class="rm__flow" d="' + d + '"/>' +
+        '<circle class="rm__halo" r="9"/><circle class="rm__traveller" r="6"/>';
+      line = $('.rm__line', svg); flow = $('.rm__flow', svg); dot = $('.rm__traveller', svg); halo = $('.rm__halo', svg);
+      L = line.getTotalLength();
+      // Length along the route at each node: measure each prefix.
+      var tmp = document.createElementNS(NS, 'path'), acc = 'M' + pts[0][0] + ' ' + pts[0][1];
+      svg.appendChild(tmp);
+      stops = [0];
+      segs.forEach(function (s) { acc += s; tmp.setAttribute('d', acc); stops.push(tmp.getTotalLength()); });
+      svg.removeChild(tmp);
+      line.style.strokeDasharray = L;
+      line.style.strokeDashoffset = drawn || reduceMotion ? 0 : L;
+      place(stops[Math.max(0, active)]);
     }
-    function sync() { if (playing() && !raf) { last = performance.now(); raf = requestAnimationFrame(frame); } syncBtn(); }
-    function syncBtn() {
-      var on = !paused && !finished;
-      playBtn.setAttribute('aria-label', on ? 'Pause the journey' : 'Play the journey');
-      playBtn.lastChild.textContent = finished ? 'Replay' : (on ? 'Pause' : 'Play');
+    function place(len) {
+      pos = len;
+      var p = line.getPointAtLength(clamp(len, 0, L));
+      dot.setAttribute('cx', p.x); dot.setAttribute('cy', p.y);
+      halo.setAttribute('cx', p.x); halo.setAttribute('cy', p.y);
     }
-    segs.forEach(function (s, i) {
-      s.addEventListener('click', function () { go(i, true); sync(); });
-      s.addEventListener('keydown', function (e) {
-        var k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
-        if (k) { e.preventDefault(); go(idx + k, true); segs[idx].focus(); sync(); }
+    var wide = window.matchMedia ? window.matchMedia('(min-width: 1000px)') : { matches: true };
+    function go(i) {
+      if (i === active) return;
+      active = i;
+      steps.forEach(function (s, k) { s.classList.toggle('is-on', k === i); s.classList.toggle('is-past', k < i); });
+      // On phones the opened card changes the layout, so redraw the route around it.
+      if (!wide.matches) { build(); return; }
+      var from = pos, to = stops[i];
+      cancelAnimationFrame(raf);
+      if (reduceMotion) { place(to); return; }
+      var t0 = performance.now(), dur = 500 + Math.abs(to - from) * 0.6;
+      (function anim(now) {
+        var k = Math.min(1, (now - t0) / dur), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+        place(from + (to - from) * e);
+        if (k < 1) raf = requestAnimationFrame(anim);
+      })(t0);
+    }
+    function tour() {
+      clearTimeout(timer);
+      if (!inView || hover || reduceMotion || !wide.matches) return;
+      timer = setTimeout(function () { go((active + 1) % steps.length); tour(); }, 3200);
+    }
+    steps.forEach(function (s, i) {
+      var c = $('.rm__card', s);
+      [c, nodes[i]].forEach(function (el) {
+        el.addEventListener('mouseenter', function () { hover = true; clearTimeout(timer); go(i); });
+        el.addEventListener('mouseleave', function () { hover = false; tour(); });
       });
+      c.addEventListener('focus', function () { hover = true; clearTimeout(timer); go(i); });
+      c.addEventListener('blur', function () { hover = false; tour(); });
+      c.addEventListener('click', function () { go(i); });
     });
-    $('[data-js2-prev]', root).addEventListener('click', function () { go(idx - 1, true); sync(); });
-    $('[data-js2-next]', root).addEventListener('click', function () { go(idx + 1, true); sync(); });
-    playBtn.addEventListener('click', function () {
-      if (finished) { finished = false; paused = false; go(0, true); }
-      else paused = !paused;
-      sync();
-    });
-    root.addEventListener('mouseenter', function () { hovering = true; });
-    root.addEventListener('mouseleave', function () { hovering = false; sync(); });
-    root.addEventListener('focusin', function () { hovering = true; });
-    root.addEventListener('focusout', function () { hovering = false; sync(); });
-    // Swipe the card to move between steps.
-    var sx = null, sy = 0;
-    card.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse') { sx = e.clientX; sy = e.clientY; } });
-    card.addEventListener('pointerup', function (e) {
-      if (sx == null) return;
-      var dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
-      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3) { go(idx + (dx < 0 ? 1 : -1), true); sync(); }
-    });
-    document.addEventListener('visibilitychange', sync);
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (es) { inView = es[0].isIntersecting; sync(); }, { threshold: 0.45 }).observe(card);
-    }
+    build();
     go(0);
-    syncBtn();
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) {
+        inView = es[0].isIntersecting;
+        if (inView && !drawn) {
+          drawn = true;
+          if (!reduceMotion && line.animate) line.animate([{ strokeDashoffset: L }, { strokeDashoffset: 0 }], { duration: 1600, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
+          else line.style.strokeDashoffset = 0;
+          steps.forEach(function (s, k) { if (!reduceMotion && s.animate) $('.rm__card', s).animate([{ opacity: 0, transform: 'translateY(' + (k % 2 ? -14 : 14) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 600, delay: 200 + k * 150, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' }); });
+        }
+        tour();
+      }, { threshold: 0.3 }).observe(root);
+    } else { drawn = true; line.style.strokeDashoffset = 0; }
+    var rt = 0;
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(build, 150); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(build);
   }
+
 
 
 
@@ -1962,7 +1976,7 @@
   initServices();
   initPostcards();
   initFundingPlan();
-  initJourneyStories();
+  initJourneyRoute();
   initParallax();
   initPointerFx();
   initAccordion();

@@ -553,73 +553,79 @@
 </section>
 
 <!-- ============================== JOURNEY ==============================
-     Compact story player: six segment bars fill like stories and play the
-     journey on their own while in view (hover/focus pauses; reduced motion
-     never autoplays). Click a segment, use the arrows or swipe to jump.
-     initJourneyStories(). -->
-<section class="section js2-sec" id="relocate">
+     Roadmap infographic: six milestones alternate above and below a curved
+     route (drawn by initJourneyRoute from the node positions). The route
+     draws in on view, a pulse flows along it, and a marker tours the
+     milestones; hover or focus a card to send the marker there. -->
+<section class="section rm-sec" id="relocate">
   <div class="container">
     <div class="section-head section-head--split reveal">
       <div>
         <span class="eyebrow"><span data-decrypt="view">Your journey</span></span>
         <h2 class="h2" style="margin-top:12px">From first application to <span class="text-grad">permanent resident.</span></h2>
       </div>
-      <p class="lead">Six steps, one team beside you the whole way. Watch it play, or jump to any step.</p>
+      <p class="lead">Your route to Finland in six milestones &mdash; and one team beside you at every stop.</p>
     </div>
 
-    <div class="js2 reveal" data-js2>
-      <div class="js2__segs" role="tablist" aria-label="Journey steps"><button class="js2__seg is-on" type="button" role="tab" aria-selected="true" aria-controls="js2-panel" data-js2-seg><i><b></b></i><span><small>01</small>Shortlist &amp; apply</span></button><button class="js2__seg" type="button" role="tab" aria-selected="false" aria-controls="js2-panel" data-js2-seg><i><b></b></i><span><small>02</small>Admission &amp; scholarship</span></button><button class="js2__seg" type="button" role="tab" aria-selected="false" aria-controls="js2-panel" data-js2-seg><i><b></b></i><span><small>03</small>Residence permit</span></button><button class="js2__seg" type="button" role="tab" aria-selected="false" aria-controls="js2-panel" data-js2-seg><i><b></b></i><span><small>04</small>Land, study &amp; work</span></button><button class="js2__seg" type="button" role="tab" aria-selected="false" aria-controls="js2-panel" data-js2-seg><i><b></b></i><span><small>05</small>Job-search permit</span></button><button class="js2__seg" type="button" role="tab" aria-selected="false" aria-controls="js2-panel" data-js2-seg><i><b></b></i><span><small>06</small>Permanent residence</span></button></div>
-      <div class="js2__card">
-        <div class="js2__media"><img class="js2__img is-on" src="./assets/img/services/career.jpg" alt="Counsellors planning an application with a student" loading="lazy" decoding="async" data-js2-img><img class="js2__img" src="./assets/img/services/college.jpg" alt="Students on the University of Vaasa campus" loading="lazy" decoding="async" data-js2-img><img class="js2__img" src="./assets/img/services/permit.jpg" alt="A passport held at an aeroplane window" loading="lazy" decoding="async" data-js2-img><img class="js2__img" src="./assets/img/services/arrival.jpg" alt="The arrivals hall at Helsinki Airport" loading="lazy" decoding="async" data-js2-img><img class="js2__img" src="./assets/img/services/settlement.jpg" alt="Keys to a new apartment" loading="lazy" decoding="async" data-js2-img><img class="js2__img" src="./assets/img/services/family.jpg" alt="A family walking together" loading="lazy" decoding="async" data-js2-img>
-          <span class="js2__big" data-js2-big aria-hidden="true">01</span>
-          <button class="js2__play" type="button" data-js2-play aria-label="Pause the journey"><svg class="ico ico-sm"><use href="#i-clock"/></svg><span>Pause</span></button>
+    <div class="rm" data-rm>
+      <svg class="rm__svg" data-rm-svg aria-hidden="true"></svg>
+      <ol class="rm__steps">
+      <li class="rm__step" data-rm-step style="--col:1;--row:1">
+        <span class="rm__node" data-rm-node><svg class="ico"><use href="#i-cap"/></svg><b>01</b></span>
+        <div class="rm__card" tabindex="0">
+          <div class="rm__top"><img class="rm__thumb" src="./assets/img/services/career.jpg" alt="" loading="lazy" decoding="async"><span class="rm__phase">Step 01 &middot; Plan</span></div>
+          <h3 class="rm__title">Shortlist &amp; apply</h3>
+          <p>We shortlist programmes that fit your profile and prepare your Studyinfo application, motivation letter and documents.</p>
+          <ul class="rm__chips"><li>Studyinfo</li><li>Motivation letter</li></ul>
         </div>
-        <div class="js2__body" id="js2-panel" role="tabpanel" aria-live="polite">
-          <div class="js2__panes">
-          <div class="js2__pane is-on" data-js2-pane>
-            <span class="js2__phase">Step 01 &middot; Plan</span>
-            <h3 class="js2__title">Shortlist &amp; apply</h3>
-            <p>We shortlist programmes that fit your profile and prepare your Studyinfo application, motivation letter and documents.</p>
-            <ul class="js2__chips"><li>Studyinfo application</li><li>Motivation letter</li><li>Document review</li></ul>
-          </div>
-          <div class="js2__pane" data-js2-pane aria-hidden="true">
-            <span class="js2__phase">Step 02 &middot; Admission</span>
-            <h3 class="js2__title">Admission &amp; scholarship</h3>
-            <p>Offers usually arrive with the institution's scholarship decision. We help you compare them and accept the right one.</p>
-            <ul class="js2__chips"><li>Scholarship decision</li><li>Offers compared</li><li>Acceptance</li></ul>
-          </div>
-          <div class="js2__pane" data-js2-pane aria-hidden="true">
-            <span class="js2__phase">Step 03 &middot; Permit</span>
-            <h3 class="js2__title">Residence permit</h3>
-            <p>Apply on Enter Finland for a continuous A permit covering your whole degree, with a D visa to fly early. No credibility interview.</p>
-            <ul class="js2__chips"><li>Enter Finland</li><li>A permit &middot; whole degree</li><li>D visa</li><li>No interview</li></ul>
-          </div>
-          <div class="js2__pane" data-js2-pane aria-hidden="true">
-            <span class="js2__phase">Step 04 &middot; Arrival</span>
-            <h3 class="js2__title">Land, study &amp; work</h3>
-            <p>Housing, registration and your identity code sorted. Work an average of 30 hours a week in any field, no separate work permit.</p>
-            <ul class="js2__chips"><li>Housing</li><li>Identity code</li><li>30 h a week average</li></ul>
-          </div>
-          <div class="js2__pane" data-js2-pane aria-hidden="true">
-            <span class="js2__phase">Step 05 &middot; Career</span>
-            <h3 class="js2__title">Job-search permit</h3>
-            <p>Up to two years after graduating to look for work or start a business &mdash; no sponsor required &mdash; then a work-based permit.</p>
-            <ul class="js2__chips"><li>Up to 2 years</li><li>No sponsor needed</li><li>Then a work permit</li></ul>
-          </div>
-          <div class="js2__pane" data-js2-pane aria-hidden="true">
-            <span class="js2__phase">Step 06 &middot; Settle</span>
-            <h3 class="js2__title">Permanent residence</h3>
-            <p>After six years &mdash; or with no residence-period requirement at all once you hold a Finnish degree and the required Finnish or Swedish.</p>
-            <ul class="js2__chips"><li>After 6 years</li><li>Or: Finnish degree + language</li></ul><a class="btn btn-primary btn-sm" href="#contact" data-magnet>Plan my route<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
-          </div>
-          </div>
-          <div class="js2__nav">
-            <button class="round-btn" type="button" aria-label="Previous step" data-js2-prev><svg class="ico ico-sm"><use href="#i-left"/></svg></button>
-            <span class="js2__count"><b data-js2-count>01</b> / 06</span>
-            <button class="round-btn" type="button" aria-label="Next step" data-js2-next><svg class="ico ico-sm"><use href="#i-right"/></svg></button>
-          </div>
+      </li>
+      <li class="rm__step" data-rm-step style="--col:2;--row:3">
+        <span class="rm__node" data-rm-node><svg class="ico"><use href="#i-award"/></svg><b>02</b></span>
+        <div class="rm__card" tabindex="0">
+          <div class="rm__top"><img class="rm__thumb" src="./assets/img/services/college.jpg" alt="" loading="lazy" decoding="async"><span class="rm__phase">Step 02 &middot; Admission</span></div>
+          <h3 class="rm__title">Admission &amp; scholarship</h3>
+          <p>Offers usually arrive with the institution's scholarship decision. We help you compare them and accept the right one.</p>
+          <ul class="rm__chips"><li>Scholarship decision</li><li>Offers compared</li></ul>
         </div>
-      </div>
+      </li>
+      <li class="rm__step" data-rm-step style="--col:3;--row:1">
+        <span class="rm__node" data-rm-node><svg class="ico"><use href="#i-shield"/></svg><b>03</b></span>
+        <div class="rm__card" tabindex="0">
+          <div class="rm__top"><img class="rm__thumb" src="./assets/img/services/permit.jpg" alt="" loading="lazy" decoding="async"><span class="rm__phase">Step 03 &middot; Permit</span></div>
+          <h3 class="rm__title">Residence permit</h3>
+          <p>Apply on Enter Finland for a continuous A permit covering your whole degree, with a D visa to fly early. No credibility interview.</p>
+          <ul class="rm__chips"><li>A permit &middot; whole degree</li><li>D visa</li></ul>
+        </div>
+      </li>
+      <li class="rm__step" data-rm-step style="--col:4;--row:3">
+        <span class="rm__node" data-rm-node><svg class="ico"><use href="#i-plane"/></svg><b>04</b></span>
+        <div class="rm__card" tabindex="0">
+          <div class="rm__top"><img class="rm__thumb" src="./assets/img/services/arrival.jpg" alt="" loading="lazy" decoding="async"><span class="rm__phase">Step 04 &middot; Arrival</span></div>
+          <h3 class="rm__title">Land, study &amp; work</h3>
+          <p>Housing, registration and your identity code sorted. Work an average of 30 hours a week in any field, no separate work permit.</p>
+          <ul class="rm__chips"><li>Identity code</li><li>30 h a week</li></ul>
+        </div>
+      </li>
+      <li class="rm__step" data-rm-step style="--col:5;--row:1">
+        <span class="rm__node" data-rm-node><svg class="ico"><use href="#i-brief"/></svg><b>05</b></span>
+        <div class="rm__card" tabindex="0">
+          <div class="rm__top"><img class="rm__thumb" src="./assets/img/services/settlement.jpg" alt="" loading="lazy" decoding="async"><span class="rm__phase">Step 05 &middot; Career</span></div>
+          <h3 class="rm__title">Job-search permit</h3>
+          <p>Up to two years after graduating to look for work or start a business &mdash; no sponsor required &mdash; then a work-based permit.</p>
+          <ul class="rm__chips"><li>Up to 2 years</li><li>No sponsor</li></ul>
+        </div>
+      </li>
+      <li class="rm__step" data-rm-step style="--col:6;--row:3">
+        <span class="rm__node" data-rm-node><svg class="ico"><use href="#i-check"/></svg><b>06</b></span>
+        <div class="rm__card" tabindex="0">
+          <div class="rm__top"><img class="rm__thumb" src="./assets/img/services/family.jpg" alt="" loading="lazy" decoding="async"><span class="rm__phase">Step 06 &middot; Settle</span></div>
+          <h3 class="rm__title">Permanent residence</h3>
+          <p>After six years &mdash; or with no residence-period requirement at all once you hold a Finnish degree and the required Finnish or Swedish.</p>
+          <ul class="rm__chips"><li>After 6 years</li><li>Degree + language</li></ul>
+            <a class="rm__cta" href="#contact">Plan my route<svg class="ico ico-sm"><use href="#i-arrow"/></svg></a>
+        </div>
+      </li>
+      </ol>
     </div>
   </div>
 </section>

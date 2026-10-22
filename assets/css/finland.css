@@ -1135,48 +1135,68 @@ main { overflow-x: clip; }
 .fpl__partners-label .ico { color: var(--fi-blue); }
 @media (prefers-reduced-motion: reduce) { .fpl__src, .fpl__toggle, .fpl__toggle i, .fpl__cost, .fpl__cost::before, .fpl__meter i { transition: none; } .fpl__tags span { animation: none; } }
 
-/* ====================================================== JOURNEY (STORIES)
-   One card: photo + content; six segment bars fill as the story plays.
-   --t (0–1) is the current segment's fill, set by JS each frame. */
-.js2-sec { position: relative; color: #dfe8f5; background: radial-gradient(70% 60% at 100% 0%, rgba(18,53,122,.9), rgba(18,53,122,0) 60%), radial-gradient(50% 50% at 0% 100%, rgba(47,227,180,.1), rgba(47,227,180,0) 60%), var(--night); }
-.js2-sec .h2 { color: #fff; } .js2-sec .lead { color: #a9bad3; } .js2-sec .eyebrow { color: var(--aurora); }
-.js2 { display: grid; gap: 14px; }
-.js2__segs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
-.js2__seg { display: grid; gap: 10px; padding: 0; text-align: left; color: #6f84a6; }
-.js2__seg i { position: relative; display: block; height: 4px; border-radius: 4px; overflow: hidden; background: rgba(255,255,255,.14); }
-.js2__seg b { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: 4px; background: linear-gradient(90deg, var(--aurora), #8fb8ff); }
-.js2__seg.is-past b { width: 100%; }
-.js2__seg.is-on b { width: calc(var(--t, 0) * 100%); }
-.js2__seg span { display: grid; gap: 2px; font-size: 13px; font-weight: 700; line-height: 1.25; transition: color .25s; }
-.js2__seg small { font-size: 11px; font-weight: 800; letter-spacing: .12em; color: #50648a; transition: color .25s; }
-.js2__seg:hover span, .js2__seg.is-past span { color: #b9c8de; }
-.js2__seg.is-on span { color: #fff; } .js2__seg.is-on small, .js2__seg.is-past small { color: var(--aurora); }
-.js2__seg:focus-visible { outline: 2px solid var(--aurora); outline-offset: 4px; border-radius: 4px; }
-@media (max-width: 760px) { .js2__seg span { display: none; } .js2__segs { gap: 5px; } }
+/* ======================================================= JOURNEY (ROUTE)
+   Desktop: a 7-column grid; milestone i spans columns i+1..i+2 so its
+   node sits on grid line i+2. Even steps sit above the route, odd below.
+   Phones: one column with the route running down the left. */
+.rm-sec { position: relative; color: #dfe8f5; background: radial-gradient(60% 60% at 50% 50%, rgba(18,53,122,.65), rgba(18,53,122,0) 70%), radial-gradient(40% 40% at 0% 0%, rgba(47,227,180,.08), rgba(47,227,180,0) 70%), var(--night); }
+.rm-sec .h2 { color: #fff; } .rm-sec .lead { color: #a9bad3; } .rm-sec .eyebrow { color: var(--aurora); }
+.rm { position: relative; }
+.rm__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.rm__base { fill: none; stroke: rgba(255,255,255,.14); stroke-width: 2; stroke-dasharray: 3 7; }
+.rm__line { fill: none; stroke: url(#rmGrad); stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 0 6px rgba(47,227,180,.55)); }
+.rm__flow { fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 2 220; opacity: .8; animation: rmFlow 4s linear infinite; }
+@keyframes rmFlow { to { stroke-dashoffset: -222; } }
+.rm__traveller { fill: #fff; filter: drop-shadow(0 0 8px var(--aurora)) drop-shadow(0 0 2px #fff); }
+.rm__halo { fill: none; stroke: var(--aurora); stroke-width: 1.5; opacity: .6; transform-box: fill-box; transform-origin: center; animation: rmHalo 1.8s ease-out infinite; }
+@keyframes rmHalo { from { transform: scale(.6); opacity: .9; } to { transform: scale(2.2); opacity: 0; } }
 
-.js2__card { display: grid; grid-template-columns: minmax(0, 1fr); border-radius: 28px; overflow: hidden; background: linear-gradient(160deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
-  border: 1px solid rgba(255,255,255,.1); box-shadow: 0 40px 80px -44px rgba(0,0,0,.9); touch-action: pan-y; }
-@media (min-width: 860px) { .js2__card { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); min-height: 430px; } }
-.js2__media { position: relative; min-height: 230px; overflow: hidden; background: #0b1f45; isolation: isolate; }
-.js2__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.12); transition: opacity .8s var(--ease), transform 7s linear; }
-.js2__img.is-on { opacity: 1; transform: scale(1); }
-.js2__media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(4,16,42,0) 55%, rgba(4,16,42,.55)), linear-gradient(0deg, rgba(4,16,42,.65), rgba(4,16,42,0) 45%); }
-.js2__big { position: absolute; z-index: 1; left: 22px; bottom: 6px; font-size: clamp(4rem, 3rem + 4vw, 7.5rem); font-weight: 700; line-height: 1; letter-spacing: -.06em; color: rgba(255,255,255,.92); }
-.js2__play { position: absolute; z-index: 1; top: 16px; left: 16px; display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; color: #fff;
-  background: rgba(4,16,42,.5); border: 1px solid rgba(255,255,255,.2); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
-.js2__play .ico { color: var(--aurora); }
-.js2__body { position: relative; display: grid; grid-template-rows: 1fr auto; padding: clamp(22px, 3vw, 38px); }
-.js2__panes { display: grid; }
-.js2__pane { grid-area: 1 / 1; display: grid; gap: 14px; align-content: center; justify-items: start; }
-.js2__pane:not(.is-on) { visibility: hidden; }
-.js2__phase { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--aurora); }
-.js2__title { font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.5rem); line-height: 1.06; letter-spacing: -.03em; color: #fff; }
-.js2__pane p { font-size: 15.5px; line-height: 1.7; color: #a9bad3; max-width: 48ch; }
-.js2__chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.js2__chips li { padding: 5px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 700; color: #dfe8f5; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); }
-.js2__nav { display: flex; align-items: center; gap: 14px; margin-top: 22px; }
-.js2__nav .round-btn { background: transparent; color: #fff; border-color: rgba(255,255,255,.25); }
-.js2__nav .round-btn:hover { background: var(--aurora); border-color: var(--aurora); color: var(--night); }
-.js2__count { font-size: 14px; font-weight: 700; color: #6f84a6; font-variant-numeric: tabular-nums; }
-.js2__count b { color: #fff; font-size: 1.1rem; }
-@media (prefers-reduced-motion: reduce) { .js2__img { transition: opacity .2s; transform: none; } .js2__img.is-on { transform: none; } }
+.rm__steps { list-style: none; margin: 0; padding: 0; position: relative; display: grid; gap: 14px; }
+.rm__step { position: relative; display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; align-items: start; }
+.rm__node { position: relative; z-index: 1; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; color: #8ea3c4; background: #0b1f45;
+  border: 2px solid rgba(255,255,255,.18); transition: color .35s, background .35s, border-color .35s, box-shadow .35s, transform .35s var(--ease); }
+.rm__node .ico { width: 20px; height: 20px; }
+.rm__node b { position: absolute; top: -6px; right: -8px; min-width: 22px; height: 20px; padding: 0 5px; border-radius: 999px; display: grid; place-items: center; font-size: 10.5px; font-weight: 800;
+  color: var(--night); background: #b9c8de; transition: background .35s; }
+.rm__step.is-past .rm__node { color: var(--aurora); border-color: rgba(47,227,180,.6); }
+.rm__step.is-past .rm__node b { background: var(--aurora); }
+.rm__step.is-on .rm__node { color: var(--night); background: var(--aurora); border-color: var(--aurora); box-shadow: 0 0 0 6px rgba(47,227,180,.18), 0 0 30px rgba(47,227,180,.5); transform: scale(1.08); }
+.rm__step.is-on .rm__node b { background: #fff; }
+.rm__card { position: relative; display: grid; gap: 8px; align-content: start; padding: 16px 18px; border-radius: 18px; background: linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  border: 1px solid rgba(255,255,255,.1); outline: none; transition: background .35s, border-color .35s, transform .35s var(--ease), box-shadow .35s; }
+.rm__card:hover, .rm__card:focus-visible { border-color: rgba(255,255,255,.22); }
+.rm__step.is-on .rm__card { background: linear-gradient(160deg, rgba(47,227,180,.14), rgba(143,184,255,.06)); border-color: rgba(47,227,180,.5); box-shadow: 0 24px 50px -30px rgba(0,0,0,.9); transform: translateY(-3px); }
+.rm__top { display: flex; align-items: center; gap: 10px; }
+.rm__thumb { width: 38px; height: 38px; flex: none; border-radius: 12px; object-fit: cover; box-shadow: 0 0 0 2px rgba(255,255,255,.12); }
+.rm__phase { font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--aurora); }
+.rm__title { font-size: 1.12rem; line-height: 1.2; letter-spacing: -.01em; color: #fff; }
+.rm__card p { font-size: 13.5px; line-height: 1.55; color: #a9bad3; }
+.rm__chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.rm__chips li { padding: 3px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 700; color: #dfe8f5; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); }
+.rm__cta { justify-self: start; display: inline-flex; align-items: center; gap: 6px; margin-top: 2px; font-size: 13.5px; font-weight: 800; color: var(--aurora); }
+.rm__cta .ico { transition: transform .25s; } .rm__cta:hover .ico { transform: translateX(3px); }
+
+@media (min-width: 1000px) {
+  .rm__steps { grid-template-columns: repeat(7, minmax(0, 1fr)); grid-template-rows: auto 120px auto; gap: 0 16px; }
+  .rm__step { display: contents; }
+  .rm__card { grid-column: var(--col) / span 2; grid-row: var(--row); }
+  .rm__step:nth-child(odd) .rm__card { align-self: end; margin-bottom: 18px; }
+  .rm__step:nth-child(even) .rm__card { align-self: start; margin-top: 18px; }
+  .rm__node { grid-column: var(--col) / span 2; grid-row: 2; justify-self: center; }
+  .rm__step:nth-child(odd) .rm__node { align-self: start; }
+  .rm__step:nth-child(even) .rm__node { align-self: end; }
+  .rm__step.is-on:nth-child(odd) .rm__card { transform: translateY(-4px); }
+  .rm__step.is-on:nth-child(even) .rm__card { transform: translateY(4px); }
+  /* A short stem from each card to its node. */
+  .rm__card::after { content: ""; position: absolute; left: 50%; width: 2px; height: 18px; margin-left: -1px; background: rgba(255,255,255,.18); }
+  .rm__step:nth-child(odd) .rm__card::after { top: 100%; }
+  .rm__step:nth-child(even) .rm__card::after { bottom: 100%; }
+  .rm__step.is-on .rm__card::after { background: var(--aurora); }
+}
+/* Phones: only the selected milestone shows its text, keeping the list short. */
+@media (max-width: 999px) {
+  .rm__step:not(.is-on) .rm__card p, .rm__step:not(.is-on) .rm__chips, .rm__step:not(.is-on) .rm__cta { display: none; }
+  .rm__step:not(.is-on) .rm__card { cursor: pointer; padding-block: 12px; }
+  .rm__step:not(.is-on) .rm__card::after { content: "+"; position: absolute; right: 14px; top: 50%; width: 24px; height: 24px; margin-top: -12px; border-radius: 50%; display: grid; place-items: center; font-size: 16px; font-weight: 700; line-height: 1; color: var(--aurora); border: 1px solid rgba(47,227,180,.4); }
+}
+@media (prefers-reduced-motion: reduce) { .rm__flow, .rm__halo { animation: none; } .rm__node, .rm__card { transition: none; } }
