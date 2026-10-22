@@ -167,10 +167,7 @@ ul { margin: 0; padding: 0; list-style: none; }
   box-shadow: 0 8px 24px -12px rgba(4,16,42,.45), inset 0 1px 0 rgba(255,255,255,.8); transition: box-shadow .3s, background .3s; }
 .logo__plate img { image-rendering: auto; }
 .header.is-scrolled .logo__plate { box-shadow: 0 4px 14px -10px rgba(4,16,42,.4), inset 0 1px 0 rgba(255,255,255,.8); border-color: var(--line); }
-.logo img { height: 54px; width: auto; }
-@media (max-width: 479px) { .logo img { height: 46px; } }
-.logo--drawer { height: 48px; width: auto; }
-.logo--footer { height: 84px; width: auto; }
+
 .logo__tag { display: none; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #fff; padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); }
 .header.is-scrolled .logo__tag { color: var(--fi-blue); background: var(--ice-2); border-color: transparent; }
 @media (min-width: 480px) { .logo__tag { display: inline-flex; } }
@@ -1418,4 +1415,19 @@ main { overflow-x: clip; }
 .ft__base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 20px; margin-top: 34px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
 .ft__base .credits summary { cursor: pointer; font-weight: 700; }
 .ft__base .credits[open] { flex-basis: 100%; }
+
+/* ========================================================== BRAND MARK
+   The master emblem + live lettering in the logo's own fonts and colours,
+   so the words stay razor-sharp at every size. */
+.brandmark { display: inline-flex; align-items: center; gap: .32em; font-size: 26px; line-height: 1; }
+.brandmark__icon { width: 2.15em; height: 2.15em; margin-block: -.15em; flex: none; object-fit: contain; }
+.brandmark__txt { display: grid; justify-items: end; gap: .08em; }
+.brandmark__name { font-family: "Alegreya", Georgia, serif; font-weight: 800; font-size: 1em; letter-spacing: -.005em; white-space: nowrap; }
+.bm-t { color: #023f40; } .bm-c { color: #8b0203; }
+.brandmark__tag { font-family: "Alegreya SC", Georgia, serif; font-weight: 700; font-size: .5em; letter-spacing: .03em; text-transform: uppercase; color: #8b0203; white-space: nowrap; }
+.brandmark--header { font-size: 24px; }
+.brandmark--drawer { font-size: 22px; }
+.brandmark--footer { font-size: 34px; }
+@media (max-width: 479px) { .brandmark--header { font-size: 21px; } }
+.logo__plate .brandmark { padding: 2px 4px; }
 
