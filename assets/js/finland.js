@@ -677,6 +677,10 @@
     var panel = $('#svc-panel'), content = $('[data-svc-content]', root), mark = $('[data-svc-mark]', root);
     var ghost = $('[data-svc-ghost]', root), points = $('[data-svc-points]', root), dots = $$('[data-svc-dot]', root);
     var line = $('.orb__track-line', root), stage = $('.orb__stage', root);
+    var wash = $('[data-svc-wash]', root), phase = $('[data-svc-phase]', root), underline = $('.orb__underline', root);
+    // Where each service sits: planning, applying, or arriving and settling.
+    var PHASES = ['plan', 'plan', 'plan', 'apply', 'apply', 'arrive', 'apply', 'arrive', 'arrive'];
+    var PHASE_NAMES = { plan: 'Plan', apply: 'Apply', arrive: 'Arrive & settle' };
     var title = $('[data-svc-title]', root), tag = $('[data-svc-tagline]', root), desc = $('[data-svc-desc]', root), count = $('[data-svc-count]', root);
     var N = nodes.length, STEP = 360 / N, idx = 0, rot = 0, raf = 0, lastFrame = 0;
     var wide = window.matchMedia ? window.matchMedia('(min-width: 960px)') : null;
@@ -767,6 +771,8 @@
       count.textContent = pad(i + 1) + ' / ' + pad(N);
       if (mark) mark.setAttribute('href', '#' + node.getAttribute('data-icon'));
       if (ghost) ghost.textContent = pad(i + 1);
+      if (wash && bgs[i]) wash.src = bgs[i].getAttribute('src');
+      if (phase) { var ph = PHASES[i] || 'plan'; phase.setAttribute('data-phase', ph); phase.textContent = PHASE_NAMES[ph]; }
       if (points && s.points) points.innerHTML = s.points.map(function (p) {
         return '<li><svg class="ico ico-sm"><use href="#i-check"/></svg><span>' + escapeHtml(p) + '</span></li>';
       }).join('');
@@ -778,6 +784,12 @@
         if (content.animate) content.animate([{ opacity: 0, transform: 'translateX(' + (18 * dir) + 'px)' }, { opacity: 1, transform: 'none' }],
           { duration: 320, easing: 'cubic-bezier(.2,.7,.2,1)' });
         slot.classList.remove('is-pulse'); void slot.offsetWidth; slot.classList.add('is-pulse');
+        if (wash && wash.animate) wash.animate([{ opacity: 0 }, { opacity: 0.5 }], { duration: 600, easing: 'ease-out' });
+        if (underline && underline.animate) underline.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: 500, delay: 120, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
+        $$('li', points).forEach(function (li, k) {
+          if (li.animate) li.animate([{ opacity: 0, transform: 'translateY(10px) scale(.98)' }, { opacity: 1, transform: 'none' }],
+            { duration: 380, delay: 90 + k * 70, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
+        });
       }
     }
 
