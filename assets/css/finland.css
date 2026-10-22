@@ -1327,3 +1327,23 @@ main { overflow-x: clip; }
 .lf__offices { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; line-height: 1.5; color: #8ea3c4; }
 .lf__offices .ico { flex: none; margin-top: 2px; color: var(--aurora); }
 @media (prefers-reduced-motion: reduce) { .lf__submit::after, .lp__name.is-typing::after { animation: none; } .lf__step.is-enter, .lf__step.is-enter-back, .lp__rows dd.is-set { animation: none; } .lp { transition: none; } }
+
+/* ======================================================= SHORTLIST FAB */
+.slfab { position: fixed; left: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 55; display: flex; align-items: center; gap: 12px; padding: 8px 16px 8px 8px; border-radius: 999px;
+  color: #fff; background: linear-gradient(120deg, var(--brand), #b4232c); box-shadow: 0 18px 36px -16px rgba(122,15,20,.8), 0 0 0 1px rgba(255,255,255,.15) inset;
+  transition: transform .4s var(--ease), opacity .3s; }
+.slfab[hidden] { display: none; }
+.slfab.is-away { opacity: 0; transform: translateY(20px); pointer-events: none; }
+.slfab:hover { transform: translateY(-2px); }
+.slfab__heart { position: relative; width: 42px; height: 42px; flex: none; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.16); }
+.slfab__heart .ico { width: 20px; height: 20px; fill: currentColor; }
+.slfab__heart b { position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; display: grid; place-items: center; font-size: 11px; font-weight: 800; color: var(--brand); background: #fff; }
+.slfab__txt { display: grid; line-height: 1.2; }
+.slfab__txt b { font-size: 14px; }
+.slfab__txt small { font-size: 12px; color: #ffd9dc; font-weight: 600; }
+.slfab__go { transition: transform .25s; } .slfab:hover .slfab__go { transform: translateX(3px); }
+.slfab.is-bump .slfab__heart { animation: slfabBump .5s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes slfabBump { 40% { transform: scale(1.25); } }
+@media (max-width: 899px) { .slfab { bottom: calc(84px + env(safe-area-inset-bottom)); padding: 6px 14px 6px 6px; } .slfab__heart { width: 36px; height: 36px; } }
+@media (prefers-reduced-motion: reduce) { .slfab, .slfab__go { transition: none; } .slfab.is-bump .slfab__heart { animation: none; } }
+

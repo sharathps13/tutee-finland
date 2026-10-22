@@ -1585,6 +1585,29 @@
     mirror();
   }
 
+  /* ------------------------------------------------------------------ *
+   * Shortlist reminder — a floating button that shows how many
+   * universities are shortlisted and leads to the lead form. Hidden while
+   * the form is on screen; bumps when the count goes up.
+   * ------------------------------------------------------------------ */
+  function initShortlistFab() {
+    var fab = $('[data-slfab]'), SL = window.TCShortlist;
+    if (!fab || !SL) return;
+    var count = $('[data-slfab-count]', fab), label = $('[data-slfab-label]', fab), last = -1;
+    function sync() {
+      var n = SL.all().length;
+      fab.hidden = n === 0;
+      count.textContent = n;
+      label.textContent = n + (n === 1 ? ' university' : ' universities') + ' shortlisted';
+      if (last >= 0 && n > last && !reduceMotion) { fab.classList.remove('is-bump'); void fab.offsetWidth; fab.classList.add('is-bump'); }
+      last = n;
+    }
+    var form = $('#contact');
+    if (form && 'IntersectionObserver' in window) new IntersectionObserver(function (es) { fab.classList.toggle('is-away', es[0].isIntersecting); }, { threshold: 0.15 }).observe(form);
+    SL.onChange(sync);
+    sync();
+  }
+
   function syncShortlist() {
     var SL = window.TCShortlist;
     if (!SL) return;
@@ -2111,6 +2134,7 @@
   initAccordion();
   initForms();
   initLeadFlow();
+  initShortlistFab();
   initChat();
   initClickSpark();
   initCredits();
