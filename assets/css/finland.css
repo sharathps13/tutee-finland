@@ -1418,16 +1418,20 @@ main { overflow-x: clip; }
 
 /* ========================================================== BRAND MARK
    The master emblem + live lettering in the logo's own fonts and colours,
-   so the words stay razor-sharp at every size. */
-.brandmark { display: inline-flex; align-items: center; gap: .32em; font-size: 26px; line-height: 1; }
-.brandmark__icon { width: 2.15em; height: 2.15em; margin-block: -.15em; flex: none; object-fit: contain; }
-.brandmark__txt { display: grid; justify-items: end; gap: .08em; }
-.brandmark__name { font-family: "Alegreya", Georgia, serif; font-weight: 800; font-size: 1em; letter-spacing: -.005em; white-space: nowrap; }
+   so the words stay razor-sharp at every size. Laid out exactly like the
+   master artwork (1200x488): 1em = the logo's height, every position and
+   size below is measured off that file. */
+.brandmark { position: relative; display: inline-block; flex: none; height: 1em; width: 2.459em; font-size: 56px; line-height: 1; }
+.brandmark__icon { position: absolute; left: 0; top: 0; height: 1em; width: auto; }
+.brandmark__txt { position: absolute; inset: 0; }
+.brandmark__name, .brandmark__tag { position: absolute; white-space: nowrap; line-height: 1; }
+.brandmark__name { left: 33.1%; top: 40.1%; font-family: "Alegreya", Georgia, serif; font-weight: 800; font-size: .243em; }
 .bm-t { color: #023f40; } .bm-c { color: #8b0203; }
-.brandmark__tag { font-family: "Alegreya SC", Georgia, serif; font-weight: 700; font-size: .5em; letter-spacing: .03em; text-transform: uppercase; color: #8b0203; white-space: nowrap; }
-.brandmark--header { font-size: 24px; }
-.brandmark--drawer { font-size: 22px; }
-.brandmark--footer { font-size: 34px; }
-@media (max-width: 479px) { .brandmark--header { font-size: 21px; } }
-.logo__plate .brandmark { padding: 2px 4px; }
+.brandmark__tag { right: .4%; top: 64.6%; font-family: "Alegreya SC", Georgia, serif; font-weight: 700; font-size: .122em; letter-spacing: .02em; text-transform: uppercase; color: #8b0203; }
+.brandmark--header { font-size: 60px; }
+.brandmark--drawer { font-size: 56px; }
+.brandmark--footer { font-size: 84px; }
+@media (max-width: 479px) { .brandmark--header { font-size: 58px; } }
+.logo__plate:has(.brandmark--header) { padding: 2px 8px; }
+.logo__plate .brandmark { margin: 0 2px; }
 
