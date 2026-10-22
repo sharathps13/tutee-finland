@@ -383,70 +383,79 @@
 </section>
 
 <!-- ============================== UNIVERSITIES ==============================
-     Map of Finland with a pin per university city. Hover a pin or a list row
-     to preview, click to select: an aurora arc flies from the last city and
-     the spotlight card shows the campus city, rank and strengths. Type and
-     field chips filter both. Shortlist hearts feed the evaluation form.
-     initUniMap(). -->
-<section class="section um-sec" id="universities">
+     Postcards from Finland: each QS-ranked institution is a postage stamp;
+     picking one "mails" a vintage postcard (city name filled with the city
+     photo, rank stamp, postmark). Click the postcard to flip it for the
+     details and the shortlist heart. initPostcards(). -->
+<section class="section pc-sec" id="universities">
   <div class="container">
     <div class="section-head section-head--split reveal">
       <div>
         <span class="eyebrow"><span data-decrypt="view">Top ranked universities</span></span>
-        <h2 class="h2" style="margin-top:12px">Your place at Finland's <span class="text-blue">best institutions.</span></h2>
+        <h2 class="h2" style="margin-top:12px">Postcards from Finland's <span class="text-blue">best institutions.</span></h2>
       </div>
-      <p class="lead">Twelve Finnish institutions rank in the QS World University Rankings: Europe 2026. Explore them on the map, filter by what you want to study and shortlist your favourites.</p>
+      <p class="lead">Twelve Finnish institutions rank in the QS World University Rankings: Europe 2026. Pick a stamp to receive its postcard, then flip it over for the details.</p>
     </div>
 
-    <div class="um reveal" data-um>
-      <div class="um__filters">
-        <div class="um__chips" role="group" aria-label="Institution type"><button class="um__chip is-on" type="button" aria-pressed="true" data-um-type="all">All 12</button><button class="um__chip" type="button" aria-pressed="false" data-um-type="uni">Universities</button><button class="um__chip" type="button" aria-pressed="false" data-um-type="uas">Applied sciences</button></div>
-        <div class="um__chips um__chips--fields" role="group" aria-label="Field of study"><button class="um__chip um__chip--field" type="button" aria-pressed="false" data-um-field="tech">Technology</button><button class="um__chip um__chip--field" type="button" aria-pressed="false" data-um-field="business">Business</button><button class="um__chip um__chip--field" type="button" aria-pressed="false" data-um-field="health">Health</button><button class="um__chip um__chip--field" type="button" aria-pressed="false" data-um-field="science">Science</button><button class="um__chip um__chip--field" type="button" aria-pressed="false" data-um-field="society">Society &amp; education</button><button class="um__chip um__chip--field" type="button" aria-pressed="false" data-um-field="arts">Arts &amp; design</button></div>
-      </div>
-      <div class="um__grid">
-        <div class="um__map" data-um-map>
-          <div class="um__tilt" data-um-tilt>
-            <svg class="um__svg" viewBox="0 0 320 642" role="img" aria-label="Map of Finland with the cities of its twelve QS-ranked institutions" data-um-svg></svg>
-            <div class="um__tip" data-um-tip hidden></div>
-          </div>
-          <div class="um__legend" aria-hidden="true"><span><i></i>University city</span><span><i class="is-count">2</i>Institutions there</span></div>
-          <span class="um__hint" aria-hidden="true"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Hover a city, click to explore</span>
-        </div>
-
-        <div class="um__side">
-          <article class="um__spot" aria-live="polite" data-um-spot>
-            <div class="um__media" aria-hidden="true"><img src="./assets/img/cities/espoo.jpg" alt="" data-um-img><img src="./assets/img/cities/espoo.jpg" alt="" data-um-img2></div>
-            <div class="um__spot-body" data-um-body>
-              <div class="um__badges"><span class="um__qs">#<b data-um-rank>1</b> in Finland <small>QS Europe 2026</small></span><span class="um__type" data-um-kind>University</span></div>
-              <h3 class="um__name" data-um-name>Aalto University</h3>
-              <span class="um__where"><svg class="ico ico-sm"><use href="#i-pin"/></svg><span data-um-where>Espoo, Uusimaa</span></span>
-              <div class="um__fields" data-um-fields><span>Technology</span><span>Business</span><span>Arts &amp; design</span></div>
-              <div class="um__actions">
-                <a class="btn btn-primary btn-sm" href="./university.html?id=aalto-university" data-um-link>View university<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
-                <button class="um__heart" type="button" aria-pressed="false" data-um-heart><svg class="ico ico-sm"><use href="#i-heart"/></svg><span>Shortlist</span></button>
+    <div class="pc reveal" data-pc>
+      <div class="pc__stage">
+        <div class="pc__card" data-pc-card>
+          <div class="pc__inner" data-pc-inner>
+            <div class="pc__face pc__front" data-pc-front>
+              <span class="pc__greet">Greetings from</span>
+              <span class="pc__big" data-pc-big style="background-image:url(./assets/img/cities/espoo.jpg)">Espoo</span>
+              <span class="pc__uni" data-pc-uni>Aalto University</span>
+              <span class="pc__rankstamp"><small>QS Europe 2026</small><b data-pc-rank>1</b><small>in Finland</small></span>
+              <span class="pc__postmark" data-pc-postmark><span data-pc-pmcity>ESPOO</span><i>FINLAND</i></span>
+              <button class="pc__flip" type="button" data-pc-flip aria-label="Flip the postcard for details"><svg class="ico ico-sm"><use href="#i-refresh"/></svg>Flip for details</button>
+            </div>
+            <div class="pc__face pc__back" data-pc-back aria-hidden="true">
+              <div class="pc__msg">
+                <span class="pc__hand">Dear future student,</span>
+                <p data-pc-note>Aalto University is ranked #1 in Finland. Its broad strengths:</p>
+                <div class="pc__fields" data-pc-fields><span>Technology</span><span>Business</span><span>Arts &amp; design</span></div>
+                <span class="pc__sign">Greetings, Tutee Connect</span>
+              </div>
+              <div class="pc__addr">
+                <span class="pc__mini">#<b data-pc-rank2>1</b></span>
+                <span class="pc__line"><small>Institution</small><b data-pc-name>Aalto University</b></span>
+                <span class="pc__line"><small>Campus city</small><b data-pc-where>Espoo, Uusimaa</b></span>
+                <span class="pc__line"><small>Type</small><b data-pc-kind>University</b></span>
+                <div class="pc__actions">
+                  <a class="btn btn-primary btn-sm" href="./university.html?id=aalto-university" data-pc-link>View university<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
+                  <button class="pc__heart" type="button" aria-pressed="false" data-pc-heart><svg class="ico ico-sm"><use href="#i-heart"/></svg><span>Shortlist</span></button>
+                </div>
+                <button class="pc__flip pc__flip--back" type="button" data-pc-flip aria-label="Flip back to the front"><svg class="ico ico-sm"><use href="#i-refresh"/></svg>Front</button>
               </div>
             </div>
-          </article>
-          <div class="um__listhead"><span>QS Europe 2026 · ranked in Finland</span><span data-um-count>12 shown</span></div>
-          <ol class="um__list" data-um-list>
-          <li><button class="um__item is-on" type="button" aria-pressed="true" data-um-item data-id="aalto-university" data-name="Aalto University" data-city="Espoo" data-region="Uusimaa" data-pin="hel" data-img="./assets/img/cities/espoo.jpg" data-f="tech business arts"><span class="um__rank">01</span><span class="um__iname"><b>Aalto University</b><small>Espoo</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
-          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="university-of-helsinki" data-name="University of Helsinki" data-city="Helsinki" data-region="Uusimaa" data-pin="hel" data-img="./assets/img/cities/helsinki.jpg" data-f="science health society"><span class="um__rank">02</span><span class="um__iname"><b>University of Helsinki</b><small>Helsinki</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
-          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="university-of-turku" data-name="University of Turku" data-city="Turku" data-region="Varsinais-Suomi" data-pin="tku" data-img="./assets/img/cities/turku.jpg" data-f="health science business society"><span class="um__rank">03</span><span class="um__iname"><b>University of Turku</b><small>Turku</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
-          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="university-of-oulu" data-name="University of Oulu" data-city="Oulu" data-region="North Ostrobothnia" data-pin="oul" data-img="./assets/img/cities/oulu.jpg" data-f="tech health science"><span class="um__rank">04</span><span class="um__iname"><b>University of Oulu</b><small>Oulu</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
-          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="tampere-university" data-name="Tampere University" data-city="Tampere" data-region="Pirkanmaa" data-pin="tre" data-img="./assets/img/cities/tampere.jpg" data-f="tech health society"><span class="um__rank">05</span><span class="um__iname"><b>Tampere University</b><small>Tampere</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
-          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="university-of-jyvaskyla" data-name="University of Jyväskylä" data-city="Jyväskylä" data-region="Central Finland" data-pin="jkl" data-img="./assets/img/cities/jyvaskyla.jpg" data-f="society science business"><span class="um__rank">06</span><span class="um__iname"><b>University of Jyväskylä</b><small>Jyväskylä</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
-          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="university-of-eastern-finland" data-name="University of Eastern Finland" data-city="Joensuu &amp; Kuopio" data-region="North Karelia &amp; North Savo" data-pin="joe" data-img="./assets/img/cities/joensuu.jpg" data-f="health science society"><span class="um__rank">07</span><span class="um__iname"><b>University of Eastern Finland</b><small>Joensuu &amp; Kuopio</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
-          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="lut-university" data-name="LUT University" data-city="Lappeenranta" data-region="South Karelia" data-pin="lpr" data-img="./assets/img/cities/lappeenranta.jpg" data-f="tech business"><span class="um__rank">08</span><span class="um__iname"><b>LUT University</b><small>Lappeenranta</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
-          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="abo-akademi-university" data-name="Åbo Akademi University" data-city="Turku" data-region="Varsinais-Suomi" data-pin="tku" data-img="./assets/img/cities/turku.jpg" data-f="science society business"><span class="um__rank">09</span><span class="um__iname"><b>Åbo Akademi University</b><small>Turku</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
-          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="university-of-vaasa" data-name="University of Vaasa" data-city="Vaasa" data-region="Ostrobothnia" data-pin="vaa" data-img="./assets/img/cities/vaasa.jpg" data-f="business tech"><span class="um__rank">10</span><span class="um__iname"><b>University of Vaasa</b><small>Vaasa</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
-          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="turku-university-of-applied-sciences" data-name="Turku University of Applied Sciences" data-city="Turku" data-region="Varsinais-Suomi" data-pin="tku" data-img="./assets/img/cities/turku.jpg" data-f="tech health arts business" data-uas><span class="um__rank">11</span><span class="um__iname"><b>Turku University of Applied Sciences</b><small>Turku · UAS</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
-          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="jamk-university-of-applied-sciences" data-name="Jamk University of Applied Sciences" data-city="Jyväskylä" data-region="Central Finland" data-pin="jkl" data-img="./assets/img/cities/jyvaskyla.jpg" data-f="business tech health" data-uas><span class="um__rank">12</span><span class="um__iname"><b>Jamk University of Applied Sciences</b><small>Jyväskylä · UAS</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
-          </ol>
-          <a class="um__all" href="./universities.html"><span><b>Explore all 36 institutions</b><small>Search 1,295 English-taught programme listings by field, city and type.</small></span><svg class="ico ico-sm"><use href="#i-arrow"/></svg></a>
+          </div>
         </div>
       </div>
+
+      <div class="pc__side">
+        <div class="pc__filters">
+          <div class="pc__chips" role="group" aria-label="Institution type"><button class="pc__chip is-on" type="button" aria-pressed="true" data-pc-type="all">All 12</button><button class="pc__chip" type="button" aria-pressed="false" data-pc-type="uni">Universities</button><button class="pc__chip" type="button" aria-pressed="false" data-pc-type="uas">Applied sciences</button></div>
+          <div class="pc__chips pc__chips--fields" role="group" aria-label="Field of study"><button class="pc__chip pc__chip--field" type="button" aria-pressed="false" data-pc-field="tech">Technology</button><button class="pc__chip pc__chip--field" type="button" aria-pressed="false" data-pc-field="business">Business</button><button class="pc__chip pc__chip--field" type="button" aria-pressed="false" data-pc-field="health">Health</button><button class="pc__chip pc__chip--field" type="button" aria-pressed="false" data-pc-field="science">Science</button><button class="pc__chip pc__chip--field" type="button" aria-pressed="false" data-pc-field="society">Society &amp; education</button><button class="pc__chip pc__chip--field" type="button" aria-pressed="false" data-pc-field="arts">Arts &amp; design</button></div>
+        </div>
+        <div class="pc__albumhead"><span>Stamp album · ranked in Finland</span><span data-pc-count>12 shown</span></div>
+        <ol class="pc__stamps" data-pc-stamps>
+          <li><button class="pc__stamp is-on" type="button" aria-pressed="true" aria-label="#1 Aalto University, Espoo" data-pc-stamp data-id="aalto-university" data-name="Aalto University" data-big="Espoo" data-where="Espoo" data-region="Uusimaa" data-img="./assets/img/cities/espoo.jpg" data-f="tech business arts"><span class="pc__stamp-in"><img src="./assets/img/cities/espoo.jpg" alt="" loading="lazy" decoding="async"><b>1</b><small>Aalto</small><svg class="ico pc__fav" aria-hidden="true"><use href="#i-heart"/></svg></span></button></li>
+          <li><button class="pc__stamp" type="button" aria-pressed="false" aria-label="#2 University of Helsinki, Helsinki" data-pc-stamp data-id="university-of-helsinki" data-name="University of Helsinki" data-big="Helsinki" data-where="Helsinki" data-region="Uusimaa" data-img="./assets/img/cities/helsinki.jpg" data-f="science health society"><span class="pc__stamp-in"><img src="./assets/img/cities/helsinki.jpg" alt="" loading="lazy" decoding="async"><b>2</b><small>Helsinki</small><svg class="ico pc__fav" aria-hidden="true"><use href="#i-heart"/></svg></span></button></li>
+          <li><button class="pc__stamp" type="button" aria-pressed="false" aria-label="#3 University of Turku, Turku" data-pc-stamp data-id="university-of-turku" data-name="University of Turku" data-big="Turku" data-where="Turku" data-region="Varsinais-Suomi" data-img="./assets/img/cities/turku.jpg" data-f="health science business society"><span class="pc__stamp-in"><img src="./assets/img/cities/turku.jpg" alt="" loading="lazy" decoding="async"><b>3</b><small>Turku</small><svg class="ico pc__fav" aria-hidden="true"><use href="#i-heart"/></svg></span></button></li>
+          <li><button class="pc__stamp" type="button" aria-pressed="false" aria-label="#4 University of Oulu, Oulu" data-pc-stamp data-id="university-of-oulu" data-name="University of Oulu" data-big="Oulu" data-where="Oulu" data-region="North Ostrobothnia" data-img="./assets/img/cities/oulu.jpg" data-f="tech health science"><span class="pc__stamp-in"><img src="./assets/img/cities/oulu.jpg" alt="" loading="lazy" decoding="async"><b>4</b><small>Oulu</small><svg class="ico pc__fav" aria-hidden="true"><use href="#i-heart"/></svg></span></button></li>
+          <li><button class="pc__stamp" type="button" aria-pressed="false" aria-label="#5 Tampere University, Tampere" data-pc-stamp data-id="tampere-university" data-name="Tampere University" data-big="Tampere" data-where="Tampere" data-region="Pirkanmaa" data-img="./assets/img/cities/tampere.jpg" data-f="tech health society"><span class="pc__stamp-in"><img src="./assets/img/cities/tampere.jpg" alt="" loading="lazy" decoding="async"><b>5</b><small>Tampere</small><svg class="ico pc__fav" aria-hidden="true"><use href="#i-heart"/></svg></span></button></li>
+          <li><button class="pc__stamp" type="button" aria-pressed="false" aria-label="#6 University of Jyväskylä, Jyväskylä" data-pc-stamp data-id="university-of-jyvaskyla" data-name="University of Jyväskylä" data-big="Jyväskylä" data-where="Jyväskylä" data-region="Central Finland" data-img="./assets/img/cities/jyvaskyla.jpg" data-f="society science business"><span class="pc__stamp-in"><img src="./assets/img/cities/jyvaskyla.jpg" alt="" loading="lazy" decoding="async"><b>6</b><small>Jyväskylä</small><svg class="ico pc__fav" aria-hidden="true"><use href="#i-heart"/></svg></span></button></li>
+          <li><button class="pc__stamp" type="button" aria-pressed="false" aria-label="#7 University of Eastern Finland, Joensuu &amp; Kuopio" data-pc-stamp data-id="university-of-eastern-finland" data-name="University of Eastern Finland" data-big="Joensuu" data-where="Joensuu &amp; Kuopio" data-region="North Karelia &amp; North Savo" data-img="./assets/img/cities/joensuu.jpg" data-f="health science society"><span class="pc__stamp-in"><img src="./assets/img/cities/joensuu.jpg" alt="" loading="lazy" decoding="async"><b>7</b><small>UEF</small><svg class="ico pc__fav" aria-hidden="true"><use href="#i-heart"/></svg></span></button></li>
+          <li><button class="pc__stamp" type="button" aria-pressed="false" aria-label="#8 LUT University, Lappeenranta" data-pc-stamp data-id="lut-university" data-name="LUT University" data-big="Lappeenranta" data-where="Lappeenranta" data-region="South Karelia" data-img="./assets/img/cities/lappeenranta.jpg" data-f="tech business"><span class="pc__stamp-in"><img src="./assets/img/cities/lappeenranta.jpg" alt="" loading="lazy" decoding="async"><b>8</b><small>LUT</small><svg class="ico pc__fav" aria-hidden="true"><use href="#i-heart"/></svg></span></button></li>
+          <li><button class="pc__stamp" type="button" aria-pressed="false" aria-label="#9 Åbo Akademi University, Turku" data-pc-stamp data-id="abo-akademi-university" data-name="Åbo Akademi University" data-big="Turku" data-where="Turku" data-region="Varsinais-Suomi" data-img="./assets/img/cities/turku.jpg" data-f="science society business"><span class="pc__stamp-in"><img src="./assets/img/cities/turku.jpg" alt="" loading="lazy" decoding="async"><b>9</b><small>Åbo Akademi</small><svg class="ico pc__fav" aria-hidden="true"><use href="#i-heart"/></svg></span></button></li>
+          <li><button class="pc__stamp" type="button" aria-pressed="false" aria-label="#10 University of Vaasa, Vaasa" data-pc-stamp data-id="university-of-vaasa" data-name="University of Vaasa" data-big="Vaasa" data-where="Vaasa" data-region="Ostrobothnia" data-img="./assets/img/cities/vaasa.jpg" data-f="business tech"><span class="pc__stamp-in"><img src="./assets/img/cities/vaasa.jpg" alt="" loading="lazy" decoding="async"><b>10</b><small>Vaasa</small><svg class="ico pc__fav" aria-hidden="true"><use href="#i-heart"/></svg></span></button></li>
+          <li><button class="pc__stamp" type="button" aria-pressed="false" aria-label="#11 Turku University of Applied Sciences, Turku" data-pc-stamp data-id="turku-university-of-applied-sciences" data-name="Turku University of Applied Sciences" data-big="Turku" data-where="Turku" data-region="Varsinais-Suomi" data-img="./assets/img/cities/turku.jpg" data-f="tech health arts business" data-uas><span class="pc__stamp-in"><img src="./assets/img/cities/turku.jpg" alt="" loading="lazy" decoding="async"><b>11</b><small>Turku UAS</small><svg class="ico pc__fav" aria-hidden="true"><use href="#i-heart"/></svg></span></button></li>
+          <li><button class="pc__stamp" type="button" aria-pressed="false" aria-label="#12 Jamk University of Applied Sciences, Jyväskylä" data-pc-stamp data-id="jamk-university-of-applied-sciences" data-name="Jamk University of Applied Sciences" data-big="Jyväskylä" data-where="Jyväskylä" data-region="Central Finland" data-img="./assets/img/cities/jyvaskyla.jpg" data-f="business tech health" data-uas><span class="pc__stamp-in"><img src="./assets/img/cities/jyvaskyla.jpg" alt="" loading="lazy" decoding="async"><b>12</b><small>Jamk</small><svg class="ico pc__fav" aria-hidden="true"><use href="#i-heart"/></svg></span></button></li>
+        </ol>
+        <a class="pc__all" href="./universities.html"><span><b>Explore all 36 institutions</b><small>Search 1,295 English-taught programme listings by field, city and type.</small></span><svg class="ico ico-sm"><use href="#i-arrow"/></svg></a>
+      </div>
     </div>
-    <p class="note">Ranks are Finland's positions in the QS World University Rankings: Europe 2026. Strengths are broad starting points; a counsellor confirms programmes with you.</p>
+    <p class="note">Ranks are Finland's positions in the QS World University Rankings: Europe 2026. Strengths are broad starting points; a counsellor confirms programmes with you. Photos show each institution's campus city.</p>
   </div>
 </section>
 

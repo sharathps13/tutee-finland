@@ -904,216 +904,153 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * Universities — map of Finland. Pins sit on each university city
-   * (drawn from the hero's FI_OUTLINE); rows and pins preview on hover and
-   * select on click, an aurora arc flies from the last city to the new one,
-   * and the spotlight card shows the campus city, rank and strengths.
-   * Type and field chips filter both; hearts use the shared shortlist.
+   * Universities — postcards from Finland. Each stamp "mails" its
+   * postcard: the old card slides away, the new one lands and the
+   * postmark thumps down. Clicking the card flips it to the written back
+   * (strengths, city, type, link, shortlist). Chips filter the album.
    * ------------------------------------------------------------------ */
-  var UM_PINS = {
-    hel: ['Helsinki region', 24.9, 60.2], tku: ['Turku', 22.27, 60.45], tre: ['Tampere', 23.76, 61.5], lpr: ['Lappeenranta', 28.19, 61.06],
-    jkl: ['Jyväskylä', 25.73, 62.24], joe: ['Joensuu', 29.76, 62.6], vaa: ['Vaasa', 21.62, 63.1], oul: ['Oulu', 25.47, 65.01]
-  };
-  var UM_FIELDS = { tech: 'Technology', business: 'Business', health: 'Health', science: 'Science', society: 'Society & education', arts: 'Arts & design' };
+  var PC_FIELDS = { tech: 'Technology', business: 'Business', health: 'Health', science: 'Science', society: 'Society & education', arts: 'Arts & design' };
 
-  function initUniMap() {
-    var root = $('[data-um]');
+  function initPostcards() {
+    var root = $('[data-pc]');
     if (!root) return;
-    var svg = $('[data-um-svg]', root), mapBox = $('[data-um-map]', root), tilt = $('[data-um-tilt]', root), tip = $('[data-um-tip]', root);
-    var items = $$('[data-um-item]', root), spot = $('[data-um-spot]', root), body = $('[data-um-body]', root);
-    var imgA = $('[data-um-img]', root), imgB = $('[data-um-img2]', root), heart = $('[data-um-heart]', root);
-    var NS = 'http://www.w3.org/2000/svg', S = 58, PAD = 16, sel = 0, filt = { type: 'all', field: null };
-    function P(lon, lat) { return [PAD + (lon - LON0) * KX * S, PAD + (LAT0 - lat) * S]; }
-    function el(tag, attrs, parent) {
-      var n = document.createElementNS(NS, tag);
-      for (var k in attrs) n.setAttribute(k, attrs[k]);
-      if (parent) parent.appendChild(n);
-      return n;
+    var card = $('[data-pc-card]', root), inner = $('[data-pc-inner]', root), front = $('[data-pc-front]', root), back = $('[data-pc-back]', root);
+    var stamps = $$('[data-pc-stamp]', root), big = $('[data-pc-big]', root), postmark = $('[data-pc-postmark]', root), heart = $('[data-pc-heart]', root);
+    var sel = 0, filt = { type: 'all', field: null }, busy = 0;
+    var data = stamps.map(function (b, i) {
+      return { i: i, id: b.getAttribute('data-id'), name: b.getAttribute('data-name'), big: b.getAttribute('data-big'), where: b.getAttribute('data-where'),
+        region: b.getAttribute('data-region'), img: b.getAttribute('data-img'), f: b.getAttribute('data-f').split(' '), uas: b.hasAttribute('data-uas') };
+    });
+    function set(sel_, text) { var n = $(sel_, root); if (n) n.textContent = text; }
+    // The big letters grow to fill the card's width (capped for short names).
+    function fitBig() {
+      big.style.fontSize = '';
+      var room = front.clientWidth * 0.84, w = big.scrollWidth, fs = parseFloat(getComputedStyle(big).fontSize);
+      if (w && room) big.style.fontSize = Math.min(fs * room / w, front.clientWidth * 0.24).toFixed(1) + 'px';
     }
-    var data = items.map(function (b, i) {
-      return { i: i, id: b.getAttribute('data-id'), name: b.getAttribute('data-name'), city: b.getAttribute('data-city'), region: b.getAttribute('data-region'),
-        pin: b.getAttribute('data-pin'), img: b.getAttribute('data-img'), f: b.getAttribute('data-f').split(' '), uas: b.hasAttribute('data-uas') };
-    });
-
-    /* ---------- draw the map ---------- */
-    var defs = el('defs', {}, svg);
-    var g1 = el('linearGradient', { id: 'umStroke', x1: '0', y1: '0', x2: '0', y2: '1' }, defs);
-    el('stop', { offset: '0', 'stop-color': '#2fe3b4' }, g1); el('stop', { offset: '1', 'stop-color': '#8fb8ff' }, g1);
-    var g2 = el('linearGradient', { id: 'umArc', x1: '0', y1: '0', x2: '1', y2: '0' }, defs);
-    el('stop', { offset: '0', 'stop-color': '#8fb8ff', 'stop-opacity': '.2' }, g2); el('stop', { offset: '1', 'stop-color': '#2fe3b4' }, g2);
-    [60, 62, 64, 66, 68, 70].forEach(function (lat) {
-      var y = P(0, lat)[1];
-      el('line', { x1: 0, y1: y, x2: 320, y2: y, 'class': 'um__grat' }, svg);
-      el('text', { x: 300, y: y - 3, 'class': 'um__gratlabel', 'text-anchor': 'end' }, svg).textContent = lat + '°N';
-    });
-    [22, 26, 30].forEach(function (lon) { var x = P(lon, 0)[0]; el('line', { x1: x, y1: 0, x2: x, y2: 642, 'class': 'um__grat' }, svg); });
-    var d = FI_OUTLINE.map(function (pt, i) { var q = P(pt[0], pt[1]); return (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1); }).join('') + 'Z';
-    el('path', { d: d, 'class': 'um__landglow' }, svg);
-    el('path', { d: d, 'class': 'um__land' }, svg);
-    var arc = el('path', { 'class': 'um__arc', d: '', opacity: 0 }, svg);
-    var comet = el('circle', { 'class': 'um__comet', r: 2.6, opacity: 0 }, svg);
-    var pins = {};
-    Object.keys(UM_PINS).forEach(function (key) {
-      var c = UM_PINS[key], q = P(c[1], c[2]), unis = data.filter(function (u) { return u.pin === key; });
-      var g = el('g', { 'class': 'um__pin', transform: 'translate(' + q[0].toFixed(1) + ' ' + q[1].toFixed(1) + ')', tabindex: '0', role: 'button',
-        'aria-label': c[0] + ': ' + unis.map(function (u) { return u.name; }).join(', ') }, svg);
-      el('circle', { 'class': 'halo', r: 9 }, g);
-      el('circle', { 'class': 'core', r: 5 }, g);
-      var left = c[1] > 27.5;                                   // eastern pins label to the left
-      el('text', { 'class': 'label', x: left ? -10 : 10, y: 4, 'text-anchor': left ? 'end' : 'start' }, g).textContent = c[0];
-      if (unis.length > 1) {
-        el('circle', { 'class': 'badge', cx: 6, cy: -7, r: 5.5 }, g);
-        el('text', { 'class': 'badgetext', x: 6, y: -4.6 }, g).textContent = unis.length;
-      }
-      pins[key] = { g: g, x: q[0], y: q[1], name: c[0], unis: unis };
-    });
-
-    /* ---------- tooltip ---------- */
-    function showTip(key) {
-      var p = pins[key];
-      if (!p) return;
-      Object.keys(pins).forEach(function (k) { pins[k].g.classList.toggle('is-hot', k === key); });
-      var r = p.g.getBoundingClientRect(), m = mapBox.getBoundingClientRect();
-      tip.innerHTML = '<b>' + escapeHtml(p.name) + '</b>' + p.unis.map(function (u) { return '<span>#' + (u.i + 1) + ' ' + escapeHtml(u.name) + '</span>'; }).join('');
-      tip.hidden = false;
-      tip.style.left = clamp(r.left + r.width / 2 - m.left, 100, m.width - 100) + 'px';
-      tip.style.top = (r.top - m.top) + 'px';
-    }
-    function hideTip() { tip.hidden = true; Object.keys(pins).forEach(function (k) { pins[k].g.classList.remove('is-hot'); }); }
 
     /* ---------- filters ---------- */
-    function matches(u) {
-      return (filt.type === 'all' || (filt.type === 'uas') === u.uas) && (!filt.field || u.f.indexOf(filt.field) > -1);
+    function matches(u) { return (filt.type === 'all' || (filt.type === 'uas') === u.uas) && (!filt.field || u.f.indexOf(filt.field) > -1); }
+    function renderFields(u) {
+      $('[data-pc-fields]', root).innerHTML = u.f.map(function (k) {
+        return '<span' + (k === filt.field ? ' class="is-match"' : '') + '>' + escapeHtml(PC_FIELDS[k] || k) + '</span>';
+      }).join('');
     }
     function applyFilter() {
       var shown = 0;
-      data.forEach(function (u) { var ok = matches(u); items[u.i].classList.toggle('is-out', !ok); if (ok) shown++; });
-      Object.keys(pins).forEach(function (k) { pins[k].g.classList.toggle('is-out', !pins[k].unis.some(matches)); });
-      $('[data-um-count]', root).textContent = shown + ' shown';
+      data.forEach(function (u) { var ok = matches(u); stamps[u.i].classList.toggle('is-out', !ok); if (ok) shown++; });
+      set('[data-pc-count]', shown + ' shown');
       if (!matches(data[sel])) { var first = data.filter(matches)[0]; if (first) select(first.i); }
       else renderFields(data[sel]);
     }
-    $$('[data-um-type]', root).forEach(function (b) {
+    $$('[data-pc-type]', root).forEach(function (b) {
       b.addEventListener('click', function () {
-        filt.type = b.getAttribute('data-um-type');
-        $$('[data-um-type]', root).forEach(function (o) { o.classList.toggle('is-on', o === b); o.setAttribute('aria-pressed', String(o === b)); });
-        root.classList.add('is-touched'); applyFilter();
+        filt.type = b.getAttribute('data-pc-type');
+        $$('[data-pc-type]', root).forEach(function (o) { o.classList.toggle('is-on', o === b); o.setAttribute('aria-pressed', String(o === b)); });
+        applyFilter();
       });
     });
-    $$('[data-um-field]', root).forEach(function (b) {
+    $$('[data-pc-field]', root).forEach(function (b) {
       b.addEventListener('click', function () {
-        var f = b.getAttribute('data-um-field');
+        var f = b.getAttribute('data-pc-field');
         filt.field = filt.field === f ? null : f;
-        $$('[data-um-field]', root).forEach(function (o) { var on = o.getAttribute('data-um-field') === filt.field; o.classList.toggle('is-on', on); o.setAttribute('aria-pressed', String(on)); });
-        root.classList.add('is-touched'); applyFilter();
+        $$('[data-pc-field]', root).forEach(function (o) { var on = o.getAttribute('data-pc-field') === filt.field; o.classList.toggle('is-on', on); o.setAttribute('aria-pressed', String(on)); });
+        applyFilter();
       });
     });
 
-    /* ---------- selection ---------- */
-    function renderFields(u) {
-      $('[data-um-fields]', root).innerHTML = u.f.map(function (k) {
-        return '<span' + (k === filt.field ? ' class="is-match"' : '') + '>' + escapeHtml(UM_FIELDS[k] || k) + '</span>';
-      }).join('');
-    }
+    /* ---------- shortlist ---------- */
     function syncHeart() {
       var SL = window.TCShortlist, u = data[sel];
-      items.forEach(function (b, i) { b.classList.toggle('is-fav', !!(SL && SL.has(data[i].id))); });
-      if (!heart) return;
+      stamps.forEach(function (b, i) { b.classList.toggle('is-fav', !!(SL && SL.has(data[i].id))); });
       var on = !!(SL && SL.has(u.id));
       heart.setAttribute('aria-pressed', String(on));
       heart.lastChild.textContent = on ? 'Shortlisted' : 'Shortlist';
     }
-    function flyArc(from, to) {
-      if (!from || from === to || reduceMotion || !arc.animate) { arc.setAttribute('opacity', 0); comet.setAttribute('opacity', 0); return; }
-      var dx = to.x - from.x, dy = to.y - from.y, dist = Math.hypot(dx, dy);
-      var cx = (from.x + to.x) / 2 + dy * 0.35, cy = (from.y + to.y) / 2 - Math.abs(dx) * 0.35 - dist * 0.15;
-      arc.setAttribute('d', 'M' + from.x + ' ' + from.y + 'Q' + cx + ' ' + cy + ' ' + to.x + ' ' + to.y);
-      var len = arc.getTotalLength();
-      arc.setAttribute('opacity', 1);
-      arc.style.strokeDasharray = len; arc.style.strokeDashoffset = len;
-      arc.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 650, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
-      comet.setAttribute('opacity', 1);
-      var t0 = performance.now();
-      (function fly(now) {
-        var k = Math.min(1, (now - t0) / 650), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2, pt = arc.getPointAtLength(len * e);
-        comet.setAttribute('cx', pt.x); comet.setAttribute('cy', pt.y);
-        if (k < 1) requestAnimationFrame(fly); else comet.setAttribute('opacity', 0);
-      })(t0);
-      arc.animate([{ opacity: 1 }, { opacity: 0.3 }], { duration: 900, delay: 900, fill: 'forwards' });
-    }
-    function select(i, opts) {
-      opts = opts || {};
-      var prev = data[sel], u = data[i];
-      sel = i;
-      items.forEach(function (b, k) { var on = k === i; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', String(on)); });
-      Object.keys(pins).forEach(function (k) { pins[k].g.classList.toggle('is-on', k === u.pin); });
-      $('[data-um-rank]', root).textContent = i + 1;
-      $('[data-um-kind]', root).textContent = u.uas ? 'University of applied sciences' : 'University';
-      $('[data-um-name]', root).textContent = u.name;
-      $('[data-um-where]', root).textContent = u.city + ', ' + u.region;
-      $('[data-um-link]', root).setAttribute('href', './university.html?id=' + u.id);
-      renderFields(u);
-      syncHeart();
-      if (opts.quick) return;
-      // Cross-fade the city photo: the old one stays underneath while the new one fades in.
-      if (imgA.getAttribute('src') !== u.img) {
-        imgB.setAttribute('src', imgA.getAttribute('src'));
-        imgA.setAttribute('src', u.img);
-        if (!reduceMotion && imgA.animate) imgA.animate([{ opacity: 0, transform: 'scale(1.06)' }, { opacity: 1, transform: 'none' }], { duration: 650, easing: 'cubic-bezier(.2,.7,.2,1)' });
-      }
-      if (!reduceMotion && body.animate) body.animate([{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 360, easing: 'cubic-bezier(.2,.7,.2,1)' });
-      flyArc(pins[prev.pin], pins[u.pin]);
-    }
-
-    items.forEach(function (b, i) {
-      b.addEventListener('click', function () { root.classList.add('is-touched'); select(i); });
-      b.addEventListener('mouseenter', function () { showTip(data[i].pin); });
-      b.addEventListener('mouseleave', hideTip);
-      b.addEventListener('keydown', function (e) {
-        var k = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
-        if (!k) return;
-        e.preventDefault();
-        var n = (i + k + items.length) % items.length;
-        items[n].focus(); select(n);
-      });
-    });
-    Object.keys(pins).forEach(function (key) {
-      var p = pins[key];
-      function pick() {
-        // A city with several institutions cycles through them on each click.
-        var list = p.unis.filter(matches); if (!list.length) list = p.unis;
-        var at = list.map(function (u) { return u.i; }).indexOf(sel);
-        root.classList.add('is-touched');
-        select(list[(at + 1) % list.length].i);
-      }
-      p.g.addEventListener('mouseenter', function () { showTip(key); });
-      p.g.addEventListener('mouseleave', hideTip);
-      p.g.addEventListener('focus', function () { showTip(key); });
-      p.g.addEventListener('blur', hideTip);
-      p.g.addEventListener('click', pick);
-      p.g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
-    });
-    if (heart) heart.addEventListener('click', function () {
+    heart.addEventListener('click', function (e) {
+      e.stopPropagation();
       var SL = window.TCShortlist, u = data[sel];
       if (!SL) return;
-      var ok = SL.toggle({ id: u.id, name: u.name, city: u.city.replace('&amp;', '&') });
+      var ok = SL.toggle({ id: u.id, name: u.name, city: u.where.replace('&amp;', '&') });
+      syncHeart();
       if (ok === false && !SL.has(u.id)) heart.lastChild.textContent = 'Shortlist full';
       heart.classList.remove('is-pop'); void heart.offsetWidth; heart.classList.add('is-pop');
-      syncHeart();
     });
     if (window.TCShortlist) window.TCShortlist.onChange(syncHeart);
 
-    // A gentle tilt of the map toward the cursor.
-    if (finePointer && !reduceMotion) {
-      mapBox.addEventListener('pointermove', function (e) {
-        var r = mapBox.getBoundingClientRect(), u = (e.clientX - r.left) / r.width - 0.5, v = (e.clientY - r.top) / r.height - 0.5;
-        tilt.style.setProperty('--ry', (u * 6).toFixed(2) + 'deg'); tilt.style.setProperty('--rx', (-v * 4).toFixed(2) + 'deg');
-      });
-      mapBox.addEventListener('pointerleave', function () { tilt.style.removeProperty('--rx'); tilt.style.removeProperty('--ry'); });
+    /* ---------- flip ---------- */
+    function flip(to) {
+      var on = to == null ? !root.classList.contains('is-flipped') : to;
+      root.classList.toggle('is-flipped', on);
+      front.setAttribute('aria-hidden', String(on)); back.setAttribute('aria-hidden', String(!on));
+      $$('a, button', front).forEach(function (n) { n.tabIndex = on ? -1 : 0; });
+      $$('a, button', back).forEach(function (n) { n.tabIndex = on ? 0 : -1; });
     }
-    select(0, { quick: true });
+    inner.addEventListener('click', function (e) { if (!e.target.closest('a, [data-pc-heart]')) flip(); });
+    flip(false);
+
+    /* ---------- select / mail a postcard ---------- */
+    function fill(u) {
+      big.textContent = u.big;
+      big.style.backgroundImage = 'url(' + u.img + ')';
+      fitBig();
+      set('[data-pc-uni]', u.name);
+      set('[data-pc-rank]', u.i + 1); set('[data-pc-rank2]', u.i + 1);
+      set('[data-pc-pmcity]', u.big.toUpperCase());
+      set('[data-pc-name]', u.name);
+      set('[data-pc-where]', u.where.replace('&amp;', '&') + ', ' + u.region.replace('&amp;', '&'));
+      set('[data-pc-kind]', u.uas ? 'University of applied sciences' : 'University');
+      set('[data-pc-note]', u.name + ' is ranked #' + (u.i + 1) + ' in Finland. Its broad strengths:');
+      $('[data-pc-link]', root).setAttribute('href', './university.html?id=' + u.id);
+      renderFields(u);
+      syncHeart();
+    }
+    function select(i) {
+      var u = data[i];
+      if (i === sel) { flip(false); return; }
+      sel = i;
+      stamps.forEach(function (b, k) { var on = k === i; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', String(on)); });
+      if (reduceMotion || !card.animate) { flip(false); fill(u); return; }
+      // The current card slides off like a dealt postcard, the new one lands.
+      var token = ++busy;
+      var out = card.animate([{ transform: 'none', opacity: 1 }, { transform: 'translate(-40px, 16px) rotate(-6deg)', opacity: 0 }], { duration: 220, easing: 'ease-in', fill: 'forwards' });
+      out.onfinish = function () {
+        if (token !== busy) return;
+        flip(false); fill(u);
+        out.cancel();
+        card.animate([{ transform: 'translate(60px, -20px) rotate(7deg)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 520, easing: 'cubic-bezier(.2,.8,.2,1)' });
+        postmark.animate([{ transform: 'rotate(-14deg) scale(1.8)', opacity: 0 }, { transform: 'rotate(-14deg) scale(.92)', opacity: 1, offset: .7 }, { transform: 'rotate(-14deg) scale(1)', opacity: 1 }],
+          { duration: 420, delay: 380, easing: 'ease-out', fill: 'backwards' });
+        busy = 0;
+      };
+    }
+    stamps.forEach(function (b, i) {
+      b.addEventListener('click', function () { select(i); });
+      b.addEventListener('keydown', function (e) {
+        var k = { ArrowRight: 1, ArrowDown: 4, ArrowLeft: -1, ArrowUp: -4 }[e.key];
+        if (!k) return;
+        e.preventDefault();
+        var n = clamp(i + k, 0, stamps.length - 1);
+        stamps[n].focus(); select(n);
+      });
+    });
+
+    // The postcard leans toward the cursor.
+    if (finePointer && !reduceMotion) {
+      var stage = $('.pc__stage', root);
+      stage.addEventListener('pointermove', function (e) {
+        var r = stage.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.setProperty('--ry', (x * 10).toFixed(2) + 'deg'); card.style.setProperty('--rx', (-y * 8).toFixed(2) + 'deg');
+      });
+      stage.addEventListener('pointerleave', function () { card.style.removeProperty('--rx'); card.style.removeProperty('--ry'); });
+    }
+    fill(data[0]);
     applyFilter();
+    var ft = 0;
+    window.addEventListener('resize', function () { clearTimeout(ft); ft = setTimeout(fitBig, 150); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitBig);
   }
+
 
 
   /* ------------------------------------------------------------------ *
@@ -1916,7 +1853,7 @@
   initVelocityRails();
   initSeasonStage();
   initServices();
-  initUniMap();
+  initPostcards();
   initJourney();
   initParallax();
   initPointerFx();
