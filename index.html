@@ -746,77 +746,97 @@
   </div>
 </section>
 
-<!-- ============================== CONTACT ============================== -->
-<section class="section section--night contact" id="contact">
+<!-- ============================== CONTACT ==============================
+     Lead form in two quick steps (tap your goal, then your contact details)
+     beside a live "Finland profile" card that fills in as you type and is
+     stamped on submit. Field names, validation, the /api/enquiry POST, the
+     shortlist, UTM and honeypot are unchanged (initForms + initLeadFlow). -->
+<section class="section section--night contact lf-sec" id="contact">
   <div class="noise-layer" data-noise aria-hidden="true"></div>
-  <div class="aurora" aria-hidden="true" style="opacity:.3"><span></span><span></span><span></span></div>
-  <div class="container contact__grid on-dark">
-    <div class="contact__info reveal">
-      <span class="eyebrow"><span data-decrypt="view">Free consultation</span></span>
-      <h2 class="h2">Evaluate your <span class="text-grad">Finland profile.</span></h2>
-      <p class="lead">Share a few details and get a specific route map to study in Finland &mdash; institutions, scholarships and permit timeline.</p>
-      <div class="promise">
-        <span class="chip chip--glass"><svg class="ico ico-sm"><use href="#i-clock"/></svg>Reply within 1 working day</span>
-        <span class="chip chip--glass"><svg class="ico ico-sm"><use href="#i-shield"/></svg>99% permit success rate</span>
+  <div class="aurora" aria-hidden="true" style="opacity:.35"><span></span><span></span><span></span></div>
+  <div class="container on-dark">
+    <div class="section-head section-head--split reveal">
+      <div>
+        <span class="eyebrow"><span data-decrypt="view">Free consultation</span></span>
+        <h2 class="h2" style="margin-top:12px">Evaluate your <span class="text-grad">Finland profile.</span></h2>
       </div>
-      <div class="info-list">
-        <div class="info"><span class="info__ico"><svg class="ico ico-sm"><use href="#i-phone"/></svg></span><div><h3>Call us</h3><a href="tel:+917010902329">+91 701-090-2329</a><br><a href="tel:+971553799068">+971 55-3799068</a></div></div>
-        <div class="info"><span class="info__ico"><svg class="ico ico-sm"><use href="#i-mail"/></svg></span><div><h3>Email us</h3><a href="mailto:info@tuteeconnect.com">info@tuteeconnect.com</a></div></div>
-        <div class="info"><span class="info__ico"><svg class="ico ico-sm"><use href="#i-pin"/></svg></span><div><h3>India office</h3><p>1st Floor, ALA Corner Complex, Virugambakkam, Chennai - 600092</p></div></div>
-        <div class="info"><span class="info__ico"><svg class="ico ico-sm"><use href="#i-pin"/></svg></span><div><h3>UAE office</h3><p>Tutee Connect LLC FZ, Meydan Grandstand, Dubai, U.A.E.</p></div></div>
-      </div>
+      <p class="lead">Two quick steps, under a minute. A counsellor sends you a route map to study in Finland &mdash; institutions, scholarships and permit timeline.</p>
     </div>
 
-    <div class="lead-card reveal" style="--d:.1s">
-      <div class="lead-card__head">
-        <div>
-          <h3 class="h3">Book your free profile evaluation</h3>
-          <p>Takes under a minute.</p>
-        </div>
-        <span class="badge-free">Free</span>
+    <div class="lf" data-lf>
+      <div class="lf__card lead-card reveal">
+        <div class="lf__progress" aria-hidden="true"><i class="is-on"></i><i></i></div>
+        <form class="form lf__form" data-lead-form data-strength-form novalidate>
+          <input type="hidden" name="subject" value="New Lead from Tutee Connect Landing Page!">
+          <input type="hidden" name="from_name" value="Tutee Connect Notification System">
+          <input type="hidden" name="form_location" value="Contact section">
+          <input type="hidden" name="destination" value="General Finland Inquiry" data-destination-input>
+          <input type="checkbox" name="botcheck" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+          <fieldset class="lf__step is-on" data-lf-step>
+            <legend class="lf__q"><span>Step 1 of 2</span>What are you aiming for?</legend>
+            <div class="lf__choices"><label class="lf__choice"><input type="radio" name="study_level" value="Bachelor's"><span class="lf__cico"><svg class="ico"><use href="#i-book"/></svg></span><b>Bachelor's</b><small>First degree</small><i class="lf__tick" aria-hidden="true"><svg class="ico ico-sm"><use href="#i-check"/></svg></i></label><label class="lf__choice"><input type="radio" name="study_level" value="Master's" checked><span class="lf__cico"><svg class="ico"><use href="#i-cap"/></svg></span><b>Master's</b><small>Advanced degree</small><i class="lf__tick" aria-hidden="true"><svg class="ico ico-sm"><use href="#i-check"/></svg></i></label><label class="lf__choice"><input type="radio" name="study_level" value="Doctoral"><span class="lf__cico"><svg class="ico"><use href="#i-flask"/></svg></span><b>Doctoral / PhD</b><small>Research degree</small><i class="lf__tick" aria-hidden="true"><svg class="ico ico-sm"><use href="#i-check"/></svg></i></label><label class="lf__choice"><input type="radio" name="study_level" value="Not sure"><span class="lf__cico"><svg class="ico"><use href="#i-spark"/></svg></span><b>Not sure yet</b><small>Help me choose</small><i class="lf__tick" aria-hidden="true"><svg class="ico ico-sm"><use href="#i-check"/></svg></i></label></div>
+            <span class="lf__sub">When would you like to start?</span>
+            <div class="lf__pills"><label class="lf__pill"><input type="radio" name="intake" value="Next intake" checked><span>Next available intake</span></label><label class="lf__pill"><input type="radio" name="intake" value="Within 12 months"><span>Within 12 months</span></label><label class="lf__pill"><input type="radio" name="intake" value="Later"><span>Later / exploring</span></label></div>
+            <div class="slchips" data-sl-chips hidden>
+              <div class="slchips__top"><span class="form-label">Your shortlist</span><a href="./universities.html">+ Add universities</a></div>
+              <div class="slchips__list" data-sl-chip-list></div>
+            </div>
+            <div class="dest"><svg class="ico ico-sm"><use href="#i-pin"/></svg><span>Interested in: <strong data-destination-label>General Finland Inquiry</strong></span></div>
+            <button class="btn btn-primary btn-block" type="button" data-lf-next>Continue<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></button>
+          </fieldset>
+
+          <fieldset class="lf__step" data-lf-step>
+            <legend class="lf__q"><span>Step 2 of 2</span>Where should we send your route map?</legend>
+            <div class="field"><svg class="ico ico-sm"><use href="#i-user"/></svg><input class="input" name="name" type="text" placeholder="Full name *" autocomplete="name" required aria-label="Full name"></div>
+            <div class="field"><svg class="ico ico-sm"><use href="#i-mail"/></svg><input class="input" name="email" type="email" inputmode="email" placeholder="Email address *" autocomplete="email" required aria-label="Email address"></div>
+            <div class="phone">
+              <select class="select" name="country_code" aria-label="Country code" data-cc><option value="+91" selected>IN +91</option></select>
+              <div class="field"><svg class="ico ico-sm"><use href="#i-phone"/></svg><input class="input" name="phone_number" type="tel" inputmode="tel" placeholder="Phone number *" autocomplete="tel-national" required aria-label="Phone number"></div>
+            </div>
+            <button class="btn btn-primary btn-block lf__submit" type="submit" data-submit-btn>Get my free route map</button>
+            <div class="lf__row">
+              <button class="lf__back" type="button" data-lf-back><svg class="ico ico-sm"><use href="#i-left"/></svg>Back</button>
+              <span class="lf__consent"><svg class="ico ico-sm"><use href="#i-shield"/></svg>By submitting you agree to be contacted about your Finland application.</span>
+            </div>
+          </fieldset>
+          <div class="lf__alerts">
+            <div class="alert alert--ok hidden" data-form-success role="status"><svg class="ico ico-sm"><use href="#i-check"/></svg><span>Profile submitted successfully! We will contact you soon.</span></div>
+            <div class="alert alert--err hidden" data-form-error role="alert"><svg class="ico ico-sm"><use href="#i-x"/></svg><span data-form-error-text>Submission failed. Please try again.</span></div>
+          </div>
+        </form>
       </div>
-      <div class="strength" aria-hidden="true"><div class="strength__top"><span>Profile strength</span><b data-strength-label>Let's start</b></div><div class="strength__bar"><span data-strength></span></div></div>
-      <form class="form" data-lead-form data-strength-form novalidate>
-        <input type="hidden" name="subject" value="New Lead from Tutee Connect Landing Page!">
-        <input type="hidden" name="from_name" value="Tutee Connect Notification System">
-        <input type="hidden" name="form_location" value="Contact section">
-        <input type="hidden" name="destination" value="General Finland Inquiry" data-destination-input>
-        <input type="checkbox" name="botcheck" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <div class="form-row form-row--2">
-          <div class="field"><svg class="ico ico-sm"><use href="#i-user"/></svg><input class="input" name="name" type="text" placeholder="Full name *" autocomplete="name" required aria-label="Full name"></div>
-          <div class="field"><svg class="ico ico-sm"><use href="#i-mail"/></svg><input class="input" name="email" type="email" inputmode="email" placeholder="Email address *" autocomplete="email" required aria-label="Email address"></div>
-        </div>
-        <div class="phone">
-          <select class="select" name="country_code" aria-label="Country code" data-cc><option value="+91" selected>IN +91</option></select>
-          <div class="field"><svg class="ico ico-sm"><use href="#i-phone"/></svg><input class="input" name="phone_number" type="tel" inputmode="tel" placeholder="Phone number *" autocomplete="tel-national" required aria-label="Phone number"></div>
-        </div>
-        <div class="form-row form-row--2">
-          <div class="field"><svg class="ico ico-sm"><use href="#i-cap"/></svg>
-            <select class="select select--ico" name="study_level" aria-label="Study level" data-level-select>
-              <option value="Bachelor's">Bachelor's degree</option>
-              <option value="Master's" selected>Master's degree</option>
-              <option value="Doctoral">Doctoral / PhD</option>
-              <option value="Not sure">Not sure yet</option>
-            </select>
+
+      <aside class="lf__side reveal" style="--d:.1s">
+        <div class="lp" data-lp aria-hidden="true">
+          <span class="lp__glare"></span>
+          <div class="lp__top"><span class="lp__brand"><svg class="flag"><use href="#flag-fi"/></svg>Finland profile</span><span class="lp__status" data-lp-status>Draft</span></div>
+          <div class="lp__who">
+            <span class="lp__ring" data-strength-ring><b data-lp-pct>0%</b></span>
+            <div><small>Applicant</small><b class="lp__name" data-lp-name>Your name</b><span class="lp__label" data-strength-label>Let's start</span></div>
           </div>
-          <div class="field"><svg class="ico ico-sm"><use href="#i-clock"/></svg>
-            <select class="select select--ico" name="intake" aria-label="Preferred intake">
-              <option value="Next intake" selected>Next available intake</option>
-              <option value="Within 12 months">Within 12 months</option>
-              <option value="Later">Later / exploring</option>
-            </select>
-          </div>
+          <dl class="lp__rows">
+            <div><dt>Aiming for</dt><dd data-lp-level>Master's degree</dd></div>
+            <div><dt>Start</dt><dd data-lp-intake>Next available intake</dd></div>
+            <div class="lp__wide"><dt>Interested in</dt><dd data-lp-dest>General Finland Inquiry</dd></div>
+            <div><dt>Email</dt><dd data-lp-email>&mdash;</dd></div>
+            <div><dt>Phone</dt><dd data-lp-phone>&mdash;</dd></div>
+          </dl>
+          <div class="strength" aria-hidden="true"><div class="strength__bar"><span data-strength></span></div></div>
+          <span class="lp__stamp" data-lp-stamp>Submitted</span>
         </div>
-        <div class="slchips" data-sl-chips hidden>
-          <div class="slchips__top"><span class="form-label">Your shortlist</span><a href="./universities.html">+ Add universities</a></div>
-          <div class="slchips__list" data-sl-chip-list></div>
+        <ul class="lf__trust">
+          <li><svg class="ico ico-sm"><use href="#i-clock"/></svg><span><b>1 working day</b> reply time</span></li>
+          <li><svg class="ico ico-sm"><use href="#i-shield"/></svg><span><b>99%</b> permit success rate</span></li>
+          <li><svg class="ico ico-sm"><use href="#i-award"/></svg><span><b>Free</b> profile evaluation</span></li>
+        </ul>
+        <div class="lf__contact">
+          <a href="tel:+917010902329"><svg class="ico ico-sm"><use href="#i-phone"/></svg>+91 701-090-2329</a>
+          <a href="tel:+971553799068"><svg class="ico ico-sm"><use href="#i-phone"/></svg>+971 55-3799068</a>
+          <a href="mailto:info@tuteeconnect.com"><svg class="ico ico-sm"><use href="#i-mail"/></svg>info@tuteeconnect.com</a>
         </div>
-        <div class="dest"><svg class="ico ico-sm"><use href="#i-pin"/></svg><span>Interested in: <strong data-destination-label>General Finland Inquiry</strong></span></div>
-        <div class="alert alert--ok hidden" data-form-success role="status"><svg class="ico ico-sm"><use href="#i-check"/></svg><span>Profile submitted successfully! We will contact you soon.</span></div>
-        <div class="alert alert--err hidden" data-form-error role="alert"><svg class="ico ico-sm"><use href="#i-x"/></svg><span data-form-error-text>Submission failed. Please try again.</span></div>
-        <button class="btn btn-primary btn-block" type="submit" data-submit-btn>Submit my profile</button>
-      </form>
-      <div class="lead-card__foot"><svg class="ico ico-sm"><use href="#i-shield"/></svg>By submitting you agree to be contacted about your Finland application.</div>
+        <p class="lf__offices"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Chennai &middot; 1st Floor, ALA Corner Complex, Virugambakkam &nbsp;|&nbsp; Dubai &middot; Tutee Connect LLC FZ, Meydan Grandstand</p>
+      </aside>
     </div>
   </div>
 </section>

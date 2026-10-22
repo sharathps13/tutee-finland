@@ -1431,6 +1431,7 @@
     if (f('study_level') && f('study_level') !== 'Not sure') pct += 10;
     if (f('destination') !== 'General Finland Inquiry') pct += 10;
     bar.style.width = pct + '%';
+    var ring = $('[data-strength-ring]'); if (ring) { ring.style.setProperty('--p', pct); var pl = $('[data-lp-pct]'); if (pl) pl.textContent = pct + '%'; }
     bar.style.backgroundPosition = (100 - pct) + '% 0';
     label.textContent = pct >= 90 ? 'Ready for review ✓' : pct >= 60 ? 'Looking strong' : pct >= 25 ? 'Getting there' : "Let's start";
   }
@@ -1484,6 +1485,7 @@
               form.reset();
               fillCountryCodes();
               syncShortlist();
+              form.dispatchEvent(new CustomEvent('tc:lead-sent'));
               setTimeout(function () { status('idle'); }, 6000);
             } else {
               status('error', (res && res.message) || 'Something went wrong. Please try again.');
@@ -1501,6 +1503,86 @@
     // rides along with every enquiry and shows as removable chips.
     syncShortlist();
     if (window.TCShortlist) window.TCShortlist.onChange(syncShortlist);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Lead flow — the contact form's two steps and the live profile card.
+   * Submission itself stays in initForms; this only moves between steps,
+   * mirrors the answers onto the card and stamps it on success.
+   * ------------------------------------------------------------------ */
+  function initLeadFlow() {
+    var root = $('[data-lf]');
+    if (!root) return;
+    var form = $('form', root), steps = $$('[data-lf-step]', root), bars = $$('.lf__progress i', root), card = $('[data-lp]', root);
+    var nameEl = $('[data-lp-name]', root), status = $('[data-lp-status]', root), step = 0, sentTimer = 0;
+    function go(i, focus) {
+      if (i === step) return;
+      var back = i < step;
+      step = i;
+      steps.forEach(function (s, k) {
+        var on = k === i;
+        s.classList.toggle('is-on', on);
+        s.classList.remove('is-enter', 'is-enter-back');
+        if (on && !reduceMotion) { void s.offsetWidth; s.classList.add(back ? 'is-enter-back' : 'is-enter'); }
+      });
+      bars.forEach(function (b, k) { b.classList.toggle('is-on', k <= i); });
+      if (focus) { var first = $('input:not([type=hidden]), select', steps[i]); if (first) first.focus({ preventScroll: true }); }
+    }
+    $('[data-lf-next]', root).addEventListener('click', function () { go(1, true); });
+    $('[data-lf-back]', root).addEventListener('click', function () { go(0, true); });
+
+    // Mirror the answers onto the profile card.
+    function setText(sel, text) {
+      var el = $(sel, card);
+      if (!el || el.textContent === text) return;
+      el.textContent = text;
+      el.classList.remove('is-set'); void el.offsetWidth; el.classList.add('is-set');
+    }
+    function picked(name) {
+      var r = $('input[name="' + name + '"]:checked', form);
+      return r ? $(name === 'study_level' ? 'b' : 'span', r.parentNode).textContent : '';
+    }
+    function mirror() {
+      var f = form.elements, nm = f.name.value.trim();
+      nameEl.textContent = nm || 'Your name';
+      nameEl.classList.toggle('is-empty', !nm);
+      var level = picked('study_level');
+      setText('[data-lp-level]', /Not sure/.test(level) ? 'Not sure yet' : level + (/PhD/.test(level) ? '' : ' degree'));
+      setText('[data-lp-intake]', picked('intake'));
+      setText('[data-lp-dest]', ($('[data-destination-label]') || {}).textContent || 'General Finland Inquiry');
+      setText('[data-lp-email]', f.email.value.trim() || '—');
+      var ph = f.phone_number.value.trim();
+      setText('[data-lp-phone]', ph ? f.country_code.value + ' ' + ph : '—');
+      var pct = parseInt(($('[data-lp-pct]', card) || {}).textContent, 10) || 0;
+      card.classList.toggle('is-ready', pct >= 90);
+      if (!card.classList.contains('is-sent')) status.textContent = pct >= 90 ? 'Ready for review' : 'Draft';
+    }
+    form.addEventListener('input', mirror);
+    form.addEventListener('change', mirror);
+    form.name.addEventListener('focus', function () { nameEl.classList.add('is-typing'); });
+    form.name.addEventListener('blur', function () { nameEl.classList.remove('is-typing'); });
+    var label = $('[data-destination-label]');
+    if (label && 'MutationObserver' in window) new MutationObserver(mirror).observe(label, { childList: true, characterData: true, subtree: true });
+
+    form.addEventListener('tc:lead-sent', function () {
+      card.classList.add('is-sent');
+      status.textContent = 'Submitted';
+      go(0);
+      mirror();
+      clearTimeout(sentTimer);
+      sentTimer = setTimeout(function () { card.classList.remove('is-sent'); mirror(); }, 8000);
+    });
+
+    // The card leans toward the cursor and catches the light.
+    if (finePointer && !reduceMotion) {
+      card.parentNode.addEventListener('pointermove', function (e) {
+        var r = card.getBoundingClientRect(), u = (e.clientX - r.left) / r.width, v = (e.clientY - r.top) / r.height;
+        card.style.setProperty('--ry', ((u - 0.5) * 8).toFixed(2) + 'deg'); card.style.setProperty('--rx', ((0.5 - v) * 6).toFixed(2) + 'deg');
+        card.style.setProperty('--gx', (u * 100).toFixed(0) + '%'); card.style.setProperty('--gy', (v * 100).toFixed(0) + '%');
+      });
+      card.parentNode.addEventListener('pointerleave', function () { ['--rx', '--ry', '--gx', '--gy'].forEach(function (k) { card.style.removeProperty(k); }); });
+    }
+    mirror();
   }
 
   function syncShortlist() {
@@ -2028,6 +2110,7 @@
   initPointerFx();
   initAccordion();
   initForms();
+  initLeadFlow();
   initChat();
   initClickSpark();
   initCredits();
