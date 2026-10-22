@@ -462,142 +462,78 @@
 </section>
 
 <!-- ============================== FUNDING ==============================
-     Funding departures: an airport-style board of the five ways to fund a
-     Finnish degree. Headline figures flip into place like a split-flap
-     board; each row opens a boarding pass with how we help. No monetary
-     amounts. initFundingBoard(). -->
-<section class="section fb-sec" id="scholarships">
+     Build your funding plan: switch funding sources on and the costs of a
+     Finnish degree they cover light up in the plan card, with a meter and
+     a "how we help" note for the last source touched. Qualitative only:
+     no monetary amounts. initFundingPlan(). -->
+<section class="section section--ice fpl-sec" id="scholarships">
   <div class="container">
     <div class="section-head section-head--split reveal">
       <div>
         <span class="eyebrow"><span data-decrypt="view">Scholarships, grants &amp; loans</span></span>
-        <h2 class="h2" style="margin-top:12px">Your Finnish dream <span class="text-grad">shouldn't break the bank.</span></h2>
+        <h2 class="h2" style="margin-top:12px">Your Finnish dream <span class="text-blue">shouldn't break the bank.</span></h2>
       </div>
-      <p class="lead">Five ways to fund your degree, all departing for Finland. Open any route to see how we help you board it &mdash; most students combine two or three.</p>
+      <p class="lead">Most students combine two or three ways to fund their degree. Switch them on below and watch your plan come together &mdash; then we'll help you secure each one.</p>
     </div>
 
-    <div class="fb reveal" data-fb>
-      <div class="fb__top">
-        <span class="fb__title"><svg class="ico"><use href="#i-plane"/></svg>Funding departures</span>
-        <span class="fb__dest"><svg class="flag" aria-hidden="true"><use href="#flag-fi"/></svg>Destination: Finland</span>
+    <div class="fpl reveal" data-fpl>
+      <div class="fpl__srcs" aria-label="Funding sources">
+        <span class="fpl__label">1 &middot; Choose your funding</span>
+        <button class="fpl__src is-on" type="button" role="switch" aria-checked="true" data-fpl-src data-key="finland" data-covers="tuition relocation" data-help="We check which of your programmes take part in the Finland Scholarship and prepare the application and supporting documents with you, alongside your Studyinfo deadlines." data-tag="Finland Scholarship">
+          <span class="fpl__srcico"><svg class="ico"><use href="#i-award"/></svg></span>
+          <span class="fpl__srctxt"><b>Finland Scholarship</b><em>100% of first-year tuition</em><small>Plus a relocation grant, for non-EU/EEA master's entrants at participating institutions.</small><span class="fpl__covers">Covers: <span>Tuition fees</span><span>Relocation</span></span></span>
+          <span class="fpl__toggle" aria-hidden="true"><i></i></span>
+        </button>
+        <button class="fpl__src" type="button" role="switch" aria-checked="false" data-fpl-src data-key="institution" data-covers="tuition" data-help="We shortlist programmes where a tuition-fee scholarship is realistic, present your merit and motivation at their best and explain the renewal conditions before you accept." data-tag="Tuition-fee scholarship">
+          <span class="fpl__srcico"><svg class="ico"><use href="#i-star"/></svg></span>
+          <span class="fpl__srctxt"><b>Tuition-fee scholarships</b><em>50–100% of tuition</em><small>Awarded by most universities and UAS in the admission decision itself; often renewable.</small><span class="fpl__covers">Covers: <span>Tuition fees</span></span></span>
+          <span class="fpl__toggle" aria-hidden="true"><i></i></span>
+        </button>
+        <button class="fpl__src" type="button" role="switch" aria-checked="false" data-fpl-src data-key="doctoral" data-covers="tuition" data-help="We help with your research proposal and supervisor outreach, map funded positions and grant routes, and plan your researcher residence permit." data-tag="Doctoral: no fee">
+          <span class="fpl__srcico"><svg class="ico"><use href="#i-book"/></svg></span>
+          <span class="fpl__srctxt"><b>Doctoral study</b><em>No tuition fee</em><small>Doctoral education carries no tuition fee; many researchers are employed or grant-funded.</small><span class="fpl__covers">Covers: <span>Tuition fees</span></span></span>
+          <span class="fpl__toggle" aria-hidden="true"><i></i></span>
+        </button>
+        <button class="fpl__src is-on" type="button" role="switch" aria-checked="true" data-fpl-src data-key="work" data-covers="living" data-help="We set up your CV and job search for the Finnish market and sort your tax card and bank account on arrival; most of our students start within their first 30 days." data-tag="Part-time work">
+          <span class="fpl__srcico"><svg class="ico"><use href="#i-brief"/></svg></span>
+          <span class="fpl__srctxt"><b>Work while you study</b><em>Average 30 h a week</em><small>Your A permit lets you work part time, averaged across the year, to cover everyday costs.</small><span class="fpl__covers">Covers: <span>Everyday living</span></span></span>
+          <span class="fpl__toggle" aria-hidden="true"><i></i></span>
+        </button>
+        <button class="fpl__src" type="button" role="switch" aria-checked="false" data-fpl-src data-key="loans" data-covers="tuition housing living" data-help="We compare non-collateral options, introduce you to bank executives and match your loan documents to the funds evidence Migri asks for." data-tag="Education loan">
+          <span class="fpl__srcico"><svg class="ico"><use href="#i-bank"/></svg></span>
+          <span class="fpl__srctxt"><b>Education loans</b><em>10 partner lenders</em><small>Collateral and non-collateral options that can cover tuition, housing and living costs.</small><span class="fpl__covers">Covers: <span>Tuition fees</span><span>Housing</span><span>Everyday living</span></span></span>
+          <span class="fpl__toggle" aria-hidden="true"><i></i></span>
+        </button>
       </div>
-      <div class="fb__head" aria-hidden="true"><span>Route</span><span>Funding</span><span>Headline</span><span>Covers</span><span>For</span><span>Status</span><span></span></div>
-      <ol class="fb__rows">
-        <li class="fb__row is-open" data-fb-row>
-          <button class="fb__line" type="button" aria-expanded="true" aria-controls="fb-pass-0" data-fb-toggle>
-            <span class="fb__code">FS 01</span>
-            <span class="fb__route"><span class="fb__ico"><svg class="ico ico-sm"><use href="#i-award"/></svg></span><b>Finland Scholarship</b></span>
-            <span class="fb__val" aria-label="100% of tuition"><span class="fb__flaps" aria-hidden="true"><span class="fb__flap" data-ch="1">1</span><span class="fb__flap" data-ch="0">0</span><span class="fb__flap" data-ch="0">0</span><span class="fb__flap" data-ch="%">%</span></span><small>of tuition</small></span>
-            <span class="fb__covers"><small>Covers</small>First-year tuition + a relocation grant</span>
-            <span class="fb__for"><small>For</small>Non-EU/EEA master's entrants</span>
-            <span class="fb__status fb__status--go"><i></i>Check eligibility</span>
-            <svg class="ico ico-sm fb__chev" aria-hidden="true"><use href="#i-down"/></svg>
-          </button>
-          <div class="fb__pass" id="fb-pass-0" data-fb-pass>
-            <div class="fb__passin">
-              <div class="fb__stub"><small>Boarding pass</small><b>FS 01</b><span>Finland Scholarship</span><span class="fb__barcode" aria-hidden="true"></span></div>
-              <div class="fb__help">
-                <span class="fb__kicker"><svg class="ico ico-sm"><use href="#i-spark"/></svg>How Tutee Connect helps</span>
-                <p>For non-EU/EEA students admitted to a master's programme at a participating institution: the first-year tuition fee is covered in full, with a relocation grant on top.</p>
-                <ul><li><svg class="ico ico-sm"><use href="#i-check"/></svg>We check which of your programmes take part</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Application and documents prepared with you</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Deadlines tracked with your Studyinfo application</li></ul>
-                <a class="btn btn-primary btn-sm" href="#contact" data-fb-cta data-fund="Finland Scholarship">Evaluate my scholarship profile<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
-              </div>
-            </div>
+
+      <div class="fpl__plan" aria-live="polite">
+        <div class="fpl__hero">
+          <img src="./assets/img/services/college.jpg" alt="" loading="lazy" decoding="async">
+          <div class="fpl__herotxt">
+            <span class="fpl__label fpl__label--light">2 &middot; Your degree in Finland</span>
+            <b data-fpl-headline>2 of 4 costs planned</b>
           </div>
-        </li>
-        <li class="fb__row" data-fb-row>
-          <button class="fb__line" type="button" aria-expanded="false" aria-controls="fb-pass-1" data-fb-toggle>
-            <span class="fb__code">TS 02</span>
-            <span class="fb__route"><span class="fb__ico"><svg class="ico ico-sm"><use href="#i-cap"/></svg></span><b>Tuition-fee scholarships</b></span>
-            <span class="fb__val" aria-label="50-100% of tuition"><span class="fb__flaps" aria-hidden="true"><span class="fb__flap" data-ch="5">5</span><span class="fb__flap" data-ch="0">0</span><span class="fb__flap" data-ch="-">-</span><span class="fb__flap" data-ch="1">1</span><span class="fb__flap" data-ch="0">0</span><span class="fb__flap" data-ch="0">0</span><span class="fb__flap" data-ch="%">%</span></span><small>of tuition</small></span>
-            <span class="fb__covers"><small>Covers</small>Tuition, decided with your admission</span>
-            <span class="fb__for"><small>For</small>Most bachelor's and master's applicants</span>
-            <span class="fb__status fb__status--go"><i></i>With admission</span>
-            <svg class="ico ico-sm fb__chev" aria-hidden="true"><use href="#i-down"/></svg>
-          </button>
-          <div class="fb__pass" id="fb-pass-1" data-fb-pass hidden>
-            <div class="fb__passin">
-              <div class="fb__stub"><small>Boarding pass</small><b>TS 02</b><span>Tuition-fee scholarships</span><span class="fb__barcode" aria-hidden="true"></span></div>
-              <div class="fb__help">
-                <span class="fb__kicker"><svg class="ico ico-sm"><use href="#i-spark"/></svg>How Tutee Connect helps</span>
-                <p>Most Finnish universities and universities of applied sciences award 50–100% tuition-fee scholarships in the admission decision itself, and many renew them for strong study progress.</p>
-                <ul><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Programmes shortlisted where scholarships are realistic</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Merit and motivation evidence presented at its best</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Renewal conditions explained before you accept</li></ul>
-                <a class="btn btn-primary btn-sm" href="#contact" data-fb-cta data-fund="Tuition-fee scholarships">Find my scholarships<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li class="fb__row" data-fb-row>
-          <button class="fb__line" type="button" aria-expanded="false" aria-controls="fb-pass-2" data-fb-toggle>
-            <span class="fb__code">DR 03</span>
-            <span class="fb__route"><span class="fb__ico"><svg class="ico ico-sm"><use href="#i-book"/></svg></span><b>Doctoral study</b></span>
-            <span class="fb__val" aria-label="NO FEE tuition"><span class="fb__flaps" aria-hidden="true"><span class="fb__flap" data-ch="N">N</span><span class="fb__flap" data-ch="O">O</span><span class="fb__flap" data-ch=" ">&nbsp;</span><span class="fb__flap" data-ch="F">F</span><span class="fb__flap" data-ch="E">E</span><span class="fb__flap" data-ch="E">E</span></span><small>tuition</small></span>
-            <span class="fb__covers"><small>Covers</small>No tuition fee at any university</span>
-            <span class="fb__for"><small>For</small>Doctoral candidates</span>
-            <span class="fb__status fb__status--ok"><i></i>Always</span>
-            <svg class="ico ico-sm fb__chev" aria-hidden="true"><use href="#i-down"/></svg>
-          </button>
-          <div class="fb__pass" id="fb-pass-2" data-fb-pass hidden>
-            <div class="fb__passin">
-              <div class="fb__stub"><small>Boarding pass</small><b>DR 03</b><span>Doctoral study</span><span class="fb__barcode" aria-hidden="true"></span></div>
-              <div class="fb__help">
-                <span class="fb__kicker"><svg class="ico ico-sm"><use href="#i-spark"/></svg>How Tutee Connect helps</span>
-                <p>Doctoral education in Finland carries no tuition fee, and many doctoral researchers are employed by their university or funded by a research project or foundation grant.</p>
-                <ul><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Research proposal and supervisor outreach</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Funded positions and grant routes mapped</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Researcher residence permit planned with you</li></ul>
-                <a class="btn btn-primary btn-sm" href="#contact" data-fb-cta data-fund="Doctoral study">Plan my doctorate<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li class="fb__row" data-fb-row>
-          <button class="fb__line" type="button" aria-expanded="false" aria-controls="fb-pass-3" data-fb-toggle>
-            <span class="fb__code">WK 04</span>
-            <span class="fb__route"><span class="fb__ico"><svg class="ico ico-sm"><use href="#i-brief"/></svg></span><b>Work while you study</b></span>
-            <span class="fb__val" aria-label="30 H a week"><span class="fb__flaps" aria-hidden="true"><span class="fb__flap" data-ch="3">3</span><span class="fb__flap" data-ch="0">0</span><span class="fb__flap" data-ch=" ">&nbsp;</span><span class="fb__flap" data-ch="H">H</span></span><small>a week</small></span>
-            <span class="fb__covers"><small>Covers</small>Living costs, from an average 30 h a week</span>
-            <span class="fb__for"><small>For</small>Every student on an A permit</span>
-            <span class="fb__status fb__status--ok"><i></i>On arrival</span>
-            <svg class="ico ico-sm fb__chev" aria-hidden="true"><use href="#i-down"/></svg>
-          </button>
-          <div class="fb__pass" id="fb-pass-3" data-fb-pass hidden>
-            <div class="fb__passin">
-              <div class="fb__stub"><small>Boarding pass</small><b>WK 04</b><span>Work while you study</span><span class="fb__barcode" aria-hidden="true"></span></div>
-              <div class="fb__help">
-                <span class="fb__kicker"><svg class="ico ico-sm"><use href="#i-spark"/></svg>How Tutee Connect helps</span>
-                <p>Your study permit lets you work an average of 30 hours a week, averaged across the year, so you can work more during the holidays. We help you find permitted part-time work after you land.</p>
-                <ul><li><svg class="ico ico-sm"><use href="#i-check"/></svg>CV and job search set up for the Finnish market</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Tax card and bank account sorted on arrival</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Most of our students start within their first 30 days</li></ul>
-                <a class="btn btn-primary btn-sm" href="#contact" data-fb-cta data-fund="Work while you study">Talk to a counsellor<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li class="fb__row" data-fb-row>
-          <button class="fb__line" type="button" aria-expanded="false" aria-controls="fb-pass-4" data-fb-toggle>
-            <span class="fb__code">LN 05</span>
-            <span class="fb__route"><span class="fb__ico"><svg class="ico ico-sm"><use href="#i-bank"/></svg></span><b>Education loans</b></span>
-            <span class="fb__val" aria-label="10 lenders"><span class="fb__flaps" aria-hidden="true"><span class="fb__flap" data-ch="1">1</span><span class="fb__flap" data-ch="0">0</span></span><small>lenders</small></span>
-            <span class="fb__covers"><small>Covers</small>Tuition, housing and living costs</span>
-            <span class="fb__for"><small>For</small>Students and their families</span>
-            <span class="fb__status fb__status--ok"><i></i>Any time</span>
-            <svg class="ico ico-sm fb__chev" aria-hidden="true"><use href="#i-down"/></svg>
-          </button>
-          <div class="fb__pass" id="fb-pass-4" data-fb-pass hidden>
-            <div class="fb__passin">
-              <div class="fb__stub"><small>Boarding pass</small><b>LN 05</b><span>Education loans</span><span class="fb__barcode" aria-hidden="true"></span></div>
-              <div class="fb__help">
-                <span class="fb__kicker"><svg class="ico ico-sm"><use href="#i-spark"/></svg>How Tutee Connect helps</span>
-                <p>Exclusive tie-ups with national banks and private lenders, with collateral and non-collateral options and introductions to bank executives for quick sanctions.</p>
-                <ul><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Non-collateral options compared for you</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Introductions to bank executives</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Loan documents matched to Migri's funds evidence</li></ul><div class="fb__logos"><span><img src="./assets/img/loan-partner/icici.png" alt="ICICI Bank" loading="lazy"></span><span><img src="./assets/img/loan-partner/hdfc-credila.jpg" alt="HDFC Credila" loading="lazy"></span><span><img src="./assets/img/loan-partner/idfc.jpg" alt="IDFC First Bank" loading="lazy"></span><span><img src="./assets/img/loan-partner/incred.jpg" alt="InCred" loading="lazy"></span><span><img src="./assets/img/loan-partner/auxilo.jpg" alt="Auxilo" loading="lazy"></span><span><img src="./assets/img/loan-partner/avanse.jpg" alt="Avanse" loading="lazy"></span><span><img src="./assets/img/loan-partner/union.jpg" alt="Union Bank" loading="lazy"></span><span><img src="./assets/img/loan-partner/prodigy.jpg" alt="Prodigy Finance" loading="lazy"></span><span><img src="./assets/img/loan-partner/axis.jpg" alt="Axis Bank" loading="lazy"></span><span><img src="./assets/img/loan-partner/mpower.jpg" alt="MPOWER Financing" loading="lazy"></span></div>
-                <a class="btn btn-primary btn-sm" href="#contact" data-fb-cta data-fund="Education loans">Check loan eligibility<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
-              </div>
-            </div>
-          </div>
-        </li>
-      </ol>
+          <div class="fpl__meter" aria-hidden="true"><i data-fpl-meter></i></div>
+        </div>
+        <div class="fpl__costs">
+            <div class="fpl__cost" data-fpl-cost="tuition"><span class="fpl__costico"><svg class="ico"><use href="#i-cap"/></svg></span><b>Tuition fees</b><span class="fpl__state" data-fpl-state>Not planned yet</span><span class="fpl__tags" data-fpl-tags></span></div>
+            <div class="fpl__cost" data-fpl-cost="relocation"><span class="fpl__costico"><svg class="ico"><use href="#i-plane"/></svg></span><b>Relocation</b><span class="fpl__state" data-fpl-state>Not planned yet</span><span class="fpl__tags" data-fpl-tags></span></div>
+            <div class="fpl__cost" data-fpl-cost="housing"><span class="fpl__costico"><svg class="ico"><use href="#i-house"/></svg></span><b>Housing</b><span class="fpl__state" data-fpl-state>Not planned yet</span><span class="fpl__tags" data-fpl-tags></span></div>
+            <div class="fpl__cost" data-fpl-cost="living"><span class="fpl__costico"><svg class="ico"><use href="#i-heart"/></svg></span><b>Everyday living</b><span class="fpl__state" data-fpl-state>Not planned yet</span><span class="fpl__tags" data-fpl-tags></span></div>
+        </div>
+        <div class="fpl__help">
+          <span class="fpl__helpico"><svg class="ico"><use href="#i-spark"/></svg></span>
+          <div><b data-fpl-helptitle>How we help: Part-time work</b><p data-fpl-helptext></p></div>
+        </div>
+        <div class="fpl__foot">
+          <span class="fpl__chosen" data-fpl-chosen></span>
+          <a class="btn btn-primary" href="#contact" data-fpl-cta data-magnet>Get my funding plan<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
+        </div>
+      </div>
     </div>
 
-    <div class="fb__partners reveal" id="financial-aid">
-      <span class="fb__partners-label"><svg class="ico ico-sm"><use href="#i-shield"/></svg>Loan partners</span>
+    <div class="fpl__partners reveal" id="financial-aid">
+      <span class="fpl__partners-label"><svg class="ico ico-sm"><use href="#i-shield"/></svg>Education loan partners</span>
       <div class="logos" aria-label="Loan partners">
         <div class="logos__track" data-logos>
           <div class="logos__item"><img src="./assets/img/loan-partner/icici.png" alt="ICICI Bank" loading="lazy"></div>

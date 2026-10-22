@@ -920,61 +920,64 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * Funding departures — split-flap headline figures settle row by row
-   * when the board first scrolls into view (and again on hover); each
-   * row opens its boarding pass, one at a time.
+   * Funding plan builder — each source switch lights up the degree costs
+   * it covers (tags, meter, headline); the help note follows the last
+   * source touched, and the button carries the chosen mix to the form.
+   * A fully covered plan earns a small burst of confetti.
    * ------------------------------------------------------------------ */
-  function initFundingBoard() {
-    var root = $('[data-fb]');
+  function initFundingPlan() {
+    var root = $('[data-fpl]');
     if (!root) return;
-    var rows = $$('[data-fb-row]', root);
-    var GLYPHS = 'ABCDEFGHIJKLMNOPRSTUVWXYZ0123456789%-';
-
-    // Each tile cycles through glyphs, then lands on its own character.
-    function flapRow(row, delay) {
-      if (reduceMotion) return;
-      $$('.fb__flap', row).forEach(function (f, k) {
-        var target = f.getAttribute('data-ch'), spins = 6 + k * 2 + Math.floor(Math.random() * 4), n = 0;
-        if (target === ' ') return;
-        setTimeout(function tick() {
-          f.classList.remove('is-flip'); void f.offsetWidth; f.classList.add('is-flip');
-          if (++n >= spins) { f.textContent = target; return; }
-          f.textContent = GLYPHS.charAt(Math.floor(Math.random() * GLYPHS.length));
-          setTimeout(tick, 70);
-        }, delay);
+    var srcs = $$('[data-fpl-src]', root), costs = $$('[data-fpl-cost]', root);
+    var meter = $('[data-fpl-meter]', root), headline = $('[data-fpl-headline]', root);
+    var helpTitle = $('[data-fpl-helptitle]', root), helpText = $('[data-fpl-helptext]', root), chosen = $('[data-fpl-chosen]', root);
+    var wasFull = false;
+    function picked() { return srcs.filter(function (s) { return s.classList.contains('is-on'); }); }
+    function render(focusSrc) {
+      var on = picked(), covered = 0;
+      costs.forEach(function (c) {
+        var key = c.getAttribute('data-fpl-cost');
+        var by = on.filter(function (s) { return s.getAttribute('data-covers').split(' ').indexOf(key) > -1; });
+        var tags = $('[data-fpl-tags]', c), was = c.classList.contains('is-covered');
+        c.classList.toggle('is-covered', by.length > 0);
+        $('[data-fpl-state]', c).textContent = by.length ? 'Covered' : 'Not planned yet';
+        // Rebuild tags, animating only the newly added ones.
+        var before = $$('span', tags).map(function (t) { return t.getAttribute('data-key'); });
+        tags.innerHTML = by.map(function (s) {
+          var k = s.getAttribute('data-key');
+          return '<span data-key="' + k + '"' + (before.indexOf(k) > -1 ? ' style="animation:none"' : '') + '>' + escapeHtml(s.getAttribute('data-tag')) + '</span>';
+        }).join('');
+        if (by.length) covered++;
+        if (!was && by.length && !reduceMotion && c.animate) c.animate([{ transform: 'scale(.97)' }, { transform: 'scale(1.02)' }, { transform: 'none' }], { duration: 420, easing: 'ease-out' });
       });
+      meter.style.width = (covered / costs.length * 100) + '%';
+      headline.textContent = covered === costs.length ? 'All 4 costs planned' : covered + ' of ' + costs.length + ' costs planned';
+      chosen.innerHTML = on.length ? '<b>' + on.length + '</b> source' + (on.length > 1 ? 's' : '') + ' in your plan' : 'Switch on a source to start';
+      var h = focusSrc || on[on.length - 1] || srcs[0];
+      helpTitle.textContent = 'How we help: ' + h.querySelector('b').textContent;
+      helpText.textContent = h.getAttribute('data-help');
+      var full = covered === costs.length;
+      if (full && !wasFull && focusSrc && window.TCFX) {
+        var r = $('.fpl__hero', root).getBoundingClientRect();
+        window.TCFX.confetti(r.left + r.width / 2, r.top + r.height / 2, 90);
+      }
+      wasFull = full;
     }
-    function open(row) {
-      rows.forEach(function (r) {
-        var on = r === row && !r.classList.contains('is-open');
-        r.classList.toggle('is-open', on);
-        $('[data-fb-toggle]', r).setAttribute('aria-expanded', String(on));
-        var pass = $('[data-fb-pass]', r);
-        if (on) {
-          pass.hidden = false;
-          if (!reduceMotion && pass.animate) pass.animate([{ opacity: 0, transform: 'translateY(-8px)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'cubic-bezier(.2,.7,.2,1)' });
-        } else pass.hidden = true;
+    srcs.forEach(function (s) {
+      s.addEventListener('click', function () {
+        var on = !s.classList.contains('is-on');
+        s.classList.toggle('is-on', on);
+        s.setAttribute('aria-checked', String(on));
+        render(s);
       });
-    }
-    rows.forEach(function (r) {
-      var btn = $('[data-fb-toggle]', r), last = 0;
-      btn.addEventListener('click', function () { open(r); });
-      btn.addEventListener('mouseenter', function () {
-        var now = performance.now();
-        if (now - last > 2500) { last = now; flapRow(r, 0); }
-      });
-      var cta = $('[data-fb-cta]', r);
-      if (cta) cta.addEventListener('click', function () { setDestination('Funding: ' + cta.getAttribute('data-fund')); });
     });
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (es) {
-        if (!es[0].isIntersecting) return;
-        io.disconnect();
-        rows.forEach(function (r, i) { flapRow(r, i * 220); });
-      }, { threshold: 0.3 });
-      io.observe(root);
-    }
+    $('[data-fpl-cta]', root).addEventListener('click', function () {
+      var on = picked().map(function (s) { return s.getAttribute('data-tag'); });
+      setDestination('Funding plan: ' + (on.length ? on.join(', ') : 'help me choose'));
+    });
+    render();
   }
+
 
 
   /* ------------------------------------------------------------------ *
@@ -1931,7 +1934,7 @@
   initSeasonStage();
   initServices();
   initPostcards();
-  initFundingBoard();
+  initFundingPlan();
   initJourney();
   initParallax();
   initPointerFx();
