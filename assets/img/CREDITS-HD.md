@@ -26,3 +26,15 @@ All files are 1920px versions from Wikimedia Commons. CC BY licences require the
 - `assets/img/cities/seinajoki.jpg` — Seinäjoki. Zache, CC BY 4.0. <https://commons.wikimedia.org/wiki/File:Seinäjoki_2023.jpg>
 - `assets/img/cities/kouvola.jpg` — Kouvola. VynedJ, CC BY 4.0. <https://commons.wikimedia.org/wiki/File:Kouvola_20260616.jpg>
 - `assets/img/cities/mariehamn.jpg` — Pommern, Mariehamn. Ypsilon (Wikivoyage), Public domain. <https://commons.wikimedia.org/wiki/File:Pommern_Mariehamn.jpg>
+
+## Video loops (Why Finland)
+
+Trimmed and re-encoded with ffmpeg (no audio): WebM VP9 plus MP4 H.264, with a poster frame each.
+
+- `assets/video/winter.{webm,mp4}` + `winter-poster.jpg` — 18 s cut (72–90 s) of "Aurora borealis timelapse", 1920x1080. Harriniva Hotels & Safaris, CC BY 3.0. <https://commons.wikimedia.org/wiki/File:Aurora_borealis_timelapse.webm>
+- `assets/video/summer.{webm,mp4}` + `summer-poster.jpg` — "Polar Day's Night", Arctic Circle, Rovaniemi, 1280x720 (the only free Finnish midnight-sun clip found). Denis Despair, CC BY 3.0. <https://commons.wikimedia.org/wiki/File:Polar_Day's_Night-HD.webm>
+
+## Landmark photos re-exported at 1920px
+
+`photos/family.jpg` (Töölönlahti, 1920x1440), `photos/team-working.jpg` (Parliament House, 1920x1280) and `photos/finland-city.jpg` (Tammerkoski, 1920x1280) were re-cropped from the same Commons originals listed in `assets/img/photos/CREDITS.md`.
+

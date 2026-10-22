@@ -1,6 +1,20 @@
 /* Photo credits, keyed by path under the site root. Generated with the HD
    photo download; CC BY photos must keep their credit visible. */
 window.TC_PHOTO_CREDITS = {
+ "assets/video/winter.webm": {
+  "subject": "Aurora borealis timelapse, Finnish and Swedish Lapland (video, trimmed)",
+  "author": "Harriniva Hotels & Safaris",
+  "licence": "CC BY 3.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Aurora_borealis_timelapse.webm",
+  "short": "Video: Harriniva Hotels & Safaris, CC BY 3.0"
+ },
+ "assets/video/summer.webm": {
+  "subject": "Polar day's night at the Arctic Circle, Rovaniemi (video)",
+  "author": "Denis Despair",
+  "licence": "CC BY 3.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Polar_Day's_Night-HD.webm",
+  "short": "Video: Denis Despair, CC BY 3.0"
+ },
  "assets/img/photos/hero-aurora.jpg": {
   "subject": "Aurora borealis over Lapland",
   "author": "Vincent Guth",

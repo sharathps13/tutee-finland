@@ -936,7 +936,7 @@ main { overflow-x: clip; }
 .ws__fig { position: absolute; inset: 0; margin: 0; clip-path: circle(0% at var(--ox, 50%) var(--oy, 60%)); z-index: 0; }
 .ws__fig.is-prev { clip-path: none; z-index: 1; }
 .ws__fig.is-on { clip-path: circle(150% at var(--ox, 50%) var(--oy, 60%)); z-index: 2; transition: clip-path 1s cubic-bezier(.65, 0, .35, 1); }
-.ws__fig img { position: absolute; inset: -14px; width: calc(100% + 28px); height: calc(100% + 28px); max-width: none; object-fit: cover;
+.ws__fig img, .ws__fig video { position: absolute; inset: -14px; width: calc(100% + 28px); height: calc(100% + 28px); max-width: none; object-fit: cover;
   transform: translate(var(--px, 0px), var(--py, 0px)) scale(1.04); transition: transform .6s var(--ease); }
 .ws__fig::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(4,16,42,.25) 0%, rgba(4,16,42,0) 30%, rgba(4,16,42,0) 55%, rgba(4,16,42,.8) 100%); }
 .ws__fig figcaption { position: absolute; left: clamp(18px, 3vw, 30px); right: 18px; bottom: clamp(18px, 3vw, 28px); z-index: 1; display: grid; gap: 8px; }
@@ -950,7 +950,7 @@ main { overflow-x: clip; }
 .ws__hint .ico { color: var(--aurora); }
 .ws__hint-touch { display: none; }
 @media (hover: none) { .ws__hint-fine { display: none; } .ws__hint-touch { display: inline; } }
-.ws.is-stirred .ws__hint { opacity: 0; }
+.ws.is-stirred .ws__hint, .ws.is-film .ws__hint { opacity: 0; }
 
 @media (max-width: 899px) {
   .ws__grid { gap: 18px; }

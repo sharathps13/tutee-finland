@@ -401,7 +401,7 @@
     var ctx = canvas.getContext && canvas.getContext('2d');
     if (!ctx) return null;
     var W = 0, H = 0, dpr = 1, kind = 0, parts = [], t = 0;
-    var DENSITY = [26, 80, 34, 30];               // per 600x600 window
+    var DENSITY = [26, 0, 34, 0];                 // per 600x600 window; winter and summer are video
     var LEAF = ['#e2582a', '#f2a93b', '#c8321e', '#f4c04a', '#b5461d'];
     var PETAL = ['#ffd1dc', '#ffb6c8', '#fff0f4', '#f7a8bf'];
     function sprite(rgb) {
@@ -501,7 +501,7 @@
           var f = (1 - d / 220) * 320;
           p.ex += ddx / d * f; p.ey += ddy / d * f;
         }
-        for (var k = 0; k < 12; k++) {
+        for (var k = DENSITY[kind] ? 0 : 12; k < 12; k++) {
           var q = spawn(kind, x, y), ang = rnd(0, 6.2832), sp = rnd(120, 300);
           q.a = 1; q.ttl = rnd(1.8, 3); q.ex = Math.cos(ang) * sp; q.ey = Math.sin(ang) * sp;
         }
@@ -520,7 +520,19 @@
     function syncLive() { sec.classList.toggle('is-live', pinned()); }
     syncLive();
     if (pinMq) { if (pinMq.addEventListener) pinMq.addEventListener('change', syncLive); else if (pinMq.addListener) pinMq.addListener(syncLive); }
-    window.addEventListener('load', function () { figs.forEach(function (f) { $('img', f).loading = 'eager'; }); });
+    window.addEventListener('load', function () { figs.forEach(function (f) { var im = $('img', f); if (im) im.loading = 'eager'; }); });
+    // Winter and summer are video loops: only the visible one plays, and only on screen.
+    function syncVideos() {
+      figs.forEach(function (f, k) {
+        var v = $('[data-ws-vid]', f);
+        if (!v) return;
+        if (k === stage && inView && !reduceMotion && !document.hidden) {
+          if (v.preload !== 'auto') v.preload = 'auto';
+          var pr = v.play();
+          if (pr && pr.catch) pr.catch(function () {});
+        } else if (!v.paused) v.pause();
+      });
+    }
 
     var fx = reduceMotion ? null : seasonFx($('[data-ws-fx]', sec));
     if (fx) fx.resize();
@@ -553,7 +565,9 @@
       if (quick) { void fig.offsetWidth; fig.style.transition = ''; }
       if (bar) bar.style.width = ((i + 1) / N * 100) + '%';
       if (seen) countUp(panels[i], quick);
+      sec.classList.toggle('is-film', !!$('[data-ws-vid]', fig));
       if (fx) fx.season(i, quick);
+      syncVideos();
     }
     function stageForScroll() {
       return clamp(Math.floor(Math.max(0, -sec.getBoundingClientRect().top) / STEP), 0, N - 1);
@@ -630,10 +644,12 @@
       var rt = 0;
       window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(fx.resize, 120); });
       document.addEventListener('visibilitychange', sync);
+      document.addEventListener('visibilitychange', syncVideos);
     }
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (es) {
         inView = es[0].isIntersecting;
+        syncVideos();
         if (inView && !seen) { seen = true; countUp(panels[stage], false); }
         sync();
       }, { threshold: 0.15 }).observe(win);
