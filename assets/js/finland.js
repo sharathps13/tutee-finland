@@ -904,178 +904,217 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * Find-your-Finland-match quiz
+   * Universities — map of Finland. Pins sit on each university city
+   * (drawn from the hero's FI_OUTLINE); rows and pins preview on hover and
+   * select on click, an aurora arc flies from the last city to the new one,
+   * and the spotlight card shows the campus city, rank and strengths.
+   * Type and field chips filter both; hearts use the shared shortlist.
    * ------------------------------------------------------------------ */
-  /* Broad subject strengths and regions for the twelve QS-ranked
-     institutions. Deliberately coarse: it suggests where to start, and the
-     page says a counsellor confirms programmes with the student. */
-  var UNIS = [
-    { n: 'Aalto University', r: 1, uas: false, city: 'Espoo, Helsinki region', reg: 'capital', f: ['tech', 'business', 'arts'] },
-    { n: 'University of Helsinki', r: 2, uas: false, city: 'Helsinki', reg: 'capital', f: ['science', 'health', 'society'] },
-    { n: 'University of Turku', r: 3, uas: false, city: 'Turku', reg: 'coast', f: ['health', 'science', 'business', 'society'] },
-    { n: 'University of Oulu', r: 4, uas: false, city: 'Oulu', reg: 'north', f: ['tech', 'health', 'science'] },
-    { n: 'Tampere University', r: 5, uas: false, city: 'Tampere', reg: 'lakeland', f: ['tech', 'health', 'society'] },
-    { n: 'University of Jyväskylä', r: 6, uas: false, city: 'Jyväskylä', reg: 'lakeland', f: ['society', 'science', 'business'] },
-    { n: 'University of Eastern Finland', r: 7, uas: false, city: 'Joensuu & Kuopio', reg: 'north', f: ['health', 'science', 'society'] },
-    { n: 'LUT University', r: 8, uas: false, city: 'Lappeenranta', reg: 'lakeland', f: ['tech', 'business'] },
-    { n: 'Åbo Akademi University', r: 9, uas: false, city: 'Turku', reg: 'coast', f: ['science', 'society', 'business'] },
-    { n: 'University of Vaasa', r: 10, uas: false, city: 'Vaasa', reg: 'coast', f: ['business', 'tech'] },
-    { n: 'Turku University of Applied Sciences', r: 11, uas: true, city: 'Turku', reg: 'coast', f: ['tech', 'health', 'arts', 'business'] },
-    { n: 'Jamk University of Applied Sciences', r: 12, uas: true, city: 'Jyväskylä', reg: 'lakeland', f: ['business', 'tech', 'health'] }
-  ];
-  // Directory ids (universities-data.js), in rank order, for detail-page links and the shortlist.
-  ['aalto-university', 'university-of-helsinki', 'university-of-turku', 'university-of-oulu', 'tampere-university',
-   'university-of-jyvaskyla', 'university-of-eastern-finland', 'lut-university', 'abo-akademi-university',
-   'university-of-vaasa', 'turku-university-of-applied-sciences', 'jamk-university-of-applied-sciences']
-    .forEach(function (id, i) { UNIS[i].id = id; });
-  var FIELD_LABEL = { tech: 'Tech & engineering', business: 'Business', health: 'Health & life sciences', science: 'Natural sciences', arts: 'Arts & design', society: 'Education & society' };
-  var REGION_LABEL = { capital: 'Helsinki region', lakeland: 'Lakeland', coast: 'Coast & archipelago', north: 'North & east' };
+  var UM_PINS = {
+    hel: ['Helsinki region', 24.9, 60.2], tku: ['Turku', 22.27, 60.45], tre: ['Tampere', 23.76, 61.5], lpr: ['Lappeenranta', 28.19, 61.06],
+    jkl: ['Jyväskylä', 25.73, 62.24], joe: ['Joensuu', 29.76, 62.6], vaa: ['Vaasa', 21.62, 63.1], oul: ['Oulu', 25.47, 65.01]
+  };
+  var UM_FIELDS = { tech: 'Technology', business: 'Business', health: 'Health', science: 'Science', society: 'Society & education', arts: 'Arts & design' };
 
-  function initQuiz() {
-    var root = $('[data-quiz]');
+  function initUniMap() {
+    var root = $('[data-um]');
     if (!root) return;
-    var steps = $$('.quiz__step', root);
-    var bars = $$('.quiz__progress span', root);
-    var back = $('[data-quiz-back]', root);
-    var answers = {}, cur = 0, shortlist = [];
-
-    function go(i) {
-      cur = i;
-      steps.forEach(function (s, j) { s.classList.toggle('is-active', j === i); });
-      bars.forEach(function (b, j) { b.classList.toggle('is-on', j <= Math.min(i, 2)); });
-      back.hidden = i === 0;
+    var svg = $('[data-um-svg]', root), mapBox = $('[data-um-map]', root), tilt = $('[data-um-tilt]', root), tip = $('[data-um-tip]', root);
+    var items = $$('[data-um-item]', root), spot = $('[data-um-spot]', root), body = $('[data-um-body]', root);
+    var imgA = $('[data-um-img]', root), imgB = $('[data-um-img2]', root), heart = $('[data-um-heart]', root);
+    var NS = 'http://www.w3.org/2000/svg', S = 58, PAD = 16, sel = 0, filt = { type: 'all', field: null };
+    function P(lon, lat) { return [PAD + (lon - LON0) * KX * S, PAD + (LAT0 - lat) * S]; }
+    function el(tag, attrs, parent) {
+      var n = document.createElementNS(NS, tag);
+      for (var k in attrs) n.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(n);
+      return n;
     }
-    function score(u) {
-      var reg = u.reg === answers.region, fld = u.f.indexOf(answers.field) > -1;
-      var s = (reg ? 3 : 0) + (fld ? 3 : 0) + (13 - u.r) / 12;
-      if (answers.level === "Bachelor's" && u.uas) s += 0.8;
-      return { u: u, s: s, reg: reg, fld: fld };
-    }
-    function result() {
-      var pool = UNIS.filter(function (u) { return !(answers.level === 'Doctoral' && u.uas); });
-      shortlist = pool.map(score).sort(function (a, b) { return b.s - a.s; }).slice(0, 3);
-      var top = shortlist[0];
-      var pct = clamp(Math.round(64 + (top.reg ? 15 : 0) + (top.fld ? 15 : 0) + (13 - top.u.r) / 2), 60, 98);
+    var data = items.map(function (b, i) {
+      return { i: i, id: b.getAttribute('data-id'), name: b.getAttribute('data-name'), city: b.getAttribute('data-city'), region: b.getAttribute('data-region'),
+        pin: b.getAttribute('data-pin'), img: b.getAttribute('data-img'), f: b.getAttribute('data-f').split(' '), uas: b.hasAttribute('data-uas') };
+    });
 
-      $('[data-result-title]', root).textContent = top.reg && top.fld ? 'A strong fit, right where you want to be' : 'Great places to start';
-      $('[data-result-chips]', root).innerHTML = [answers.level, FIELD_LABEL[answers.field], REGION_LABEL[answers.region]].map(function (c) {
-        return '<span class="chip chip--glass">' + escapeHtml(c) + '</span>';
-      }).join('');
-      $('[data-picks]', root).innerHTML = shortlist.map(function (p, i) {
-        var why = p.reg && p.fld ? 'Field + location' : p.fld ? 'Your field' : p.reg ? 'Your location' : 'Top ranked';
-        return '<li class="pick" style="--i:' + i + '"><div class="pick__top"><span class="pick__tag">' + why + '</span>' +
-          '<span class="pick__rank">QS Europe #' + p.u.r + '</span></div><h4><a href="./university.html?id=' + p.u.id + '">' + escapeHtml(p.u.n) + '</a></h4>' +
-          '<span class="pick__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>' + escapeHtml(p.u.city) + '</span></li>';
-      }).join('');
-
-      var ring = $('[data-ring]', root), val = $('[data-ring-val]', root);
-      if (reduceMotion) { ring.style.setProperty('--p', pct); val.textContent = pct + '%'; }
-      else {
-        var t0 = null;
-        requestAnimationFrame(function anim(t) {
-          if (t0 === null) t0 = t;
-          var k = Math.min(1, (t - t0) / 1100), v = Math.round(pct * (1 - Math.pow(1 - k, 3)));
-          ring.style.setProperty('--p', v); val.textContent = v + '%';
-          if (k < 1) requestAnimationFrame(anim);
-        });
+    /* ---------- draw the map ---------- */
+    var defs = el('defs', {}, svg);
+    var g1 = el('linearGradient', { id: 'umStroke', x1: '0', y1: '0', x2: '0', y2: '1' }, defs);
+    el('stop', { offset: '0', 'stop-color': '#2fe3b4' }, g1); el('stop', { offset: '1', 'stop-color': '#8fb8ff' }, g1);
+    var g2 = el('linearGradient', { id: 'umArc', x1: '0', y1: '0', x2: '1', y2: '0' }, defs);
+    el('stop', { offset: '0', 'stop-color': '#8fb8ff', 'stop-opacity': '.2' }, g2); el('stop', { offset: '1', 'stop-color': '#2fe3b4' }, g2);
+    [60, 62, 64, 66, 68, 70].forEach(function (lat) {
+      var y = P(0, lat)[1];
+      el('line', { x1: 0, y1: y, x2: 320, y2: y, 'class': 'um__grat' }, svg);
+      el('text', { x: 300, y: y - 3, 'class': 'um__gratlabel', 'text-anchor': 'end' }, svg).textContent = lat + '°N';
+    });
+    [22, 26, 30].forEach(function (lon) { var x = P(lon, 0)[0]; el('line', { x1: x, y1: 0, x2: x, y2: 642, 'class': 'um__grat' }, svg); });
+    var d = FI_OUTLINE.map(function (pt, i) { var q = P(pt[0], pt[1]); return (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1); }).join('') + 'Z';
+    el('path', { d: d, 'class': 'um__landglow' }, svg);
+    el('path', { d: d, 'class': 'um__land' }, svg);
+    var arc = el('path', { 'class': 'um__arc', d: '', opacity: 0 }, svg);
+    var comet = el('circle', { 'class': 'um__comet', r: 2.6, opacity: 0 }, svg);
+    var pins = {};
+    Object.keys(UM_PINS).forEach(function (key) {
+      var c = UM_PINS[key], q = P(c[1], c[2]), unis = data.filter(function (u) { return u.pin === key; });
+      var g = el('g', { 'class': 'um__pin', transform: 'translate(' + q[0].toFixed(1) + ' ' + q[1].toFixed(1) + ')', tabindex: '0', role: 'button',
+        'aria-label': c[0] + ': ' + unis.map(function (u) { return u.name; }).join(', ') }, svg);
+      el('circle', { 'class': 'halo', r: 9 }, g);
+      el('circle', { 'class': 'core', r: 5 }, g);
+      var left = c[1] > 27.5;                                   // eastern pins label to the left
+      el('text', { 'class': 'label', x: left ? -10 : 10, y: 4, 'text-anchor': left ? 'end' : 'start' }, g).textContent = c[0];
+      if (unis.length > 1) {
+        el('circle', { 'class': 'badge', cx: 6, cy: -7, r: 5.5 }, g);
+        el('text', { 'class': 'badgetext', x: 6, y: -4.6 }, g).textContent = unis.length;
       }
-      go(3);
-      var r = ring.getBoundingClientRect();
-      setTimeout(function () { fx.confetti(r.left + r.width / 2, r.top + r.height / 2, 110); }, 350);
-    }
+      pins[key] = { g: g, x: q[0], y: q[1], name: c[0], unis: unis };
+    });
 
-    steps.slice(0, 3).forEach(function (step, i) {
-      var key = step.getAttribute('data-q');
-      $$('.opt', step).forEach(function (opt) {
-        opt.addEventListener('click', function () {
-          $$('.opt', step).forEach(function (o) { o.classList.toggle('is-picked', o === opt); });
-          answers[key] = opt.getAttribute('data-v');
-          setTimeout(function () { if (i < 2) go(i + 1); else result(); }, reduceMotion ? 0 : 260);
-        });
+    /* ---------- tooltip ---------- */
+    function showTip(key) {
+      var p = pins[key];
+      if (!p) return;
+      Object.keys(pins).forEach(function (k) { pins[k].g.classList.toggle('is-hot', k === key); });
+      var r = p.g.getBoundingClientRect(), m = mapBox.getBoundingClientRect();
+      tip.innerHTML = '<b>' + escapeHtml(p.name) + '</b>' + p.unis.map(function (u) { return '<span>#' + (u.i + 1) + ' ' + escapeHtml(u.name) + '</span>'; }).join('');
+      tip.hidden = false;
+      tip.style.left = clamp(r.left + r.width / 2 - m.left, 100, m.width - 100) + 'px';
+      tip.style.top = (r.top - m.top) + 'px';
+    }
+    function hideTip() { tip.hidden = true; Object.keys(pins).forEach(function (k) { pins[k].g.classList.remove('is-hot'); }); }
+
+    /* ---------- filters ---------- */
+    function matches(u) {
+      return (filt.type === 'all' || (filt.type === 'uas') === u.uas) && (!filt.field || u.f.indexOf(filt.field) > -1);
+    }
+    function applyFilter() {
+      var shown = 0;
+      data.forEach(function (u) { var ok = matches(u); items[u.i].classList.toggle('is-out', !ok); if (ok) shown++; });
+      Object.keys(pins).forEach(function (k) { pins[k].g.classList.toggle('is-out', !pins[k].unis.some(matches)); });
+      $('[data-um-count]', root).textContent = shown + ' shown';
+      if (!matches(data[sel])) { var first = data.filter(matches)[0]; if (first) select(first.i); }
+      else renderFields(data[sel]);
+    }
+    $$('[data-um-type]', root).forEach(function (b) {
+      b.addEventListener('click', function () {
+        filt.type = b.getAttribute('data-um-type');
+        $$('[data-um-type]', root).forEach(function (o) { o.classList.toggle('is-on', o === b); o.setAttribute('aria-pressed', String(o === b)); });
+        root.classList.add('is-touched'); applyFilter();
       });
     });
-    back.addEventListener('click', function () { go(Math.max(0, cur - 1)); });
-    $('[data-quiz-restart]', root).addEventListener('click', function () {
-      answers = {};
-      $$('.opt', root).forEach(function (o) { o.classList.remove('is-picked'); });
-      go(0);
+    $$('[data-um-field]', root).forEach(function (b) {
+      b.addEventListener('click', function () {
+        var f = b.getAttribute('data-um-field');
+        filt.field = filt.field === f ? null : f;
+        $$('[data-um-field]', root).forEach(function (o) { var on = o.getAttribute('data-um-field') === filt.field; o.classList.toggle('is-on', on); o.setAttribute('aria-pressed', String(on)); });
+        root.classList.add('is-touched'); applyFilter();
+      });
     });
-    $('[data-quiz-send]', root).addEventListener('click', function () {
-      if (window.TCShortlist) {
-        shortlist.forEach(function (p) { window.TCShortlist.add({ id: p.u.id, name: p.u.n, city: p.u.city }); });
-      } else {
-        setDestination('Shortlist: ' + shortlist.map(function (p) { return p.u.n; }).join(', '));
+
+    /* ---------- selection ---------- */
+    function renderFields(u) {
+      $('[data-um-fields]', root).innerHTML = u.f.map(function (k) {
+        return '<span' + (k === filt.field ? ' class="is-match"' : '') + '>' + escapeHtml(UM_FIELDS[k] || k) + '</span>';
+      }).join('');
+    }
+    function syncHeart() {
+      var SL = window.TCShortlist, u = data[sel];
+      items.forEach(function (b, i) { b.classList.toggle('is-fav', !!(SL && SL.has(data[i].id))); });
+      if (!heart) return;
+      var on = !!(SL && SL.has(u.id));
+      heart.setAttribute('aria-pressed', String(on));
+      heart.lastChild.textContent = on ? 'Shortlisted' : 'Shortlist';
+    }
+    function flyArc(from, to) {
+      if (!from || from === to || reduceMotion || !arc.animate) { arc.setAttribute('opacity', 0); comet.setAttribute('opacity', 0); return; }
+      var dx = to.x - from.x, dy = to.y - from.y, dist = Math.hypot(dx, dy);
+      var cx = (from.x + to.x) / 2 + dy * 0.35, cy = (from.y + to.y) / 2 - Math.abs(dx) * 0.35 - dist * 0.15;
+      arc.setAttribute('d', 'M' + from.x + ' ' + from.y + 'Q' + cx + ' ' + cy + ' ' + to.x + ' ' + to.y);
+      var len = arc.getTotalLength();
+      arc.setAttribute('opacity', 1);
+      arc.style.strokeDasharray = len; arc.style.strokeDashoffset = len;
+      arc.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 650, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
+      comet.setAttribute('opacity', 1);
+      var t0 = performance.now();
+      (function fly(now) {
+        var k = Math.min(1, (now - t0) / 650), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2, pt = arc.getPointAtLength(len * e);
+        comet.setAttribute('cx', pt.x); comet.setAttribute('cy', pt.y);
+        if (k < 1) requestAnimationFrame(fly); else comet.setAttribute('opacity', 0);
+      })(t0);
+      arc.animate([{ opacity: 1 }, { opacity: 0.3 }], { duration: 900, delay: 900, fill: 'forwards' });
+    }
+    function select(i, opts) {
+      opts = opts || {};
+      var prev = data[sel], u = data[i];
+      sel = i;
+      items.forEach(function (b, k) { var on = k === i; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', String(on)); });
+      Object.keys(pins).forEach(function (k) { pins[k].g.classList.toggle('is-on', k === u.pin); });
+      $('[data-um-rank]', root).textContent = i + 1;
+      $('[data-um-kind]', root).textContent = u.uas ? 'University of applied sciences' : 'University';
+      $('[data-um-name]', root).textContent = u.name;
+      $('[data-um-where]', root).textContent = u.city + ', ' + u.region;
+      $('[data-um-link]', root).setAttribute('href', './university.html?id=' + u.id);
+      renderFields(u);
+      syncHeart();
+      if (opts.quick) return;
+      // Cross-fade the city photo: the old one stays underneath while the new one fades in.
+      if (imgA.getAttribute('src') !== u.img) {
+        imgB.setAttribute('src', imgA.getAttribute('src'));
+        imgA.setAttribute('src', u.img);
+        if (!reduceMotion && imgA.animate) imgA.animate([{ opacity: 0, transform: 'scale(1.06)' }, { opacity: 1, transform: 'none' }], { duration: 650, easing: 'cubic-bezier(.2,.7,.2,1)' });
       }
-      var lvl = $('[data-level-select]');
-      if (lvl && answers.level) lvl.value = answers.level;
-      refreshStrength();
+      if (!reduceMotion && body.animate) body.animate([{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 360, easing: 'cubic-bezier(.2,.7,.2,1)' });
+      flyArc(pins[prev.pin], pins[u.pin]);
+    }
+
+    items.forEach(function (b, i) {
+      b.addEventListener('click', function () { root.classList.add('is-touched'); select(i); });
+      b.addEventListener('mouseenter', function () { showTip(data[i].pin); });
+      b.addEventListener('mouseleave', hideTip);
+      b.addEventListener('keydown', function (e) {
+        var k = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
+        if (!k) return;
+        e.preventDefault();
+        var n = (i + k + items.length) % items.length;
+        items[n].focus(); select(n);
+      });
     });
+    Object.keys(pins).forEach(function (key) {
+      var p = pins[key];
+      function pick() {
+        // A city with several institutions cycles through them on each click.
+        var list = p.unis.filter(matches); if (!list.length) list = p.unis;
+        var at = list.map(function (u) { return u.i; }).indexOf(sel);
+        root.classList.add('is-touched');
+        select(list[(at + 1) % list.length].i);
+      }
+      p.g.addEventListener('mouseenter', function () { showTip(key); });
+      p.g.addEventListener('mouseleave', hideTip);
+      p.g.addEventListener('focus', function () { showTip(key); });
+      p.g.addEventListener('blur', hideTip);
+      p.g.addEventListener('click', pick);
+      p.g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+    });
+    if (heart) heart.addEventListener('click', function () {
+      var SL = window.TCShortlist, u = data[sel];
+      if (!SL) return;
+      var ok = SL.toggle({ id: u.id, name: u.name, city: u.city.replace('&amp;', '&') });
+      if (ok === false && !SL.has(u.id)) heart.lastChild.textContent = 'Shortlist full';
+      heart.classList.remove('is-pop'); void heart.offsetWidth; heart.classList.add('is-pop');
+      syncHeart();
+    });
+    if (window.TCShortlist) window.TCShortlist.onChange(syncHeart);
+
+    // A gentle tilt of the map toward the cursor.
+    if (finePointer && !reduceMotion) {
+      mapBox.addEventListener('pointermove', function (e) {
+        var r = mapBox.getBoundingClientRect(), u = (e.clientX - r.left) / r.width - 0.5, v = (e.clientY - r.top) / r.height - 0.5;
+        tilt.style.setProperty('--ry', (u * 6).toFixed(2) + 'deg'); tilt.style.setProperty('--rx', (-v * 4).toFixed(2) + 'deg');
+      });
+      mapBox.addEventListener('pointerleave', function () { tilt.style.removeProperty('--rx'); tilt.style.removeProperty('--ry'); });
+    }
+    select(0, { quick: true });
+    applyFilter();
   }
 
-  /* ------------------------------------------------------------------ *
-   * Universities carousel — buttons, progress bar, drag to scroll
-   * ------------------------------------------------------------------ */
-  function initCarousel(name) {
-    var track = $('[data-car="' + name + '"]');
-    if (!track) return;
-    var prev = $('[data-car-prev="' + name + '"]');
-    var next = $('[data-car-next="' + name + '"]');
-    var bar = $('[data-car-bar="' + name + '"]');
-
-    function stepSize() {
-      var card = track.firstElementChild;
-      if (!card) return track.clientWidth;
-      var gap = parseFloat(getComputedStyle(track).columnGap) || 14;
-      return card.getBoundingClientRect().width + gap;
-    }
-    function go(dir) {
-      var max = track.scrollWidth - track.clientWidth - 2;
-      if (dir > 0 && track.scrollLeft >= max) track.scrollTo({ left: 0, behavior: 'smooth' });
-      else if (dir < 0 && track.scrollLeft <= 2) track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' });
-      else track.scrollBy({ left: dir * stepSize(), behavior: reduceMotion ? 'auto' : 'smooth' });
-    }
-    function paint() {
-      if (!bar) return;
-      var visible = track.clientWidth / track.scrollWidth;
-      var max = track.scrollWidth - track.clientWidth;
-      var p = max > 0 ? track.scrollLeft / max : 0;
-      bar.style.width = Math.max(12, visible * 100) + '%';
-      bar.style.transform = 'translateX(' + (p * (1 / Math.max(visible, 0.12) - 1) * 100) + '%)';
-    }
-    if (prev) prev.addEventListener('click', function () { go(-1); });
-    if (next) next.addEventListener('click', function () { go(1); });
-    track.addEventListener('scroll', function () { requestAnimationFrame(paint); }, { passive: true });
-    window.addEventListener('resize', paint);
-    track.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
-    });
-    paint();
-
-    // Mouse drag (touch already scrolls natively).
-    if (track.hasAttribute('data-drag') && finePointer) {
-      var down = false, moved = 0, startX = 0, startL = 0;
-      track.style.cursor = 'grab';
-      track.addEventListener('pointerdown', function (e) {
-        if (e.pointerType !== 'mouse' || e.button !== 0) return;
-        down = true; moved = 0; startX = e.clientX; startL = track.scrollLeft;
-        track.style.scrollSnapType = 'none'; track.style.scrollBehavior = 'auto'; track.style.cursor = 'grabbing';
-      });
-      window.addEventListener('pointermove', function (e) {
-        if (!down) return;
-        moved = Math.max(moved, Math.abs(e.clientX - startX));
-        track.scrollLeft = startL - (e.clientX - startX);
-      });
-      window.addEventListener('pointerup', function () {
-        if (!down) return;
-        down = false; track.style.cursor = 'grab'; track.style.scrollBehavior = '';
-        setTimeout(function () { track.style.scrollSnapType = ''; }, 60);
-      });
-      // A drag must not count as a click on the card underneath.
-      track.addEventListener('click', function (e) { if (moved > 6) { e.preventDefault(); e.stopPropagation(); } }, true);
-      track.addEventListener('dragstart', function (e) { e.preventDefault(); });
-    }
-  }
 
   /* ------------------------------------------------------------------ *
    * Journey — pinned horizontal scroll story on large screens,
@@ -1877,8 +1916,7 @@
   initVelocityRails();
   initSeasonStage();
   initServices();
-  initQuiz();
-  initCarousel('uni');
+  initUniMap();
   initJourney();
   initParallax();
   initPointerFx();

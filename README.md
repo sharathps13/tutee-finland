@@ -10,8 +10,8 @@ copy, the dataset, the photographs and the currency glyph differ.
 `index.html` is now **hand-authored** and no longer a clone of the reference
 DOM. It uses its own Nordic design system — `assets/css/finland.css` (Finnish
 flag blue, snow white, aurora accents, Tutee maroon for every conversion
-action) and `assets/js/finland.js` (seasons scene, services tabs, "Find my
-Finland match" quiz, pinned horizontal journey, scroll-velocity rails,
+action) and `assets/js/finland.js` (seasons stage, service dial, universities
+showcase, pinned horizontal journey, scroll-velocity rails,
 spotlight/tilt/magnet effects, FAQ search, lead forms, Tutee AI chat). **The
 landing page shows no monetary values** — fees, funds, insurance, wages and
 grant amounts were removed from the page, the chat replies and the service

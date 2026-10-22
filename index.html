@@ -86,7 +86,6 @@
   <a href="#home" data-dot="home"><span>Start</span></a>
   <a href="#why" data-dot="why"><span>Why Finland</span></a>
   <a href="#services" data-dot="services"><span>Services</span></a>
-  <a href="#match" data-dot="match"><span>Find my match</span></a>
   <a href="#universities" data-dot="universities"><span>Universities</span></a>
   <a href="#scholarships" data-dot="scholarships"><span>Funding</span></a>
   <a href="#relocate" data-dot="relocate"><span>Your journey</span></a>
@@ -105,7 +104,6 @@
     <nav class="nav" aria-label="Primary">
       <a href="#why" data-nav="why">Why Finland</a>
       <a href="#services" data-nav="services">Services</a>
-      <a href="#match" data-nav="match">Find my match</a>
       <a href="./universities.html">Universities</a>
       <a href="#scholarships" data-nav="scholarships">Funding</a>
       <a href="#relocate" data-nav="relocate">Journey</a>
@@ -128,7 +126,6 @@
     <div class="drawer__links">
       <a href="#why">Why Finland <svg class="ico ico-sm"><use href="#i-right"/></svg></a>
       <a href="#services">Services <svg class="ico ico-sm"><use href="#i-right"/></svg></a>
-      <a href="#match">Find my Finland match <svg class="ico ico-sm"><use href="#i-right"/></svg></a>
       <a href="#universities">Top universities <svg class="ico ico-sm"><use href="#i-right"/></svg></a>
       <a href="./universities.html">All 36 institutions <svg class="ico ico-sm"><use href="#i-up"/></svg></a>
       <a href="#scholarships">Scholarships &amp; loans <svg class="ico ico-sm"><use href="#i-right"/></svg></a>
@@ -385,116 +382,71 @@
   </div>
 </section>
 
-<!-- ============================== MATCH QUIZ ============================== -->
-<section class="section section--night match" id="match">
-  <div class="noise-layer" data-noise aria-hidden="true"></div>
-  <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
-  <div class="container on-dark">
-    <div class="section-head section-head--center reveal">
-      <span class="eyebrow"><span data-decrypt="view">Find your Finland match</span></span>
-      <h2 class="h2">Three taps to your <span class="text-grad">university shortlist.</span></h2>
-      <p class="lead">Tell us what you want to study and where you'd like to live. We'll suggest where to start &mdash; then a counsellor sharpens it with you.</p>
-    </div>
-
-    <div class="quiz reveal" data-quiz>
-      <div class="quiz__card">
-        <div class="quiz__progress" aria-hidden="true">
-          <span class="is-on"></span><span></span><span></span>
-        </div>
-
-        <div class="quiz__step is-active" data-q="level">
-          <p class="quiz__n">Question 1 of 3</p>
-          <h3 class="quiz__q">What do you want to study?</h3>
-          <div class="quiz__opts quiz__opts--3">
-            <button type="button" class="opt" data-v="Bachelor's"><svg class="ico ico-lg"><use href="#i-book"/></svg><b>Bachelor's</b><span>Start your degree</span></button>
-            <button type="button" class="opt" data-v="Master's"><svg class="ico ico-lg"><use href="#i-cap"/></svg><b>Master's</b><span>Level up your career</span></button>
-            <button type="button" class="opt" data-v="Doctoral"><svg class="ico ico-lg"><use href="#i-flask"/></svg><b>PhD</b><span>Research at the frontier</span></button>
-          </div>
-        </div>
-
-        <div class="quiz__step" data-q="field">
-          <p class="quiz__n">Question 2 of 3</p>
-          <h3 class="quiz__q">Which field excites you most?</h3>
-          <div class="quiz__opts">
-            <button type="button" class="opt" data-v="tech"><svg class="ico ico-lg"><use href="#i-cpu"/></svg><b>Tech &amp; engineering</b></button>
-            <button type="button" class="opt" data-v="business"><svg class="ico ico-lg"><use href="#i-chart"/></svg><b>Business</b></button>
-            <button type="button" class="opt" data-v="health"><svg class="ico ico-lg"><use href="#i-heart"/></svg><b>Health &amp; life sciences</b></button>
-            <button type="button" class="opt" data-v="science"><svg class="ico ico-lg"><use href="#i-flask"/></svg><b>Natural sciences</b></button>
-            <button type="button" class="opt" data-v="arts"><svg class="ico ico-lg"><use href="#i-palette"/></svg><b>Arts &amp; design</b></button>
-            <button type="button" class="opt" data-v="society"><svg class="ico ico-lg"><use href="#i-users"/></svg><b>Education &amp; society</b></button>
-          </div>
-        </div>
-
-        <div class="quiz__step" data-q="region">
-          <p class="quiz__n">Question 3 of 3</p>
-          <h3 class="quiz__q">Where would you love to live?</h3>
-          <div class="quiz__opts">
-            <button type="button" class="opt" data-v="capital"><svg class="ico ico-lg"><use href="#i-building"/></svg><b>Capital buzz</b><span>Helsinki &amp; Espoo</span></button>
-            <button type="button" class="opt" data-v="lakeland"><svg class="ico ico-lg"><use href="#i-waves"/></svg><b>Lakeland cities</b><span>Tampere, Jyväskylä, Lappeenranta</span></button>
-            <button type="button" class="opt" data-v="coast"><svg class="ico ico-lg"><use href="#i-anchor"/></svg><b>Coast &amp; archipelago</b><span>Turku, Vaasa</span></button>
-            <button type="button" class="opt" data-v="north"><svg class="ico ico-lg"><use href="#i-mountain"/></svg><b>North &amp; east</b><span>Oulu, Joensuu, Kuopio</span></button>
-          </div>
-        </div>
-
-        <div class="quiz__step quiz__result" data-q="result" aria-live="polite">
-          <div class="quiz__resulthead">
-            <div class="ring" data-ring style="--p:0"><b data-ring-val>0%</b><span>match</span></div>
-            <div>
-              <p class="quiz__n">Your Finland shortlist</p>
-              <h3 class="quiz__q" data-result-title>Great picks for you</h3>
-              <div class="quiz__chips" data-result-chips></div>
-            </div>
-          </div>
-          <ol class="picks" data-picks></ol>
-          <div class="quiz__actions">
-            <a class="btn btn-primary" href="#contact" data-quiz-send data-magnet>Send me this shortlist<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
-            <button class="btn btn-glass" type="button" data-quiz-restart><svg class="ico ico-sm"><use href="#i-refresh"/></svg>Start over</button>
-          </div>
-          <p class="quiz__fine">Suggestions are a starting point based on location and broad subject areas. Your counsellor confirms programmes, entry requirements and deadlines with you.</p>
-        </div>
-
-        <button class="quiz__back" type="button" data-quiz-back hidden><svg class="ico ico-sm"><use href="#i-left"/></svg>Back</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================== UNIVERSITIES ============================== -->
-<section class="section" id="universities">
+<!-- ============================== UNIVERSITIES ==============================
+     Map of Finland with a pin per university city. Hover a pin or a list row
+     to preview, click to select: an aurora arc flies from the last city and
+     the spotlight card shows the campus city, rank and strengths. Type and
+     field chips filter both. Shortlist hearts feed the evaluation form.
+     initUniMap(). -->
+<section class="section um-sec" id="universities">
   <div class="container">
     <div class="section-head section-head--split reveal">
       <div>
         <span class="eyebrow"><span data-decrypt="view">Top ranked universities</span></span>
         <h2 class="h2" style="margin-top:12px">Your place at Finland's <span class="text-blue">best institutions.</span></h2>
       </div>
-      <div style="display:grid;gap:16px">
-        <p class="lead">Drag, swipe or use the arrows. Tap a university to check your chances of getting in.</p>
-        <div class="carousel__controls">
-          <button class="round-btn" type="button" aria-label="Previous universities" data-car-prev="uni"><svg class="ico ico-sm"><use href="#i-left"/></svg></button>
-          <div class="carousel__bar" aria-hidden="true"><span data-car-bar="uni"></span></div>
-          <button class="round-btn" type="button" aria-label="Next universities" data-car-next="uni"><svg class="ico ico-sm"><use href="#i-right"/></svg></button>
+      <p class="lead">Twelve Finnish institutions rank in the QS World University Rankings: Europe 2026. Explore them on the map, filter by what you want to study and shortlist your favourites.</p>
+    </div>
+
+    <div class="um reveal" data-um>
+      <div class="um__filters">
+        <div class="um__chips" role="group" aria-label="Institution type"><button class="um__chip is-on" type="button" aria-pressed="true" data-um-type="all">All 12</button><button class="um__chip" type="button" aria-pressed="false" data-um-type="uni">Universities</button><button class="um__chip" type="button" aria-pressed="false" data-um-type="uas">Applied sciences</button></div>
+        <div class="um__chips um__chips--fields" role="group" aria-label="Field of study"><button class="um__chip um__chip--field" type="button" aria-pressed="false" data-um-field="tech">Technology</button><button class="um__chip um__chip--field" type="button" aria-pressed="false" data-um-field="business">Business</button><button class="um__chip um__chip--field" type="button" aria-pressed="false" data-um-field="health">Health</button><button class="um__chip um__chip--field" type="button" aria-pressed="false" data-um-field="science">Science</button><button class="um__chip um__chip--field" type="button" aria-pressed="false" data-um-field="society">Society &amp; education</button><button class="um__chip um__chip--field" type="button" aria-pressed="false" data-um-field="arts">Arts &amp; design</button></div>
+      </div>
+      <div class="um__grid">
+        <div class="um__map" data-um-map>
+          <div class="um__tilt" data-um-tilt>
+            <svg class="um__svg" viewBox="0 0 320 642" role="img" aria-label="Map of Finland with the cities of its twelve QS-ranked institutions" data-um-svg></svg>
+            <div class="um__tip" data-um-tip hidden></div>
+          </div>
+          <div class="um__legend" aria-hidden="true"><span><i></i>University city</span><span><i class="is-count">2</i>Institutions there</span></div>
+          <span class="um__hint" aria-hidden="true"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Hover a city, click to explore</span>
+        </div>
+
+        <div class="um__side">
+          <article class="um__spot" aria-live="polite" data-um-spot>
+            <div class="um__media" aria-hidden="true"><img src="./assets/img/cities/espoo.jpg" alt="" data-um-img><img src="./assets/img/cities/espoo.jpg" alt="" data-um-img2></div>
+            <div class="um__spot-body" data-um-body>
+              <div class="um__badges"><span class="um__qs">#<b data-um-rank>1</b> in Finland <small>QS Europe 2026</small></span><span class="um__type" data-um-kind>University</span></div>
+              <h3 class="um__name" data-um-name>Aalto University</h3>
+              <span class="um__where"><svg class="ico ico-sm"><use href="#i-pin"/></svg><span data-um-where>Espoo, Uusimaa</span></span>
+              <div class="um__fields" data-um-fields><span>Technology</span><span>Business</span><span>Arts &amp; design</span></div>
+              <div class="um__actions">
+                <a class="btn btn-primary btn-sm" href="./university.html?id=aalto-university" data-um-link>View university<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
+                <button class="um__heart" type="button" aria-pressed="false" data-um-heart><svg class="ico ico-sm"><use href="#i-heart"/></svg><span>Shortlist</span></button>
+              </div>
+            </div>
+          </article>
+          <div class="um__listhead"><span>QS Europe 2026 · ranked in Finland</span><span data-um-count>12 shown</span></div>
+          <ol class="um__list" data-um-list>
+          <li><button class="um__item is-on" type="button" aria-pressed="true" data-um-item data-id="aalto-university" data-name="Aalto University" data-city="Espoo" data-region="Uusimaa" data-pin="hel" data-img="./assets/img/cities/espoo.jpg" data-f="tech business arts"><span class="um__rank">01</span><span class="um__iname"><b>Aalto University</b><small>Espoo</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
+          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="university-of-helsinki" data-name="University of Helsinki" data-city="Helsinki" data-region="Uusimaa" data-pin="hel" data-img="./assets/img/cities/helsinki.jpg" data-f="science health society"><span class="um__rank">02</span><span class="um__iname"><b>University of Helsinki</b><small>Helsinki</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
+          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="university-of-turku" data-name="University of Turku" data-city="Turku" data-region="Varsinais-Suomi" data-pin="tku" data-img="./assets/img/cities/turku.jpg" data-f="health science business society"><span class="um__rank">03</span><span class="um__iname"><b>University of Turku</b><small>Turku</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
+          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="university-of-oulu" data-name="University of Oulu" data-city="Oulu" data-region="North Ostrobothnia" data-pin="oul" data-img="./assets/img/cities/oulu.jpg" data-f="tech health science"><span class="um__rank">04</span><span class="um__iname"><b>University of Oulu</b><small>Oulu</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
+          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="tampere-university" data-name="Tampere University" data-city="Tampere" data-region="Pirkanmaa" data-pin="tre" data-img="./assets/img/cities/tampere.jpg" data-f="tech health society"><span class="um__rank">05</span><span class="um__iname"><b>Tampere University</b><small>Tampere</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
+          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="university-of-jyvaskyla" data-name="University of Jyväskylä" data-city="Jyväskylä" data-region="Central Finland" data-pin="jkl" data-img="./assets/img/cities/jyvaskyla.jpg" data-f="society science business"><span class="um__rank">06</span><span class="um__iname"><b>University of Jyväskylä</b><small>Jyväskylä</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
+          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="university-of-eastern-finland" data-name="University of Eastern Finland" data-city="Joensuu &amp; Kuopio" data-region="North Karelia &amp; North Savo" data-pin="joe" data-img="./assets/img/cities/joensuu.jpg" data-f="health science society"><span class="um__rank">07</span><span class="um__iname"><b>University of Eastern Finland</b><small>Joensuu &amp; Kuopio</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
+          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="lut-university" data-name="LUT University" data-city="Lappeenranta" data-region="South Karelia" data-pin="lpr" data-img="./assets/img/cities/lappeenranta.jpg" data-f="tech business"><span class="um__rank">08</span><span class="um__iname"><b>LUT University</b><small>Lappeenranta</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
+          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="abo-akademi-university" data-name="Åbo Akademi University" data-city="Turku" data-region="Varsinais-Suomi" data-pin="tku" data-img="./assets/img/cities/turku.jpg" data-f="science society business"><span class="um__rank">09</span><span class="um__iname"><b>Åbo Akademi University</b><small>Turku</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
+          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="university-of-vaasa" data-name="University of Vaasa" data-city="Vaasa" data-region="Ostrobothnia" data-pin="vaa" data-img="./assets/img/cities/vaasa.jpg" data-f="business tech"><span class="um__rank">10</span><span class="um__iname"><b>University of Vaasa</b><small>Vaasa</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
+          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="turku-university-of-applied-sciences" data-name="Turku University of Applied Sciences" data-city="Turku" data-region="Varsinais-Suomi" data-pin="tku" data-img="./assets/img/cities/turku.jpg" data-f="tech health arts business" data-uas><span class="um__rank">11</span><span class="um__iname"><b>Turku University of Applied Sciences</b><small>Turku · UAS</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
+          <li><button class="um__item" type="button" aria-pressed="false" data-um-item data-id="jamk-university-of-applied-sciences" data-name="Jamk University of Applied Sciences" data-city="Jyväskylä" data-region="Central Finland" data-pin="jkl" data-img="./assets/img/cities/jyvaskyla.jpg" data-f="business tech health" data-uas><span class="um__rank">12</span><span class="um__iname"><b>Jamk University of Applied Sciences</b><small>Jyväskylä · UAS</small></span><svg class="ico ico-sm um__fav" aria-hidden="true"><use href="#i-heart"/></svg></button></li>
+          </ol>
+          <a class="um__all" href="./universities.html"><span><b>Explore all 36 institutions</b><small>Search 1,295 English-taught programme listings by field, city and type.</small></span><svg class="ico ico-sm"><use href="#i-arrow"/></svg></a>
         </div>
       </div>
     </div>
-
-    <div class="carousel reveal">
-      <div class="carousel__track" data-car="uni" data-drag tabindex="0" aria-label="Top ranked Finnish universities">
-        <a class="uni" href="./university.html?id=aalto-university" data-uni-pick="Aalto University" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/helsinki.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>1</b></span><span class="uni__type">University</span></div><h3>Aalto University</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Helsinki, Uusimaa</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="./university.html?id=university-of-helsinki" data-uni-pick="University of Helsinki" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/helsinki.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>2</b></span><span class="uni__type">University</span></div><h3>University of Helsinki</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Helsinki, Uusimaa</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="./university.html?id=university-of-turku" data-uni-pick="University of Turku" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/turku.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>3</b></span><span class="uni__type">University</span></div><h3>University of Turku</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Turku, Varsinais-Suomi</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="./university.html?id=university-of-oulu" data-uni-pick="University of Oulu" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/oulu.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>4</b></span><span class="uni__type">University</span></div><h3>University of Oulu</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Oulu, North Ostrobothnia</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="./university.html?id=tampere-university" data-uni-pick="Tampere University" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/tampere.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>5</b></span><span class="uni__type">University</span></div><h3>Tampere University</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Tampere, Pirkanmaa</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="./university.html?id=university-of-jyvaskyla" data-uni-pick="University of Jyväskylä" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/jyvaskyla.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>6</b></span><span class="uni__type">University</span></div><h3>University of Jyväskylä</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Jyväskylä, Central Finland</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="./university.html?id=university-of-eastern-finland" data-uni-pick="University of Eastern Finland" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/joensuu.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>7</b></span><span class="uni__type">University</span></div><h3>University of Eastern Finland</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Joensuu, North Karelia</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="./university.html?id=lut-university" data-uni-pick="LUT University" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/lappeenranta.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>8</b></span><span class="uni__type">University</span></div><h3>LUT University</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Lappeenranta, South Karelia</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="./university.html?id=abo-akademi-university" data-uni-pick="Åbo Akademi University" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/turku.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>9</b></span><span class="uni__type">University</span></div><h3>Åbo Akademi University</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Turku, Varsinais-Suomi</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="./university.html?id=university-of-vaasa" data-uni-pick="University of Vaasa" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/vaasa.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>10</b></span><span class="uni__type">University</span></div><h3>University of Vaasa</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Vaasa, Ostrobothnia</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="./university.html?id=turku-university-of-applied-sciences" data-uni-pick="Turku University of Applied Sciences" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/turku.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>11</b></span><span class="uni__type uni__type--uas">UAS</span></div><h3>Turku University of Applied Sciences</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Turku, Varsinais-Suomi</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni" href="./university.html?id=jamk-university-of-applied-sciences" data-uni-pick="Jamk University of Applied Sciences" data-spot data-tilt><span class="uni__img"><img src="./assets/img/cities/jyvaskyla.jpg" alt="" loading="lazy" decoding="async"></span><div class="uni__top"><span class="uni__rank"><small>#</small><b>12</b></span><span class="uni__type uni__type--uas">UAS</span></div><h3>Jamk University of Applied Sciences</h3><span class="uni__loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Jyväskylä, Central Finland</span><span class="uni__cta">View university<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-        <a class="uni uni--more" href="./universities.html"><svg class="ico ico-lg"><use href="#i-globe"/></svg><h3 style="min-height:0">Explore all 36 institutions</h3><p>Search 1,295 English-taught programme listings by field, city and type.</p><span class="link-arrow" style="color:var(--aurora)">Open the directory<svg class="ico ico-sm"><use href="#i-arrow"/></svg></span></a>
-      </div>
-    </div>
-    <p class="note">Ranks are Finland's positions in the QS World University Rankings: Europe 2026.</p>
+    <p class="note">Ranks are Finland's positions in the QS World University Rankings: Europe 2026. Strengths are broad starting points; a counsellor confirms programmes with you.</p>
   </div>
 </section>
 
@@ -775,7 +727,6 @@
         <h3>Study in Finland</h3>
         <ul>
           <li><a href="#services">Our services</a></li>
-          <li><a href="#match">Find my Finland match</a></li>
           <li><a href="./universities.html">All 36 institutions</a></li>
           <li><a href="#scholarships">Scholarships &amp; loans</a></li>
         </ul>
