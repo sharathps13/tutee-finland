@@ -1,6 +1,69 @@
 /* Photo credits, keyed by path under the site root. Generated with the HD
    photo download; CC BY photos must keep their credit visible. */
 window.TC_PHOTO_CREDITS = {
+ "assets/img/services/career.jpg": {
+  "subject": "Colleagues working together at a laptop",
+  "author": "Jud Mackrill",
+  "licence": "Unsplash Licence",
+  "url": "https://unsplash.com/photos/Of_m3hMsoAA",
+  "short": "Photo: Jud Mackrill, Unsplash"
+ },
+ "assets/img/services/language.jpg": {
+  "subject": "Preparing for an English exam",
+  "author": "Maxim Ilyahov",
+  "licence": "Unsplash Licence",
+  "url": "https://unsplash.com/photos/czQuENgpHY0",
+  "short": "Photo: Maxim Ilyahov, Unsplash"
+ },
+ "assets/img/services/college.jpg": {
+  "subject": "University of Vaasa campus",
+  "author": "University of Vaasa",
+  "licence": "CC0",
+  "url": "https://commons.wikimedia.org/wiki/File:University_of_Vaasa_campus.jpg",
+  "short": "Photo: University of Vaasa"
+ },
+ "assets/img/services/documentation.jpg": {
+  "subject": "Signing documents at a desk",
+  "author": "Scott Graham",
+  "licence": "Unsplash Licence",
+  "url": "https://unsplash.com/photos/OQMZwNd3ThU",
+  "short": "Photo: Scott Graham, Unsplash"
+ },
+ "assets/img/services/permit.jpg": {
+  "subject": "Passport at an aeroplane window",
+  "author": "Blake Guidry",
+  "licence": "Unsplash Licence",
+  "url": "https://unsplash.com/photos/jXxdtXFEjcc",
+  "short": "Photo: Blake Guidry, Unsplash"
+ },
+ "assets/img/services/settlement.jpg": {
+  "subject": "Keys to a new apartment",
+  "author": "Jakub Żerdzicki",
+  "licence": "Unsplash Licence",
+  "url": "https://unsplash.com/photos/bqUZEAeWuok",
+  "short": "Photo: Jakub Żerdzicki, Unsplash"
+ },
+ "assets/img/services/finance.jpg": {
+  "subject": "Reviewing and signing papers",
+  "author": "Carrie Allen",
+  "licence": "Unsplash Licence",
+  "url": "https://unsplash.com/photos/1H1LBKvD7ew",
+  "short": "Photo: Carrie Allen, Unsplash"
+ },
+ "assets/img/services/arrival.jpg": {
+  "subject": "Arrivals hall, Helsinki Airport",
+  "author": "Ypsilon from Finland",
+  "licence": "CC0",
+  "url": "https://commons.wikimedia.org/wiki/File:Helsinki_airport_arrivals.jpg",
+  "short": "Photo: Ypsilon from Finland"
+ },
+ "assets/img/services/family.jpg": {
+  "subject": "Family walking through a meadow",
+  "author": "Jessica Rockowitz",
+  "licence": "Unsplash Licence",
+  "url": "https://unsplash.com/photos/5NLCaz2wJXE",
+  "short": "Photo: Jessica Rockowitz, Unsplash"
+ },
  "assets/video/winter.webm": {
   "subject": "Aurora borealis timelapse, Finnish and Swedish Lapland (video, trimmed and slowed)",
   "author": "Harriniva Hotels & Safaris",

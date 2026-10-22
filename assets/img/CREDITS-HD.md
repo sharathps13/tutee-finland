@@ -38,3 +38,16 @@ Trimmed and re-encoded with ffmpeg (no audio): WebM VP9 plus MP4 H.264, with a p
 
 `photos/family.jpg` (Töölönlahti, 1920x1440), `photos/team-working.jpg` (Parliament House, 1920x1280) and `photos/finland-city.jpg` (Tammerkoski, 1920x1280) were re-cropped from the same Commons originals listed in `assets/img/photos/CREDITS.md`.
 
+## Service photos (What we do dial)
+
+1920px JPEGs in `assets/img/services/`, one per service.
+
+- `assets/img/services/career.jpg` — Colleagues working together at a laptop. Jud Mackrill, Unsplash Licence. <https://unsplash.com/photos/Of_m3hMsoAA>
+- `assets/img/services/language.jpg` — Preparing for an English exam. Maxim Ilyahov, Unsplash Licence. <https://unsplash.com/photos/czQuENgpHY0>
+- `assets/img/services/college.jpg` — University of Vaasa campus. University of Vaasa, CC0. <https://commons.wikimedia.org/wiki/File:University_of_Vaasa_campus.jpg>
+- `assets/img/services/documentation.jpg` — Signing documents at a desk. Scott Graham, Unsplash Licence. <https://unsplash.com/photos/OQMZwNd3ThU>
+- `assets/img/services/permit.jpg` — Passport at an aeroplane window. Blake Guidry, Unsplash Licence. <https://unsplash.com/photos/jXxdtXFEjcc>
+- `assets/img/services/settlement.jpg` — Keys to a new apartment. Jakub Żerdzicki, Unsplash Licence. <https://unsplash.com/photos/bqUZEAeWuok>
+- `assets/img/services/finance.jpg` — Reviewing and signing papers. Carrie Allen, Unsplash Licence. <https://unsplash.com/photos/1H1LBKvD7ew>
+- `assets/img/services/arrival.jpg` — Arrivals hall, Helsinki Airport. Ypsilon from Finland, CC0. <https://commons.wikimedia.org/wiki/File:Helsinki_airport_arrivals.jpg>
+- `assets/img/services/family.jpg` — Family walking through a meadow. Jessica Rockowitz, Unsplash Licence. <https://unsplash.com/photos/5NLCaz2wJXE>

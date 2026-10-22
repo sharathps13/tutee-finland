@@ -675,6 +675,8 @@
     var slot = $('[data-orb-slot]', root), num = $('[data-orb-num]', root), name = $('[data-orb-name]', root);
     var bgs = $$('[data-orb-bg]', root), place = $('[data-orb-place]', root), comet = $('[data-orb-comet]', root);
     var panel = $('#svc-panel'), content = $('[data-svc-content]', root), mark = $('[data-svc-mark]', root);
+    var ghost = $('[data-svc-ghost]', root), points = $('[data-svc-points]', root), dots = $$('[data-svc-dot]', root);
+    var line = $('.orb__track-line', root), stage = $('.orb__stage', root);
     var title = $('[data-svc-title]', root), tag = $('[data-svc-tagline]', root), desc = $('[data-svc-desc]', root), count = $('[data-svc-count]', root);
     var N = nodes.length, STEP = 360 / N, idx = 0, rot = 0, raf = 0, lastFrame = 0;
     var wide = window.matchMedia ? window.matchMedia('(min-width: 960px)') : null;
@@ -722,12 +724,12 @@
     }
 
     /* ---------- panel ---------- */
-    /* First paragraph always shows; the rest sits behind "Read more". */
+    /* A three-line summary shows; "Read full details" opens the rest. */
     function renderDesc(s) {
       var paras = String(s.desc).split(/\n\s*\n/).map(function (p) { return '<p>' + escapeHtml(p.trim()) + '</p>'; });
       desc.innerHTML = paras[0] + (paras.length > 1
         ? '<div class="svc__extra" id="svc-extra" hidden>' + paras.slice(1).join('') + '</div>' +
-          '<button class="svc__more" type="button" aria-expanded="false" aria-controls="svc-extra">Read more' +
+          '<button class="svc__more" type="button" aria-expanded="false" aria-controls="svc-extra">Read full details' +
           '<svg class="ico ico-sm"><use href="#i-down"/></svg></button>'
         : '');
       var more = $('.svc__more', desc), extra = $('.svc__extra', desc);
@@ -735,7 +737,8 @@
         var open = more.getAttribute('aria-expanded') !== 'true';
         more.setAttribute('aria-expanded', String(open));
         extra.hidden = !open;
-        more.firstChild.textContent = open ? 'Show less' : 'Read more';
+        desc.classList.toggle('is-full', open);
+        more.firstChild.textContent = open ? 'Show less' : 'Read full details';
       });
     }
     function select(i, opts) {
@@ -753,6 +756,8 @@
       num.textContent = pad(i + 1);
       name.textContent = node.getAttribute('data-short');
       root.style.setProperty('--pp', ((i + 1) / N * 100).toFixed(2));
+      if (line) line.style.setProperty('--jp', (i / (N - 1) * 100).toFixed(2) + '%');
+      dots.forEach(function (d, k) { d.classList.toggle('is-on', k === i); d.classList.toggle('is-done', k < i); });
       bgs.forEach(function (b, k) { b.classList.toggle('is-on', k === i); });
       if (place) place.textContent = node.getAttribute('data-place');
       if (opts.spin !== false) tween(targetFor(i), 600);
@@ -761,6 +766,11 @@
       tag.textContent = s.tagline;
       count.textContent = pad(i + 1) + ' / ' + pad(N);
       if (mark) mark.setAttribute('href', '#' + node.getAttribute('data-icon'));
+      if (ghost) ghost.textContent = pad(i + 1);
+      if (points && s.points) points.innerHTML = s.points.map(function (p) {
+        return '<li><svg class="ico ico-sm"><use href="#i-check"/></svg><span>' + escapeHtml(p) + '</span></li>';
+      }).join('');
+      desc.classList.remove('is-full');
       if (panel) panel.setAttribute('aria-labelledby', node.id);
       renderDesc(s);
       if (!reduceMotion && i !== prev) {
@@ -828,6 +838,31 @@
         else if (e.key === 'End') { e.preventDefault(); select(N - 1, { focus: true }); }
       });
     });
+    dots.forEach(function (d, k) { d.addEventListener('click', function () { select(k); }); });
+
+    /* ---------- wheel over the stage ---------- */
+    // Each wheel gesture over the dial's box moves one service. At the first or
+    // last service the wheel goes back to scrolling the page (after letting a
+    // trackpad's momentum from the last step die out).
+    var wheelAcc = 0, lastWheel = 0, lastStep = 0;
+    stage.addEventListener('wheel', function (e) {
+      if (e.ctrlKey || Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+      var dy = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaMode === 2 ? e.deltaY * 400 : e.deltaY;
+      var dir = dy > 0 ? 1 : -1, now = performance.now();
+      var atEnd = (dir > 0 && idx === N - 1) || (dir < 0 && idx === 0);
+      if (atEnd && now - lastStep > 450) { wheelAcc = 0; return; }
+      e.preventDefault();
+      if (atEnd) return;
+      if (now - lastWheel > 200 || (wheelAcc && (wheelAcc > 0) !== (dy > 0))) wheelAcc = 0;
+      lastWheel = now;
+      wheelAcc += dy;
+      if (Math.abs(wheelAcc) >= 40 && now - lastStep > 280) {
+        wheelAcc = 0; lastStep = now;
+        root.classList.add('is-touched');
+        select(idx + dir);
+      }
+    }, { passive: false });
+
     var prevBtn = $('[data-svc-prev]', root), nextBtn = $('[data-svc-next]', root);
     if (prevBtn) prevBtn.addEventListener('click', function () { select(idx - 1); });
     if (nextBtn) nextBtn.addEventListener('click', function () { select(idx + 1); });
