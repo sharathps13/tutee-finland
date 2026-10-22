@@ -985,7 +985,8 @@ main { overflow-x: clip; }
    A vintage postcard (front: city name filled with the city photo; back:
    message + address) beside an album of perforated stamps. */
 .pc { display: grid; gap: 22px; grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 1000px) { .pc { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 32px; align-items: center; } }
+@media (min-width: 1000px) { .pc { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px 32px; align-items: start; } .pc__filters { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; } .pc__chips--fields { padding-left: 18px; border-left: 1px solid var(--line); }
+  .pc { align-items: stretch; } .pc__side { align-content: space-between; } .pc .pc__stamp-in { aspect-ratio: 5 / 4; } }
 .pc__stage { perspective: 1600px; }
 .pc__card { position: relative; aspect-ratio: 3 / 2; transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .5s var(--ease); }
 .pc__inner { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .8s cubic-bezier(.3, .1, .2, 1); cursor: pointer; }
@@ -1077,7 +1078,8 @@ main { overflow-x: clip; }
   .pc__mini { display: none; }
 }
 
-.pc__side { display: grid; gap: 14px; min-width: 0; }
+.pc__side { display: grid; gap: 12px; min-width: 0; }
+.pc__stamps { gap: 10px !important; }
 .pc__filters { display: grid; gap: 8px; min-width: 0; }
 .pc__chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--gutter) * -1); padding: 2px var(--gutter); }
 .pc__chips::-webkit-scrollbar { display: none; }
