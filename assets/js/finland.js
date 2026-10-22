@@ -1134,201 +1134,55 @@
 
 
   /* ------------------------------------------------------------------ *
-   * Journey — the Tutee Express. The section pins; scroll moves a train
-   * along a rail that draws itself across parallax layers of Finnish
-   * landscape (fells, forest + lakes, foreground). The sky moves from an
-   * autumn morning to an aurora night, the nearest station opens, and on
-   * stopping the train eases into the closest station. The <ol> is the
-   * content and the fallback (no JS / reduced motion).
+   * Journey — editorial timeline. The tracing beam fills with scroll and
+   * its head marks the reading line; the step it has passed becomes the
+   * active one, rolling the side counter and highlighting the index.
+   * Photos open with a clip-path reveal and drift a little (parallax).
    * ------------------------------------------------------------------ */
-  var JR_SKY = [
-    { p: 0, sky1: '#f6c9a4', sky2: '#cfe3f3', far: '#a8bdd2', mid: '#40607a', near: '#22394d', tree: '#2f4d63', lake: '#e9f2f9' },
-    { p: 0.36, sky1: '#9dbfe6', sky2: '#eef4fa', far: '#c2d1e0', mid: '#6f879d', near: '#4a6176', tree: '#405a70', lake: '#f6f9fc' },
-    { p: 0.68, sky1: '#ff9a6a', sky2: '#ffd7a0', far: '#cf8c7c', mid: '#5c3e52', near: '#37253a', tree: '#43303f', lake: '#ffd3a6' },
-    { p: 1, sky1: '#030d24', sky2: '#123578', far: '#1d3159', mid: '#0e1d3a', near: '#06112a', tree: '#0b1a34', lake: '#24578a' }
-  ];
-
-  function initJourneyExpress() {
-    var sec = $('[data-jr]');
-    if (!sec || reduceMotion) return;
-    sec.classList.add('is-live');
-    var pin = $('[data-jr-pin]', sec), layers = $$('[data-jr-layer]', sec), stationsBox = $('[data-jr-stations]', sec);
-    var svgFar = $('[data-jr-far]', sec), svgMid = $('[data-jr-mid]', sec), svgTrack = $('[data-jr-track]', sec), svgNear = $('[data-jr-near]', sec);
-    var hud = $('[data-jr-hud]', sec), dots = $$('[data-jr-dot]', sec), rail = $('.jr__rail', sec);
-    var items = $$('[data-jr-item]', sec).map(function (li) {
-      var cta = $('a', li);
-      return { icon: li.getAttribute('data-icon'), short: li.getAttribute('data-short'), title: $('h3', li).innerHTML, text: $('p', li).innerHTML, cta: cta ? cta.outerHTML : '' };
-    });
-    var N = items.length, W = 0, H = 0, VW = 0, mobile = false, base = 0.68, xs = 0, xe = 0;
-    var live, train, wheels = [], stations = [], L = 0, active = -1, raf = 0, fitted = 0;
-
-    function rnd(seed) { var x = Math.sin(seed * 9301 + 49297) * 233280; return x - Math.floor(x); }   // stable "random"
-    function trackY(x) { var amp = mobile ? 0.45 : 1; return H * (base + amp * (0.035 * Math.sin(2 * Math.PI * x / W * 2.2) + 0.018 * Math.sin(2 * Math.PI * x / W * 5.3 + 1))); }
-    function uToX(u) { return xs + u * (xe - xs); }
-    function stationU(i) { return 0.04 + i * 0.92 / (N - 1); }
-    function hex(h) { return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)]; }
-    function mixHex(a, b, k) { a = hex(a); b = hex(b); return 'rgb(' + a.map(function (v, i) { return Math.round(v + (b[i] - v) * k); }).join(',') + ')'; }
-    function smooth(a, b, x) { var t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); }
-    function card(i) {
-      var it = items[i];
-      return '<div class="jr__top"><span class="jr__ico"><svg class="ico"><use href="#' + it.icon + '"/></svg></span><div><small>Stop ' + ('0' + (i + 1)).slice(-2) + ' &middot; ' + it.short + '</small><h3>' + it.title + '</h3></div></div>' +
-        '<p>' + it.text + '</p>' + it.cta;
-    }
-
-    /* ---------- build the scene for the current size ---------- */
-    function build() {
-      VW = pin.clientWidth; H = pin.clientHeight; mobile = VW < 900;
-      W = mobile ? VW * 5 : Math.max(VW * 3.3, 2800);
-      base = mobile ? 0.42 : (fitted || 0.68);
-      xs = W * 0.05; xe = W * 0.95;
-      var widths = layers.map(function (l) { return (W - VW) * parseFloat(l.getAttribute('data-jr-layer')) + VW; });
-      layers.forEach(function (l, i) { l.style.width = widths[i] + 'px'; var s = $('svg', l); s.setAttribute('width', widths[i]); s.setAttribute('height', H); s.setAttribute('viewBox', '0 0 ' + widths[i] + ' ' + H); });
-
-      // Far fells.
-      var wf = widths[0], d = 'M0 ' + H, x;
-      for (x = 0; x <= wf + 40; x += 40) d += 'L' + x + ' ' + (H * (0.6 - 0.11 * (0.5 + 0.5 * Math.sin(x * 0.0035 + 1)) * (0.65 + 0.35 * Math.sin(x * 0.011)))).toFixed(1);
-      svgFar.innerHTML = '<path d="' + d + 'L' + (wf + 40) + ' ' + H + 'Z" fill="var(--far)"/>';
-
-      // Forest and lakes behind the embankment.
-      var wm = widths[1], yB = H * (base + 0.08), g = '<rect x="0" y="' + yB + '" width="' + wm + '" height="' + (H - yB) + '" fill="var(--mid)"/>', k = 0;
-      for (x = 0; x < wm; k++) {
-        var h = 26 + rnd(k) * 70, w = h * 0.42;
-        g += '<polygon points="' + x.toFixed(1) + ',' + (yB - h).toFixed(1) + ' ' + (x - w / 2).toFixed(1) + ',' + (yB + 2) + ' ' + (x + w / 2).toFixed(1) + ',' + (yB + 2) + '" fill="var(--tree)"/>';
-        x += 12 + rnd(k + 99) * 26;
-      }
-      for (x = 300; x < wm; x += 820) g += '<ellipse cx="' + x + '" cy="' + (yB + H * 0.06).toFixed(1) + '" rx="150" ry="9" fill="var(--lake)" opacity=".75"/>';
-      svgMid.innerHTML = g;
-
-      // Lakes and a lower band of forest on the embankment below the rails.
-      function bankDetail() {
-        var out = '', q = 0, bx;
-        for (bx = 260; bx < W; bx += 760) out += '<ellipse cx="' + bx + '" cy="' + (trackY(bx) + H * 0.13).toFixed(1) + '" rx="' + (120 + rnd(bx) * 80).toFixed(0) + '" ry="10" fill="var(--lake)" opacity=".7"/>';
-        for (bx = 0; bx < W; q++) {
-          var th = 18 + rnd(q + 300) * 34, tw = th * 0.42, ty0 = trackY(bx) + H * 0.24;
-          out += '<polygon points="' + bx.toFixed(1) + ',' + (ty0 - th).toFixed(1) + ' ' + (bx - tw / 2).toFixed(1) + ',' + ty0.toFixed(1) + ' ' + (bx + tw / 2).toFixed(1) + ',' + ty0.toFixed(1) + '" fill="var(--tree)" opacity=".85"/>';
-          bx += 16 + rnd(q + 500) * 40;
-        }
-        return out;
-      }
-      // Embankment, rails and the train.
-      var pts = [];
-      for (x = 0; x <= W; x += 12) pts.push(x.toFixed(1) + ' ' + trackY(x).toFixed(1));
-      var line = 'M' + pts.join('L');
-      var lineXs = 'M' + pts.filter(function (p) { var px = parseFloat(p); return px >= xs - 6 && px <= xe + 6; }).join('L');
-      var t = '<defs><radialGradient id="jrLamp"><stop offset="0" stop-color="#fff3c4" stop-opacity=".95"/><stop offset="1" stop-color="#fff3c4" stop-opacity="0"/></radialGradient></defs>' +
-        '<path class="jr__bank" d="' + line + 'L' + W + ' ' + H + 'L0 ' + H + 'Z" transform="translate(0 8)"/>' +
-        bankDetail() +
-        '<path class="jr__sleepers" d="' + line + '"/><path class="jr__rail-base" d="' + line + '"/>' +
-        '<path class="jr__rail-live" d="' + lineXs + '" data-jr-live/>' +
-        '<g class="jr__train" data-jr-train>' +
-          '<circle class="lamp" cx="30" cy="-17" r="46"/>' +
-          '<g class="jr__smoke" transform="translate(12 -44)"><circle r="5"/><circle r="5"/><circle r="5"/></g>' +
-          '<rect class="body" x="-114" y="-30" width="56" height="24" rx="5"/><rect class="stripe" x="-114" y="-14" width="56" height="3"/>' +
-          '<rect class="lit" x="-106" y="-25" width="10" height="8" rx="2"/><rect class="lit" x="-91" y="-25" width="10" height="8" rx="2"/><rect class="lit" x="-76" y="-25" width="10" height="8" rx="2"/>' +
-          '<rect x="-58" y="-13" width="8" height="3" fill="#0b1b33"/>' +
-          '<rect class="body" x="-50" y="-28" width="58" height="22" rx="5"/><path class="body" d="M8 -28h8a11 11 0 0 1 0 22h-8z"/><rect class="stripe" x="-50" y="-16" width="72" height="3"/>' +
-          '<rect class="cab" x="-46" y="-46" width="24" height="40" rx="4"/><rect class="lit" x="-41" y="-41" width="14" height="10" rx="2"/>' +
-          '<rect class="cab" x="6" y="-40" width="8" height="13" rx="2"/>' +
-          '<line x1="-30" y1="-46" x2="-30" y2="-60" stroke="#0b1b33" stroke-width="1.5"/><rect x="-30" y="-60" width="13" height="8" fill="#fff"/><rect x="-26" y="-60" width="2.5" height="8" class="stripe"/><rect x="-30" y="-57" width="13" height="2.5" class="stripe"/>' +
-          '<path d="M26 -8l10 8h-13z" fill="#0b1b33"/><circle cx="27" cy="-17" r="3" fill="#fff7d6"/>' +
-          [-104, -68, -40, -18, 2].map(function (wx) { return '<g class="jr__wh" transform="translate(' + wx + ' -4)"><circle class="wheel" r="6"/><line x1="-5" y1="0" x2="5" y2="0" stroke="#2fe3b4" stroke-width="1"/><line x1="0" y1="-5" x2="0" y2="5" stroke="#2fe3b4" stroke-width="1"/></g>'; }).join('') +
-        '</g>';
-      svgTrack.innerHTML = t;
-      live = $('[data-jr-live]', svgTrack); L = live.getTotalLength(); live.style.strokeDasharray = L;
-      train = $('[data-jr-train]', svgTrack); wheels = $$('.jr__wh', svgTrack);
-
-      // Foreground mounds and a few tall pines that sweep past.
-      var wn = widths[3], dn = 'M0 ' + H;
-      for (x = 0; x <= wn + 30; x += 30) dn += 'L' + x + ' ' + (H * (0.93 + 0.025 * Math.sin(x * 0.006) + 0.012 * Math.sin(x * 0.021))).toFixed(1);
-      var n = '<path d="' + dn + 'L' + (wn + 30) + ' ' + H + 'Z" fill="var(--near)"/>';
-      for (x = 500, k = 0; x < wn; x += 700 + rnd(k + 7) * 500, k++) {
-        var ph = H * (0.16 + rnd(k + 3) * 0.1), pw = ph * 0.38;
-        n += '<polygon points="' + x + ',' + (H - ph) + ' ' + (x - pw / 2) + ',' + H + ' ' + (x + pw / 2) + ',' + H + '" fill="var(--near)"/>';
-      }
-      svgNear.innerHTML = n;
-
-      // Stations.
-      stationsBox.innerHTML = '';
-      stations = items.map(function (it, i) {
-        var sx = uToX(stationU(i)), el = document.createElement('div');
-        el.className = 'jr__station';
-        el.style.left = sx + 'px'; el.style.top = trackY(sx) + 'px';
-        el.innerHTML = '<span class="jr__post"></span><div class="jr__card"><span class="jr__sign"><b>' + ('0' + (i + 1)).slice(-2) + '</b>' + it.title + '</span><div class="jr__body">' + card(i) + '</div></div>';
-        stationsBox.appendChild(el);
-        return el;
-      });
-      active = -1;
-      // Keep the open card clear of the heading: lower the track on short screens.
-      if (!mobile && !fitted) {
-        var head = $('.jr__head', sec), hb = head.getBoundingClientRect().bottom - pin.getBoundingClientRect().top;
-        var tallest = Math.max.apply(null, $$('.jr__body', stationsBox).map(function (b) { return b.offsetHeight; }));
-        var need = clamp((hb + 18 + tallest + 56) / H + 0.053, 0.6, (H - 120) / H);   // 0.053: the track's highest swing above base
-        if (Math.abs(need - base) > 0.005 && need > base) { fitted = need; return build(); }
-      }
-      fitted = 0;
-      update();
-    }
-
-    /* ---------- per-frame update from scroll ---------- */
-    function progress() {
-      var r = sec.getBoundingClientRect(), span = sec.offsetHeight - window.innerHeight;
-      return clamp(-r.top / span, 0, 1);
-    }
+  function initJourneyTimeline() {
+    var root = $('[data-jx]');
+    if (!root) return;
+    var steps = $$('[data-jx-step]', root), wrap = $('[data-jx-steps]', root), nav = $$('[data-jx-nav]', root);
+    var digits = $('[data-jx-digits]', root), now = $('[data-jx-now]', root), medias = $$('[data-jx-media]', root);
+    var active = -1, raf = 0;
     function update() {
       raf = 0;
-      var p = progress(), u = 0.04 + p * 0.92, tx = uToX(u), ty = trackY(tx);
-      var ang = Math.atan2(trackY(tx + 4) - trackY(tx - 4), 8) * 180 / Math.PI;
-      var cam = clamp(tx - VW * (mobile ? 0.32 : 0.4), 0, W - VW);
-      layers.forEach(function (l) { l.style.transform = 'translate3d(' + (-cam * parseFloat(l.getAttribute('data-jr-layer'))).toFixed(1) + 'px,0,0)'; });
-      live.style.strokeDashoffset = (L * (1 - (tx - xs) / (xe - xs))).toFixed(1);
-      train.setAttribute('transform', 'translate(' + tx.toFixed(1) + ' ' + (ty - 2).toFixed(1) + ') rotate(' + ang.toFixed(2) + ')');
-      var spin = (tx / 6) * 180 / Math.PI;
-      wheels.forEach(function (w) { var t = w.getAttribute('transform').split(')')[0] + ')'; w.setAttribute('transform', t + ' rotate(' + spin.toFixed(1) + ')'); });
-
-      // Sky palette, night and sun.
-      var s = 0; while (s < JR_SKY.length - 2 && p > JR_SKY[s + 1].p) s++;
-      var A = JR_SKY[s], B = JR_SKY[s + 1], kk = clamp((p - A.p) / (B.p - A.p), 0, 1);
-      ['sky1', 'sky2', 'far', 'mid', 'near', 'tree', 'lake'].forEach(function (k) { pin.style.setProperty('--' + k, mixHex(A[k], B[k], kk)); });
-      var night = smooth(0.74, 0.95, p);
-      pin.style.setProperty('--night', night.toFixed(3));
-      sec.classList.toggle('is-dusk', p > 0.8);
-      sec.classList.toggle('is-moving', p > 0.01);
-      pin.style.setProperty('--sx', (12 + p * 74).toFixed(1) + '%');
-      pin.style.setProperty('--sy', (34 - Math.sin(p * Math.PI) * 18 + night * 8).toFixed(1) + '%');
-      rail.style.setProperty('--rp', p.toFixed(4));
-
-      // Nearest station.
-      var near = 0, best = 9;
-      for (var i = 0; i < N; i++) { var dd = Math.abs(stationU(i) - u); if (dd < best) { best = dd; near = i; } }
-      if (near !== active) {
-        active = near;
-        stations.forEach(function (st, i) { st.classList.toggle('is-on', i === near); st.classList.toggle('is-past', i < near); });
-        dots.forEach(function (d, i) { d.classList.toggle('is-on', i === near); d.classList.toggle('is-past', i < near); });
-        $('[data-jr-step]', sec).textContent = ('0' + (near + 1)).slice(-2);
-        $('[data-jr-stop]', sec).textContent = items[near].short;
-        hud.innerHTML = card(near);
-        if (hud.animate && mobile) hud.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'cubic-bezier(.2,.7,.2,1)' });
+      var vh = window.innerHeight, line = vh * 0.55, r = wrap.getBoundingClientRect();
+      var p = clamp((line - r.top) / r.height, 0, 1);
+      root.style.setProperty('--jx', p.toFixed(4));
+      var act = 0;
+      steps.forEach(function (s, i) { var t = s.getBoundingClientRect(); if (t.top + Math.min(t.height, 160) / 2 < line) act = i; });
+      if (act !== active) {
+        active = act;
+        steps.forEach(function (s, i) { s.classList.toggle('is-on', i === act); s.classList.toggle('is-past', i < act); });
+        nav.forEach(function (b, i) { b.classList.toggle('is-on', i === act); b.classList.toggle('is-past', i < act); });
+        $$('span', digits).forEach(function (d) { d.style.setProperty('--jxi', act); });
+        now.innerHTML = $('.jx__title', steps[act]).innerHTML;
+        if (!reduceMotion && now.animate) now.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 400, easing: 'cubic-bezier(.2,.7,.2,1)' });
       }
+      if (!reduceMotion) medias.forEach(function (m) {
+        var b = m.getBoundingClientRect();
+        if (b.bottom < -100 || b.top > vh + 100) return;
+        m.style.setProperty('--py', (((b.top + b.height / 2) - vh / 2) * -0.06).toFixed(1) + 'px');
+      });
     }
-    function stationTop(i) { return sec.offsetTop + (i / (N - 1)) * (sec.offsetHeight - window.innerHeight); }
-
-    // When scrolling stops inside the pinned scene, ease into the nearest station.
-    var idle = 0;
-    window.addEventListener('scroll', function () {
-      if (!raf) raf = requestAnimationFrame(update);
-      clearTimeout(idle);
-      idle = setTimeout(function () {
-        var r = sec.getBoundingClientRect();
-        if (r.top > 0 || r.bottom < window.innerHeight) return;
-        var target = stationTop(active);
-        if (Math.abs(window.scrollY - target) > 6) window.scrollTo({ top: target, behavior: 'smooth' });
-      }, 220);
-    }, { passive: true });
-    dots.forEach(function (d, i) { d.addEventListener('click', function () { window.scrollTo({ top: stationTop(i), behavior: 'smooth' }); }); });
-    var rt = 0;
-    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(build, 150); });
-    build();
+    window.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+    window.addEventListener('resize', function () { if (!raf) raf = requestAnimationFrame(update); });
+    nav.forEach(function (b, i) {
+      b.addEventListener('click', function () {
+        var t = steps[i].getBoundingClientRect();
+        window.scrollTo({ top: window.scrollY + t.top - window.innerHeight * 0.55 + Math.min(t.height, 160) / 2 + 4, behavior: reduceMotion ? 'auto' : 'smooth' });
+      });
+    });
+    if ('IntersectionObserver' in window && !reduceMotion) {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
+      }, { threshold: 0.25 });
+      medias.forEach(function (m) { io.observe(m); });
+    } else medias.forEach(function (m) { m.classList.add('is-in'); });
+    update();
   }
+
 
 
   /* Gentle parallax on the photo band. */
@@ -2072,7 +1926,7 @@
   initServices();
   initPostcards();
   initFundingPlan();
-  initJourneyExpress();
+  initJourneyTimeline();
   initParallax();
   initPointerFx();
   initAccordion();

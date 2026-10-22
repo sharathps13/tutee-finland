@@ -552,72 +552,98 @@
   </div>
 </section>
 
-<!-- ============================== JOURNEY (Tutee Express) ==============================
-     Scroll-driven train ride across a layered Finnish landscape: the rail
-     draws itself, the sky turns from an autumn morning to an aurora night,
-     and each of the six stations opens as the train arrives. The <ol> is
-     the content source and the no-JS / reduced-motion fallback.
-     initJourneyExpress(). -->
-<section class="jr" id="relocate" data-jr>
-  <div class="jr__pin" data-jr-pin aria-hidden="true">
-    <div class="jr__sky" data-jr-sky>
-      <span class="jr__stars"></span>
-      <span class="jr__aurora"></span>
-      <span class="jr__sun" data-jr-sun></span>
-    </div>
-    <div class="jr__layer" data-jr-layer="0.25"><svg data-jr-far></svg></div>
-    <div class="jr__layer" data-jr-layer="0.55"><svg data-jr-mid></svg></div>
-    <div class="jr__layer jr__world" data-jr-layer="1" data-jr-world><svg data-jr-track></svg><div class="jr__stations" data-jr-stations></div></div>
-    <div class="jr__layer jr__near" data-jr-layer="1.3"><svg data-jr-near></svg></div>
-    <div class="container jr__head">
-      <div class="jr__headin">
-        <span class="eyebrow"><span>Your journey &middot; the Tutee Express</span></span>
-        <span class="jr__h2">From first application to <span class="text-grad">permanent resident.</span></span>
+<!-- ============================== JOURNEY ==============================
+     Editorial timeline: a sticky panel (rolling step counter, current
+     stage, progress, step index) beside six steps whose tracing beam fills
+     with scroll and whose photos reveal on entry. Native scrolling.
+     initJourneyTimeline(). -->
+<section class="section jx-sec" id="relocate">
+  <div class="container">
+    <div class="section-head section-head--split reveal">
+      <div>
+        <span class="eyebrow"><span data-decrypt="view">Your journey</span></span>
+        <h2 class="h2" style="margin-top:12px">From first application to <span class="text-grad">permanent resident.</span></h2>
       </div>
-      <div class="jr__meter"><b data-jr-step>01</b><span>/ 06</span><small data-jr-stop>Application</small></div>
+      <p class="lead">Six steps, one team beside you the whole way &mdash; from your first Studyinfo application to a permanent home in Finland.</p>
     </div>
-    <div class="jr__hud" data-jr-hud></div>
-    <nav class="jr__rail" aria-label="Journey stops"><span class="jr__railfill" data-jr-railfill></span><button class="jr__dot is-on" type="button" data-jr-dot aria-label="Go to stop 1: Shortlist and apply"><i></i><span>Application</span></button><button class="jr__dot" type="button" data-jr-dot aria-label="Go to stop 2: Admission and scholarship"><i></i><span>Offer</span></button><button class="jr__dot" type="button" data-jr-dot aria-label="Go to stop 3: Residence permit"><i></i><span>Permit</span></button><button class="jr__dot" type="button" data-jr-dot aria-label="Go to stop 4: Land, study and work"><i></i><span>Arrival</span></button><button class="jr__dot" type="button" data-jr-dot aria-label="Go to stop 5: Job-search permit"><i></i><span>Graduation</span></button><button class="jr__dot" type="button" data-jr-dot aria-label="Go to stop 6: Permanent residence"><i></i><span>Home</span></button></nav>
-    <span class="jr__hint"><svg class="ico ico-sm"><use href="#i-down"/></svg>Scroll to ride</span>
-  </div>
-  <div class="container jr__fallback">
-    <div class="section-head reveal">
-      <span class="eyebrow"><span data-decrypt="view">Your journey</span></span>
-      <h2 class="h2" style="margin-top:12px">From first application to <span class="text-grad">permanent resident.</span></h2>
+
+    <div class="jx" data-jx>
+      <aside class="jx__side">
+        <div class="jx__sticky">
+          <span class="jx__label">Your route to Finland</span>
+          <div class="jx__count" aria-hidden="true"><span class="jx__digits" data-jx-digits><span>01</span><span>02</span><span>03</span><span>04</span><span>05</span><span>06</span></span><small>/ 06</small></div>
+          <span class="jx__now" data-jx-now>Shortlist &amp; apply</span>
+          <span class="jx__bar" aria-hidden="true"><i data-jx-bar></i></span>
+          <ol class="jx__nav"><li><button class="jx__navbtn is-on" type="button" data-jx-nav><span>01</span>Shortlist &amp; apply</button></li><li><button class="jx__navbtn" type="button" data-jx-nav><span>02</span>Admission &amp; scholarship</button></li><li><button class="jx__navbtn" type="button" data-jx-nav><span>03</span>Residence permit</button></li><li><button class="jx__navbtn" type="button" data-jx-nav><span>04</span>Land, study &amp; work</button></li><li><button class="jx__navbtn" type="button" data-jx-nav><span>05</span>Job-search permit</button></li><li><button class="jx__navbtn" type="button" data-jx-nav><span>06</span>Permanent residence</button></li></ol>
+          <a class="btn btn-primary" href="#contact" data-magnet>Plan my route<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
+        </div>
+      </aside>
+
+      <div class="jx__steps" data-jx-steps>
+        <span class="jx__beam" aria-hidden="true"><i data-jx-fill></i><b data-jx-head></b></span>
+        <article class="jx__step" data-jx-step>
+          <span class="jx__node" aria-hidden="true"></span>
+          <div class="jx__text">
+            <span class="jx__phase">Step 01 &middot; Plan</span>
+            <h3 class="jx__title">Shortlist &amp; apply</h3>
+            <p>We shortlist programmes that fit your profile and prepare your Studyinfo application, motivation letter and documents.</p>
+            <ul class="jx__chips"><li>Studyinfo application</li><li>Motivation letter</li><li>Document review</li></ul>
+          </div>
+          <figure class="jx__media" data-jx-media><img src="./assets/img/services/career.jpg" alt="Counsellors planning an application with a student" loading="lazy" decoding="async"><figcaption>01</figcaption></figure>
+        </article>
+        <article class="jx__step" data-jx-step>
+          <span class="jx__node" aria-hidden="true"></span>
+          <div class="jx__text">
+            <span class="jx__phase">Step 02 &middot; Admission</span>
+            <h3 class="jx__title">Admission &amp; scholarship</h3>
+            <p>Offers usually arrive with the institution's scholarship decision. We help you compare them and accept the right one.</p>
+            <ul class="jx__chips"><li>Scholarship decision</li><li>Offers compared</li><li>Acceptance</li></ul>
+          </div>
+          <figure class="jx__media" data-jx-media><img src="./assets/img/services/college.jpg" alt="Students on the University of Vaasa campus" loading="lazy" decoding="async"><figcaption>02</figcaption></figure>
+        </article>
+        <article class="jx__step" data-jx-step>
+          <span class="jx__node" aria-hidden="true"></span>
+          <div class="jx__text">
+            <span class="jx__phase">Step 03 &middot; Permit</span>
+            <h3 class="jx__title">Residence permit</h3>
+            <p>Apply on Enter Finland for a continuous A permit covering your whole degree, with a D visa to fly early. No credibility interview.</p>
+            <ul class="jx__chips"><li>Enter Finland</li><li>A permit &middot; whole degree</li><li>D visa</li><li>No interview</li></ul>
+          </div>
+          <figure class="jx__media" data-jx-media><img src="./assets/img/services/permit.jpg" alt="A passport held at an aeroplane window" loading="lazy" decoding="async"><figcaption>03</figcaption></figure>
+        </article>
+        <article class="jx__step" data-jx-step>
+          <span class="jx__node" aria-hidden="true"></span>
+          <div class="jx__text">
+            <span class="jx__phase">Step 04 &middot; Arrival</span>
+            <h3 class="jx__title">Land, study &amp; work</h3>
+            <p>Housing, registration and your identity code sorted. Work an average of 30 hours a week in any field, no separate work permit.</p>
+            <ul class="jx__chips"><li>Housing</li><li>Identity code</li><li>30 h a week average</li></ul>
+          </div>
+          <figure class="jx__media" data-jx-media><img src="./assets/img/services/arrival.jpg" alt="The arrivals hall at Helsinki Airport" loading="lazy" decoding="async"><figcaption>04</figcaption></figure>
+        </article>
+        <article class="jx__step" data-jx-step>
+          <span class="jx__node" aria-hidden="true"></span>
+          <div class="jx__text">
+            <span class="jx__phase">Step 05 &middot; Career</span>
+            <h3 class="jx__title">Job-search permit</h3>
+            <p>Up to two years after graduating to look for work or start a business &mdash; no sponsor required &mdash; then a work-based permit.</p>
+            <ul class="jx__chips"><li>Up to 2 years</li><li>No sponsor needed</li><li>Then a work permit</li></ul>
+          </div>
+          <figure class="jx__media" data-jx-media><img src="./assets/img/services/settlement.jpg" alt="Keys to a new apartment" loading="lazy" decoding="async"><figcaption>05</figcaption></figure>
+        </article>
+        <article class="jx__step" data-jx-step>
+          <span class="jx__node" aria-hidden="true"></span>
+          <div class="jx__text">
+            <span class="jx__phase">Step 06 &middot; Settle</span>
+            <h3 class="jx__title">Permanent residence</h3>
+            <p>After six years &mdash; or with no residence-period requirement at all once you hold a Finnish degree and the required Finnish or Swedish.</p>
+            <ul class="jx__chips"><li>After 6 years</li><li>Or: Finnish degree + language</li></ul>
+            <a class="btn btn-primary btn-sm" href="#contact" data-magnet>Plan my route<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
+          </div>
+          <figure class="jx__media" data-jx-media><img src="./assets/img/services/family.jpg" alt="A family walking together" loading="lazy" decoding="async"><figcaption>06</figcaption></figure>
+        </article>
+      </div>
     </div>
-    <ol class="jr__list" data-jr-list>
-      <li class="jr__item" data-jr-item data-icon="i-cap" data-short="Application">
-        <span class="jr__n">01</span><span class="jr__ico"><svg class="ico"><use href="#i-cap"/></svg></span>
-        <h3>Shortlist &amp; apply</h3>
-        <p>We shortlist programmes that fit your profile and prepare your Studyinfo application, motivation letter and documents.</p>
-      </li>
-      <li class="jr__item" data-jr-item data-icon="i-award" data-short="Offer">
-        <span class="jr__n">02</span><span class="jr__ico"><svg class="ico"><use href="#i-award"/></svg></span>
-        <h3>Admission &amp; scholarship</h3>
-        <p>Offers usually arrive with the institution's scholarship decision. We help you compare them and accept the right one.</p>
-      </li>
-      <li class="jr__item" data-jr-item data-icon="i-shield" data-short="Permit">
-        <span class="jr__n">03</span><span class="jr__ico"><svg class="ico"><use href="#i-shield"/></svg></span>
-        <h3>Residence permit</h3>
-        <p>Apply on Enter Finland for a continuous A permit covering your whole degree, with a D visa to fly early. No credibility interview.</p>
-      </li>
-      <li class="jr__item" data-jr-item data-icon="i-plane" data-short="Arrival">
-        <span class="jr__n">04</span><span class="jr__ico"><svg class="ico"><use href="#i-plane"/></svg></span>
-        <h3>Land, study &amp; work</h3>
-        <p>Housing, registration and your identity code sorted. Work an average of 30 hours a week in any field, no separate work permit.</p>
-      </li>
-      <li class="jr__item" data-jr-item data-icon="i-brief" data-short="Graduation">
-        <span class="jr__n">05</span><span class="jr__ico"><svg class="ico"><use href="#i-brief"/></svg></span>
-        <h3>Job-search permit</h3>
-        <p>Up to two years after graduating to look for work or start a business &mdash; no sponsor required &mdash; then a work-based permit.</p>
-      </li>
-      <li class="jr__item" data-jr-item data-icon="i-check" data-short="Home">
-        <span class="jr__n">06</span><span class="jr__ico"><svg class="ico"><use href="#i-check"/></svg></span>
-        <h3>Permanent residence</h3>
-        <p>After six years &mdash; or with no residence-period requirement at all once you hold a Finnish degree and the required Finnish or Swedish.</p>
-        <a class="btn btn-primary btn-sm" href="#contact" data-magnet>Plan my route<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
-      </li>
-    </ol>
   </div>
 </section>
 
