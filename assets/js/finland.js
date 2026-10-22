@@ -1134,54 +1134,90 @@
 
 
   /* ------------------------------------------------------------------ *
-   * Journey — editorial timeline. The tracing beam fills with scroll and
-   * its head marks the reading line; the step it has passed becomes the
-   * active one, rolling the side counter and highlighting the index.
-   * Photos open with a clip-path reveal and drift a little (parallax).
+   * Journey — story player. While in view, each step plays for STEP_MS
+   * and the segment bar fills; hover, focus or the Pause button stops it.
+   * Segments, arrows and swipes jump between steps. Reduced motion never
+   * autoplays.
    * ------------------------------------------------------------------ */
-  function initJourneyTimeline() {
-    var root = $('[data-jx]');
+  function initJourneyStories() {
+    var root = $('[data-js2]');
     if (!root) return;
-    var steps = $$('[data-jx-step]', root), wrap = $('[data-jx-steps]', root), nav = $$('[data-jx-nav]', root);
-    var digits = $('[data-jx-digits]', root), now = $('[data-jx-now]', root), medias = $$('[data-jx-media]', root);
-    var active = -1, raf = 0;
-    function update() {
-      raf = 0;
-      var vh = window.innerHeight, line = vh * 0.55, r = wrap.getBoundingClientRect();
-      var p = clamp((line - r.top) / r.height, 0, 1);
-      root.style.setProperty('--jx', p.toFixed(4));
-      var act = 0;
-      steps.forEach(function (s, i) { var t = s.getBoundingClientRect(); if (t.top + Math.min(t.height, 160) / 2 < line) act = i; });
-      if (act !== active) {
-        active = act;
-        steps.forEach(function (s, i) { s.classList.toggle('is-on', i === act); s.classList.toggle('is-past', i < act); });
-        nav.forEach(function (b, i) { b.classList.toggle('is-on', i === act); b.classList.toggle('is-past', i < act); });
-        $$('span', digits).forEach(function (d) { d.style.setProperty('--jxi', act); });
-        now.innerHTML = $('.jx__title', steps[act]).innerHTML;
-        if (!reduceMotion && now.animate) now.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 400, easing: 'cubic-bezier(.2,.7,.2,1)' });
-      }
-      if (!reduceMotion) medias.forEach(function (m) {
-        var b = m.getBoundingClientRect();
-        if (b.bottom < -100 || b.top > vh + 100) return;
-        m.style.setProperty('--py', (((b.top + b.height / 2) - vh / 2) * -0.06).toFixed(1) + 'px');
+    var segs = $$('[data-js2-seg]', root), panes = $$('[data-js2-pane]', root), imgs = $$('[data-js2-img]', root);
+    var big = $('[data-js2-big]', root), count = $('[data-js2-count]', root), playBtn = $('[data-js2-play]', root), card = $('.js2__card', root);
+    var N = segs.length, STEP_MS = 6500, idx = 0, t = 0, last = 0, raf = 0;
+    var inView = false, hovering = false, paused = reduceMotion, finished = false;
+    function pad(n) { return ('0' + n).slice(-2); }
+    function go(i, user) {
+      i = (i + N) % N;
+      var dir = i >= idx ? 1 : -1;
+      idx = i; t = 0;
+      if (user) finished = false;
+      segs.forEach(function (s, k) {
+        s.classList.toggle('is-on', k === i); s.classList.toggle('is-past', k < i);
+        s.setAttribute('aria-selected', String(k === i));
       });
+      imgs.forEach(function (im, k) { im.classList.toggle('is-on', k === i); });
+      panes.forEach(function (p, k) {
+        var on = k === i;
+        p.classList.toggle('is-on', on); p.setAttribute('aria-hidden', String(!on));
+        $$('a', p).forEach(function (l) { l.tabIndex = on ? 0 : -1; });
+        if (on && !reduceMotion && p.animate) p.animate([{ opacity: 0, transform: 'translateX(' + (16 * dir) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' });
+      });
+      big.textContent = pad(i + 1); count.textContent = pad(i + 1);
+      root.style.setProperty('--t', 0);
     }
-    window.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
-    window.addEventListener('resize', function () { if (!raf) raf = requestAnimationFrame(update); });
-    nav.forEach(function (b, i) {
-      b.addEventListener('click', function () {
-        var t = steps[i].getBoundingClientRect();
-        window.scrollTo({ top: window.scrollY + t.top - window.innerHeight * 0.55 + Math.min(t.height, 160) / 2 + 4, behavior: reduceMotion ? 'auto' : 'smooth' });
+    function playing() { return inView && !hovering && !paused && !finished && !document.hidden; }
+    function frame(now) {
+      raf = 0;
+      if (!playing()) return;
+      t += (now - last) / STEP_MS; last = now;
+      if (t >= 1) {
+        if (idx === N - 1) { t = 1; finished = true; root.style.setProperty('--t', 1); syncBtn(); return; }   // stop on the last step
+        go(idx + 1);
+      }
+      root.style.setProperty('--t', t.toFixed(4));
+      raf = requestAnimationFrame(frame);
+    }
+    function sync() { if (playing() && !raf) { last = performance.now(); raf = requestAnimationFrame(frame); } syncBtn(); }
+    function syncBtn() {
+      var on = !paused && !finished;
+      playBtn.setAttribute('aria-label', on ? 'Pause the journey' : 'Play the journey');
+      playBtn.lastChild.textContent = finished ? 'Replay' : (on ? 'Pause' : 'Play');
+    }
+    segs.forEach(function (s, i) {
+      s.addEventListener('click', function () { go(i, true); sync(); });
+      s.addEventListener('keydown', function (e) {
+        var k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+        if (k) { e.preventDefault(); go(idx + k, true); segs[idx].focus(); sync(); }
       });
     });
-    if ('IntersectionObserver' in window && !reduceMotion) {
-      var io = new IntersectionObserver(function (es) {
-        es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
-      }, { threshold: 0.25 });
-      medias.forEach(function (m) { io.observe(m); });
-    } else medias.forEach(function (m) { m.classList.add('is-in'); });
-    update();
+    $('[data-js2-prev]', root).addEventListener('click', function () { go(idx - 1, true); sync(); });
+    $('[data-js2-next]', root).addEventListener('click', function () { go(idx + 1, true); sync(); });
+    playBtn.addEventListener('click', function () {
+      if (finished) { finished = false; paused = false; go(0, true); }
+      else paused = !paused;
+      sync();
+    });
+    root.addEventListener('mouseenter', function () { hovering = true; });
+    root.addEventListener('mouseleave', function () { hovering = false; sync(); });
+    root.addEventListener('focusin', function () { hovering = true; });
+    root.addEventListener('focusout', function () { hovering = false; sync(); });
+    // Swipe the card to move between steps.
+    var sx = null, sy = 0;
+    card.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse') { sx = e.clientX; sy = e.clientY; } });
+    card.addEventListener('pointerup', function (e) {
+      if (sx == null) return;
+      var dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3) { go(idx + (dx < 0 ? 1 : -1), true); sync(); }
+    });
+    document.addEventListener('visibilitychange', sync);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { inView = es[0].isIntersecting; sync(); }, { threshold: 0.45 }).observe(card);
+    }
+    go(0);
+    syncBtn();
   }
+
 
 
 
@@ -1926,7 +1962,7 @@
   initServices();
   initPostcards();
   initFundingPlan();
-  initJourneyTimeline();
+  initJourneyStories();
   initParallax();
   initPointerFx();
   initAccordion();

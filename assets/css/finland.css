@@ -1135,70 +1135,48 @@ main { overflow-x: clip; }
 .fpl__partners-label .ico { color: var(--fi-blue); }
 @media (prefers-reduced-motion: reduce) { .fpl__src, .fpl__toggle, .fpl__toggle i, .fpl__cost, .fpl__cost::before, .fpl__meter i { transition: none; } .fpl__tags span { animation: none; } }
 
-/* ===================================================== JOURNEY (TIMELINE)
-   Sticky side panel + six steps on a tracing beam. JS sets --jx (beam
-   fill, 0–1) and the active step; photos reveal with a clip-path. */
-.jx-sec { position: relative; color: #dfe8f5; background: radial-gradient(70% 50% at 100% 0%, rgba(18,53,122,.9), rgba(18,53,122,0) 60%), radial-gradient(50% 40% at 0% 100%, rgba(47,227,180,.1), rgba(47,227,180,0) 60%), var(--night); }
-.jx-sec::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
-  background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 56px 56px;
-  -webkit-mask-image: radial-gradient(70% 60% at 50% 40%, #000, transparent); mask-image: radial-gradient(70% 60% at 50% 40%, #000, transparent); }
-.jx-sec .container { position: relative; }
-.jx-sec .h2 { color: #fff; }
-.jx-sec .lead { color: #a9bad3; }
-.jx-sec .eyebrow { color: var(--aurora); }
-.jx { display: grid; gap: 28px; grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 1000px) { .jx { grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 56px; } }
+/* ====================================================== JOURNEY (STORIES)
+   One card: photo + content; six segment bars fill as the story plays.
+   --t (0–1) is the current segment's fill, set by JS each frame. */
+.js2-sec { position: relative; color: #dfe8f5; background: radial-gradient(70% 60% at 100% 0%, rgba(18,53,122,.9), rgba(18,53,122,0) 60%), radial-gradient(50% 50% at 0% 100%, rgba(47,227,180,.1), rgba(47,227,180,0) 60%), var(--night); }
+.js2-sec .h2 { color: #fff; } .js2-sec .lead { color: #a9bad3; } .js2-sec .eyebrow { color: var(--aurora); }
+.js2 { display: grid; gap: 14px; }
+.js2__segs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.js2__seg { display: grid; gap: 10px; padding: 0; text-align: left; color: #6f84a6; }
+.js2__seg i { position: relative; display: block; height: 4px; border-radius: 4px; overflow: hidden; background: rgba(255,255,255,.14); }
+.js2__seg b { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: 4px; background: linear-gradient(90deg, var(--aurora), #8fb8ff); }
+.js2__seg.is-past b { width: 100%; }
+.js2__seg.is-on b { width: calc(var(--t, 0) * 100%); }
+.js2__seg span { display: grid; gap: 2px; font-size: 13px; font-weight: 700; line-height: 1.25; transition: color .25s; }
+.js2__seg small { font-size: 11px; font-weight: 800; letter-spacing: .12em; color: #50648a; transition: color .25s; }
+.js2__seg:hover span, .js2__seg.is-past span { color: #b9c8de; }
+.js2__seg.is-on span { color: #fff; } .js2__seg.is-on small, .js2__seg.is-past small { color: var(--aurora); }
+.js2__seg:focus-visible { outline: 2px solid var(--aurora); outline-offset: 4px; border-radius: 4px; }
+@media (max-width: 760px) { .js2__seg span { display: none; } .js2__segs { gap: 5px; } }
 
-.jx__side { display: none; }
-@media (min-width: 1000px) { .jx__side { display: block; } }
-.jx__sticky { position: sticky; top: calc(var(--header-h) + 32px); display: grid; gap: 16px; padding: 28px; border-radius: 24px;
-  background: linear-gradient(160deg, rgba(255,255,255,.07), rgba(255,255,255,.02)); border: 1px solid rgba(255,255,255,.1); box-shadow: 0 30px 60px -40px rgba(0,0,0,.8); }
-.jx__label { font-size: 11.5px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #8ea3c4; }
-.jx__count { display: flex; align-items: flex-end; gap: 10px; line-height: 1; }
-.jx__digits { display: flex; flex-direction: column; height: 5.4rem; overflow: hidden; font-size: 5.4rem; font-weight: 700; letter-spacing: -.06em; color: #fff; font-variant-numeric: tabular-nums; }
-.jx__digits span { display: block; height: 5.4rem; line-height: 5.4rem; transform: translateY(calc(var(--jxi, 0) * -100%)); transition: transform .6s cubic-bezier(.65, 0, .35, 1);
-  background: linear-gradient(180deg, #fff 30%, #8fb8ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.jx__count small { padding-bottom: 12px; font-size: 15px; font-weight: 700; color: #6f84a6; }
-.jx__now { font-size: 1.35rem; font-weight: 700; letter-spacing: -.02em; color: #fff; min-height: 1.6em; }
-.jx__bar { position: relative; height: 3px; border-radius: 3px; background: rgba(255,255,255,.1); overflow: hidden; }
-.jx__bar i { position: absolute; inset: 0 auto 0 0; width: calc(var(--jx, 0) * 100%); background: linear-gradient(90deg, var(--aurora), #8fb8ff); }
-.jx__nav { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
-.jx__navbtn { width: 100%; display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 10px; text-align: left; font-size: 14px; font-weight: 600; color: #7f93b3; transition: color .25s, background .25s; }
-.jx__navbtn span { font-size: 11.5px; font-weight: 800; letter-spacing: .08em; color: #50648a; font-variant-numeric: tabular-nums; transition: color .25s; }
-.jx__navbtn:hover { color: #dfe8f5; background: rgba(255,255,255,.04); }
-.jx__navbtn.is-past { color: #b9c8de; } .jx__navbtn.is-past span { color: var(--aurora); }
-.jx__navbtn.is-on { color: #fff; background: rgba(47,227,180,.1); }
-.jx__navbtn.is-on span { color: var(--aurora); }
-.jx__sticky .btn { justify-self: start; margin-top: 4px; }
-
-.jx__steps { position: relative; display: grid; gap: clamp(44px, 6vw, 84px); padding-left: 44px; }
-.jx__beam { position: absolute; left: 11px; top: 8px; bottom: 8px; width: 2px; border-radius: 2px; background: rgba(255,255,255,.1); }
-.jx__beam i { position: absolute; left: 0; top: 0; width: 100%; height: calc(var(--jx, 0) * 100%); border-radius: 2px; background: linear-gradient(180deg, rgba(47,227,180,0), var(--aurora) 30%, #8fb8ff); }
-.jx__beam b { position: absolute; left: 50%; top: calc(var(--jx, 0) * 100%); width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: #fff;
-  box-shadow: 0 0 0 5px rgba(47,227,180,.25), 0 0 24px 4px rgba(47,227,180,.7); }
-.jx__step { position: relative; display: grid; gap: 22px; align-items: center; grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 760px) and (max-width: 999px), (min-width: 1200px) { .jx__step { grid-template-columns: minmax(0, 1fr) minmax(0, .95fr); gap: 36px; } }
-.jx__node { position: absolute; left: -38px; top: 6px; width: 14px; height: 14px; border-radius: 50%; background: var(--night); border: 2px solid rgba(255,255,255,.25); transition: border-color .3s, background .3s, box-shadow .3s; }
-@media (min-width: 760px) and (max-width: 999px), (min-width: 1200px) { .jx__node { top: 50%; margin-top: -7px; } }
-.jx__step.is-past .jx__node { border-color: var(--aurora); background: var(--aurora); }
-.jx__step.is-on .jx__node { border-color: var(--aurora); background: var(--night); box-shadow: 0 0 0 5px rgba(47,227,180,.22); }
-.jx__text { display: grid; gap: 12px; justify-items: start; opacity: .45; transform: translateY(10px); transition: opacity .5s, transform .6s var(--ease); }
-.jx__step.is-on .jx__text, .jx__step.is-past .jx__text { opacity: 1; transform: none; }
-.jx__phase { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--aurora); }
-.jx__title { font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.3rem); line-height: 1.08; letter-spacing: -.03em; color: #fff; }
-.jx__text p { font-size: 15.5px; line-height: 1.7; color: #a9bad3; max-width: 46ch; }
-.jx__chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.jx__chips li { padding: 5px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 700; color: #dfe8f5; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); }
-.jx__text .btn { margin-top: 4px; }
-.jx__media { position: relative; margin: 0; aspect-ratio: 4 / 3; border-radius: 20px; overflow: hidden; background: #0b1f45;
-  clip-path: inset(10% 8% 10% 8% round 20px); transition: clip-path 1.1s cubic-bezier(.65, 0, .35, 1); box-shadow: 0 30px 60px -36px rgba(0,0,0,.9); }
-.jx__media img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.18) translateY(var(--py, 0px)); transition: transform 1.4s cubic-bezier(.2, .7, .2, 1); }
-.jx__media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(4,16,42,0) 55%, rgba(4,16,42,.65)); }
-.jx__media figcaption { position: absolute; z-index: 1; right: 16px; bottom: 10px; font-size: 3.4rem; font-weight: 700; line-height: 1; letter-spacing: -.05em; color: rgba(255,255,255,.85); }
-.jx__media.is-in { clip-path: inset(0 0 0 0 round 20px); }
-.jx__media.is-in img { transform: scale(1.04) translateY(var(--py, 0px)); }
-@media (min-width: 760px) and (max-width: 999px), (min-width: 1200px) { .jx__step:nth-child(odd of .jx__step) .jx__media { order: -1; } }
-@media (prefers-reduced-motion: reduce) {
-  .jx__digits span, .jx__text, .jx__media, .jx__media img, .jx__node { transition: none; }
-  .jx__media { clip-path: none; } .jx__text { opacity: 1; transform: none; }
-}
+.js2__card { display: grid; grid-template-columns: minmax(0, 1fr); border-radius: 28px; overflow: hidden; background: linear-gradient(160deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+  border: 1px solid rgba(255,255,255,.1); box-shadow: 0 40px 80px -44px rgba(0,0,0,.9); touch-action: pan-y; }
+@media (min-width: 860px) { .js2__card { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); min-height: 430px; } }
+.js2__media { position: relative; min-height: 230px; overflow: hidden; background: #0b1f45; isolation: isolate; }
+.js2__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.12); transition: opacity .8s var(--ease), transform 7s linear; }
+.js2__img.is-on { opacity: 1; transform: scale(1); }
+.js2__media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(4,16,42,0) 55%, rgba(4,16,42,.55)), linear-gradient(0deg, rgba(4,16,42,.65), rgba(4,16,42,0) 45%); }
+.js2__big { position: absolute; z-index: 1; left: 22px; bottom: 6px; font-size: clamp(4rem, 3rem + 4vw, 7.5rem); font-weight: 700; line-height: 1; letter-spacing: -.06em; color: rgba(255,255,255,.92); }
+.js2__play { position: absolute; z-index: 1; top: 16px; left: 16px; display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; color: #fff;
+  background: rgba(4,16,42,.5); border: 1px solid rgba(255,255,255,.2); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.js2__play .ico { color: var(--aurora); }
+.js2__body { position: relative; display: grid; grid-template-rows: 1fr auto; padding: clamp(22px, 3vw, 38px); }
+.js2__panes { display: grid; }
+.js2__pane { grid-area: 1 / 1; display: grid; gap: 14px; align-content: center; justify-items: start; }
+.js2__pane:not(.is-on) { visibility: hidden; }
+.js2__phase { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--aurora); }
+.js2__title { font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.5rem); line-height: 1.06; letter-spacing: -.03em; color: #fff; }
+.js2__pane p { font-size: 15.5px; line-height: 1.7; color: #a9bad3; max-width: 48ch; }
+.js2__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.js2__chips li { padding: 5px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 700; color: #dfe8f5; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); }
+.js2__nav { display: flex; align-items: center; gap: 14px; margin-top: 22px; }
+.js2__nav .round-btn { background: transparent; color: #fff; border-color: rgba(255,255,255,.25); }
+.js2__nav .round-btn:hover { background: var(--aurora); border-color: var(--aurora); color: var(--night); }
+.js2__count { font-size: 14px; font-weight: 700; color: #6f84a6; font-variant-numeric: tabular-nums; }
+.js2__count b { color: #fff; font-size: 1.1rem; }
+@media (prefers-reduced-motion: reduce) { .js2__img { transition: opacity .2s; transform: none; } .js2__img.is-on { transform: none; } }
