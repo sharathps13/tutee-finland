@@ -920,6 +920,94 @@
   }
 
   /* ------------------------------------------------------------------ *
+   * Funding passes — five ways to fund a degree. A tab swaps the
+   * holographic pass (it turns edge-on, changes, and turns back) and the
+   * detail panel; the foil and glare follow the pointer across the pass.
+   * ------------------------------------------------------------------ */
+  function initFundingPasses() {
+    var root = $('[data-fp]');
+    if (!root) return;
+    var tabs = $$('[data-fp-tab]', root), pass = $('[data-fp-pass]', root), passin = $('[data-fp-passin]', root);
+    var stage = $('[data-fp-stage]', root), panel = $('[data-fp-panel]', root), logos = $('[data-fp-logos]', root);
+    var idx = 0, N = tabs.length;
+    function set(sel, text) { var n = $(sel, root); if (n) n.textContent = text; }
+    function fill(i) {
+      var t = tabs[i], d = function (k) { return t.getAttribute('data-' + k); };
+      pass.setAttribute('data-key', d('key'));
+      root.setAttribute('data-key', d('key'));
+      set('[data-fp-value]', d('value')); set('[data-fp-sub]', d('sub'));
+      set('[data-fp-name]', t.querySelector('b').textContent);
+      set('[data-fp-for]', d('for')); set('[data-fp-by]', d('by'));
+      set('[data-fp-no]', ('0' + (i + 1)).slice(-2) + ' / ' + ('0' + N).slice(-2));
+      set('[data-fp-title]', d('title')); set('[data-fp-text]', d('text'));
+      $('[data-fp-points]', root).innerHTML = d('points').split('|').map(function (p) {
+        return '<li><svg class="ico ico-sm"><use href="#i-check"/></svg>' + escapeHtml(p) + '</li>';
+      }).join('');
+      logos.hidden = d('key') !== 'loans';
+      var cta = $('[data-fp-cta]', root);
+      cta.firstChild.textContent = d('cta');
+      panel.setAttribute('aria-labelledby', t.id);
+    }
+    function select(i, focus) {
+      i = (i + N) % N;
+      if (i === idx) return;
+      var dir = i > idx ? 1 : -1;
+      idx = i;
+      tabs.forEach(function (t, k) {
+        var on = k === i;
+        t.classList.toggle('is-on', on); t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1;
+      });
+      if (focus) tabs[i].focus();
+      var strip = tabs[i].parentNode;
+      if (strip.scrollWidth > strip.clientWidth) strip.scrollTo({ left: tabs[i].offsetLeft - 16, behavior: reduceMotion ? 'auto' : 'smooth' });
+      if (reduceMotion || !pass.animate) { fill(i); return; }
+      // Turn the pass edge-on, swap it, turn it back; the panel slides in.
+      var a = passin.animate([{ transform: 'none', opacity: 1 }, { transform: 'translateY(' + (-8 * dir) + 'px)', opacity: 0 }], { duration: 160, easing: 'ease-in', fill: 'forwards' });
+      pass.animate([{ transform: 'rotateY(0deg)' }, { transform: 'rotateY(' + (90 * dir) + 'deg)' }], { duration: 200, easing: 'ease-in', composite: 'add' });
+      a.onfinish = function () {
+        fill(i);
+        a.cancel();
+        pass.animate([{ transform: 'rotateY(' + (-90 * dir) + 'deg)' }, { transform: 'rotateY(0deg)' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)', composite: 'add' });
+        passin.animate([{ transform: 'translateY(' + (10 * dir) + 'px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 380, delay: 120, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
+        panel.animate([{ opacity: 0, transform: 'translateX(14px)' }, { opacity: 1, transform: 'none' }], { duration: 360, easing: 'cubic-bezier(.2,.7,.2,1)' });
+      };
+    }
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { select(i); });
+      t.addEventListener('keydown', function (e) {
+        var k = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
+        if (k) { e.preventDefault(); select(idx + k, true); }
+      });
+    });
+    $('[data-fp-cta]', root).addEventListener('click', function () { setDestination('Funding: ' + tabs[idx].querySelector('b').textContent); });
+
+    // Holographic foil, glare and tilt follow the pointer.
+    if (finePointer && !reduceMotion) {
+      stage.addEventListener('pointermove', function (e) {
+        var r = pass.getBoundingClientRect(), u = clamp((e.clientX - r.left) / r.width, 0, 1), v = clamp((e.clientY - r.top) / r.height, 0, 1);
+        pass.style.setProperty('--mx', (u * 100).toFixed(1) + '%'); pass.style.setProperty('--my', (v * 100).toFixed(1) + '%');
+        pass.style.setProperty('--ry', ((u - 0.5) * 16).toFixed(2) + 'deg'); pass.style.setProperty('--rx', ((0.5 - v) * 12).toFixed(2) + 'deg');
+      });
+      stage.addEventListener('pointerleave', function () { ['--mx', '--my', '--rx', '--ry'].forEach(function (k) { pass.style.removeProperty(k); }); });
+    } else if (!reduceMotion) {
+      // Without a pointer the foil drifts slowly on its own.
+      var t0 = performance.now(), live = false;
+      function drift(now) {
+        if (!live) return;
+        var k = (now - t0) / 6000;
+        pass.style.setProperty('--mx', (50 + Math.sin(k * 2 * Math.PI) * 40).toFixed(1) + '%');
+        pass.style.setProperty('--my', (50 + Math.cos(k * 2 * Math.PI) * 30).toFixed(1) + '%');
+        requestAnimationFrame(drift);
+      }
+      if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
+        var was = live; live = es[0].isIntersecting;
+        if (live && !was) requestAnimationFrame(drift);
+      }).observe(pass);
+    }
+    root.setAttribute('data-key', tabs[0].getAttribute('data-key'));
+  }
+
+  /* ------------------------------------------------------------------ *
    * Universities — postcards from Finland. Each stamp "mails" its
    * postcard: the old card slides away, the new one lands and the
    * postmark thumps down. Clicking the card flips it to the written back
@@ -1873,6 +1961,7 @@
   initSeasonStage();
   initServices();
   initPostcards();
+  initFundingPasses();
   initJourney();
   initParallax();
   initPointerFx();

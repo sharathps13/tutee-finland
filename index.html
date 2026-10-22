@@ -461,44 +461,63 @@
   </div>
 </section>
 
-<!-- ============================== FUNDING ============================== -->
-<section class="section section--ice" id="scholarships">
+<!-- ============================== FUNDING ==============================
+     Funding passes: five ways to fund a Finnish degree. Picking a route
+     swaps the holographic pass (foil follows the cursor) and fills the
+     detail panel. No monetary amounts anywhere. initFundingPasses(). -->
+<section class="section fp-sec" id="scholarships">
+  <div class="aurora-bg" aria-hidden="true"></div>
   <div class="container">
-    <div class="section-head section-head--center reveal">
-      <span class="eyebrow"><span data-decrypt="view">Scholarships, grants &amp; loans</span></span>
-      <h2 class="h2">Your Finnish dream <span class="text-blue">shouldn't break the bank.</span></h2>
-      <p class="lead">We identify and secure the Finland Scholarship, institutional tuition-fee scholarships and EDUFI grants &mdash; and arrange education loans for whatever remains.</p>
+    <div class="section-head section-head--split reveal">
+      <div>
+        <span class="eyebrow"><span data-decrypt="view">Scholarships, grants &amp; loans</span></span>
+        <h2 class="h2" style="margin-top:12px">Your Finnish dream <span class="text-grad">shouldn't break the bank.</span></h2>
+      </div>
+      <p class="lead">Five ways to fund your degree. Pick one to see your pass &mdash; we help you combine them into a plan that works.</p>
     </div>
 
-    <div class="fund">
-      <div class="feature reveal" data-spot>
-        <span class="chip chip--glass" style="justify-self:start"><svg class="ico ico-sm"><use href="#i-spark"/></svg>Finland Scholarship</span>
-        <div class="feature__amount">
-          <div><b><span data-count="100">100</span>%</b><span>of first-year tuition</span></div>
-          <div><b>+</b><span>a relocation grant</span></div>
+    <div class="fp reveal" data-fp>
+      <div class="fp__tabs" role="tablist" aria-label="Ways to fund your degree">
+          <button class="fp__tab is-on" type="button" role="tab" id="fp-tab-finland" aria-controls="fp-panel" aria-selected="true" data-fp-tab data-key="finland" data-value="100%" data-sub="of first-year tuition + a relocation grant" data-for="Non-EU/EEA master's entrants" data-by="Participating Finnish institutions" data-title="The Finland Scholarship" data-text="For non-EU/EEA students admitted to a master's programme at a participating institution: your first-year tuition fee is covered in full, with a relocation grant on top." data-points="We check which of your programmes take part|Your application and supporting documents prepared with you|Deadlines tracked alongside your Studyinfo application" data-cta="Evaluate my scholarship profile"><span class="fp__tabico"><svg class="ico"><use href="#i-award"/></svg></span><span class="fp__tabtxt"><b>Finland Scholarship</b><small>First-year tuition covered</small></span><svg class="ico ico-sm fp__tabgo" aria-hidden="true"><use href="#i-right"/></svg></button>
+          <button class="fp__tab" type="button" role="tab" id="fp-tab-institution" aria-controls="fp-panel" aria-selected="false" tabindex="-1" data-fp-tab data-key="institution" data-value="50–100%" data-sub="of tuition, decided with your admission" data-for="Most bachelor’s and master’s applicants" data-by="Finnish universities and UAS" data-title="Institutional tuition-fee scholarships" data-text="Most Finnish universities and universities of applied sciences award scholarships of 50–100% of tuition in the admission decision itself, and many renew them for strong study progress." data-points="Programmes shortlisted where scholarships are realistic|Merit and motivation evidence presented at its best|Renewal conditions explained before you accept" data-cta="Find my scholarships"><span class="fp__tabico"><svg class="ico"><use href="#i-cap"/></svg></span><span class="fp__tabtxt"><b>Tuition-fee scholarships</b><small>Awarded with your admission</small></span><svg class="ico ico-sm fp__tabgo" aria-hidden="true"><use href="#i-right"/></svg></button>
+          <button class="fp__tab" type="button" role="tab" id="fp-tab-doctoral" aria-controls="fp-panel" aria-selected="false" tabindex="-1" data-fp-tab data-key="doctoral" data-value="No fee" data-sub="tuition for doctoral study in Finland" data-for="Doctoral candidates" data-by="All Finnish universities" data-title="Doctoral study carries no tuition fee" data-text="Doctoral education in Finland has no tuition fee, and many doctoral researchers are employed by their university or funded by a research project or foundation grant." data-points="Research proposal and supervisor outreach|Funded positions and grant routes mapped|Residence permit for researchers planned with you" data-cta="Plan my doctorate"><span class="fp__tabico"><svg class="ico"><use href="#i-book"/></svg></span><span class="fp__tabtxt"><b>Doctoral study</b><small>No tuition fee at all</small></span><svg class="ico ico-sm fp__tabgo" aria-hidden="true"><use href="#i-right"/></svg></button>
+          <button class="fp__tab" type="button" role="tab" id="fp-tab-work" aria-controls="fp-panel" aria-selected="false" tabindex="-1" data-fp-tab data-key="work" data-value="30 h" data-sub="average weekly work allowance" data-for="Every student on an A permit" data-by="Your Finnish residence permit" data-title="Earn while you learn" data-text="Your study permit lets you work an average of 30 hours a week, averaged across the year, so you can work more during the holidays. We help you find permitted part-time work after you land." data-points="CV and job search set up for the Finnish market|Tax card and bank account sorted on arrival|Most of our students start within their first 30 days" data-cta="Talk to a counsellor"><span class="fp__tabico"><svg class="ico"><use href="#i-brief"/></svg></span><span class="fp__tabtxt"><b>Work while you study</b><small>An average of 30 h a week</small></span><svg class="ico ico-sm fp__tabgo" aria-hidden="true"><use href="#i-right"/></svg></button>
+          <button class="fp__tab" type="button" role="tab" id="fp-tab-loans" aria-controls="fp-panel" aria-selected="false" tabindex="-1" data-fp-tab data-key="loans" data-value="10" data-sub="partner banks and lenders" data-for="Students and their families" data-by="Banks and private lenders" data-title="Education loans from trusted lenders" data-text="Exclusive tie-ups with national banks and private lenders, with collateral and non-collateral options that can cover tuition, housing and living costs." data-points="Non-collateral options compared for you|Introductions to bank executives|Loan documents matched to Migri’s funds evidence" data-cta="Check loan eligibility"><span class="fp__tabico"><svg class="ico"><use href="#i-bank"/></svg></span><span class="fp__tabtxt"><b>Education loans</b><small>Ten partner lenders</small></span><svg class="ico ico-sm fp__tabgo" aria-hidden="true"><use href="#i-right"/></svg></button>
+      </div>
+
+      <div class="fp__stage" data-fp-stage>
+        <div class="fp__pass" data-fp-pass data-key="finland">
+          <span class="fp__foil" aria-hidden="true"></span>
+          <span class="fp__glare" aria-hidden="true"></span>
+          <div class="fp__passin" data-fp-passin>
+            <div class="fp__passtop">
+              <span class="fp__brand"><svg class="flag" aria-hidden="true"><use href="#flag-fi"/></svg>Funding pass</span>
+              <span class="fp__no" data-fp-no>01 / 05</span>
+            </div>
+            <span class="fp__chipgfx" aria-hidden="true"><i></i><i></i><i></i></span>
+            <div class="fp__value"><b data-fp-value>100%</b><span data-fp-sub>of first-year tuition + a relocation grant</span></div>
+            <span class="fp__name" data-fp-name>Finland Scholarship</span>
+            <div class="fp__fields">
+              <span><small>For</small><b data-fp-for>Non-EU/EEA master's entrants</b></span>
+              <span><small>Via</small><b data-fp-by>Participating Finnish institutions</b></span>
+            </div>
+          </div>
         </div>
-        <p>For non-EU/EEA master's entrants at participating institutions. Most universities also award 50&ndash;100% tuition-fee scholarships in the admission decision, and doctoral study carries no tuition fee at all.</p>
-        <ul class="ticks">
-          <li><svg class="ico ico-sm"><use href="#i-check"/></svg>We match your profile to the scholarships you can realistically win</li>
-          <li><svg class="ico ico-sm"><use href="#i-check"/></svg>Essays and supporting documents prepared with you</li>
-        </ul>
-        <a class="btn btn-primary" href="#contact" style="justify-self:start" data-magnet>Evaluate my scholarship profile<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
+        <span class="fp__shadow" aria-hidden="true"></span>
       </div>
-      <div class="cards3">
-        <div class="mini reveal" style="--d:.05s" data-spot><div class="tile__icon"><svg class="ico"><use href="#i-award"/></svg></div><div><h3>Merit-based scholarships</h3><p>Strong academics? We identify and apply for merit awards directly from prestigious Finnish institutions.</p></div></div>
-        <div class="mini reveal" style="--d:.1s" data-spot><div class="tile__icon"><svg class="ico"><use href="#i-banknote"/></svg></div><div><h3>Full &amp; partial grants</h3><p>Institutional bursaries and department scholarships that can cover up to 100% of tuition.</p></div></div>
-        <div class="mini reveal" style="--d:.15s" data-spot><div class="tile__icon"><svg class="ico"><use href="#i-pen"/></svg></div><div><h3>Application support</h3><p>A compelling narrative wins funding. We help craft your essays and financial-aid paperwork.</p></div></div>
-        <div class="mini reveal" style="--d:.2s" data-spot><div class="tile__icon"><svg class="ico"><use href="#i-brief"/></svg></div><div><h3>Earn while you learn</h3><p>Help on arrival to find permitted part-time work &mdash; most of our students start within their first 30 days.</p></div></div>
-      </div>
+
+      <article class="fp__panel" id="fp-panel" role="tabpanel" aria-labelledby="fp-tab-finland" aria-live="polite" data-fp-panel>
+        <span class="fp__kicker"><svg class="ico ico-sm"><use href="#i-spark"/></svg>How Tutee Connect helps</span>
+        <h3 class="fp__title" data-fp-title>The Finland Scholarship</h3>
+        <p class="fp__text" data-fp-text>For non-EU/EEA students admitted to a master's programme at a participating institution: your first-year tuition fee is covered in full, with a relocation grant on top.</p>
+        <ul class="fp__points" data-fp-points><li><svg class="ico ico-sm"><use href="#i-check"/></svg>We check which of your programmes take part</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Your application and supporting documents prepared with you</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Deadlines tracked alongside your Studyinfo application</li></ul>
+        <div class="fp__logos" data-fp-logos hidden><span class="fp__logo"><img src="./assets/img/loan-partner/icici.png" alt="ICICI Bank" loading="lazy"></span><span class="fp__logo"><img src="./assets/img/loan-partner/hdfc-credila.jpg" alt="HDFC Credila" loading="lazy"></span><span class="fp__logo"><img src="./assets/img/loan-partner/idfc.jpg" alt="IDFC First Bank" loading="lazy"></span><span class="fp__logo"><img src="./assets/img/loan-partner/incred.jpg" alt="InCred" loading="lazy"></span><span class="fp__logo"><img src="./assets/img/loan-partner/auxilo.jpg" alt="Auxilo" loading="lazy"></span><span class="fp__logo"><img src="./assets/img/loan-partner/avanse.jpg" alt="Avanse" loading="lazy"></span><span class="fp__logo"><img src="./assets/img/loan-partner/union.jpg" alt="Union Bank" loading="lazy"></span><span class="fp__logo"><img src="./assets/img/loan-partner/prodigy.jpg" alt="Prodigy Finance" loading="lazy"></span><span class="fp__logo"><img src="./assets/img/loan-partner/axis.jpg" alt="Axis Bank" loading="lazy"></span><span class="fp__logo"><img src="./assets/img/loan-partner/mpower.jpg" alt="MPOWER Financing" loading="lazy"></span></div>
+        <a class="btn btn-primary" href="#contact" data-fp-cta data-magnet>Evaluate my scholarship profile<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
+      </article>
     </div>
 
-    <div class="loans reveal" id="financial-aid">
-      <div class="loans__copy">
-        <h3 class="h3">Education loans from trusted lenders</h3>
-        <p style="color:var(--muted);font-size:15px">Exclusive tie-ups with national banks and private lenders, covering tuition, housing and living costs.</p>
-        <div class="loans__perks"><span class="chip"><svg class="ico ico-sm"><use href="#i-shield"/></svg>Non-collateral</span><span class="chip"><svg class="ico ico-sm"><use href="#i-bank"/></svg>Top banks</span></div>
-        <a class="link-arrow" href="#contact">Check loan eligibility<svg class="ico ico-sm"><use href="#i-arrow"/></svg></a>
-      </div>
+    <div class="fp__partners reveal" id="financial-aid">
+      <span class="fp__partners-label"><svg class="ico ico-sm"><use href="#i-shield"/></svg>Loan partners</span>
       <div class="logos" aria-label="Loan partners">
         <div class="logos__track" data-logos>
           <div class="logos__item"><img src="./assets/img/loan-partner/icici.png" alt="ICICI Bank" loading="lazy"></div>
