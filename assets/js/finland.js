@@ -1615,23 +1615,13 @@
    * country-code list adds flags (or ISO badges where the OS can't draw
    * flag emoji), country names and a search box.
    * ------------------------------------------------------------------ */
-  var DD_FLAGS = (function () {
-    try {
-      var c = document.createElement('canvas'), x = c.getContext('2d');
-      c.width = c.height = 16; x.textBaseline = 'top'; x.font = '14px sans-serif';
-      x.fillText('🇫🇮', 0, 0);
-      var d = x.getImageData(0, 0, 16, 16).data;
-      for (var i = 0; i < d.length; i += 4) if (d[i + 3] && (Math.abs(d[i] - d[i + 1]) > 30 || Math.abs(d[i + 1] - d[i + 2]) > 30)) return true;
-    } catch (e) { /* no canvas */ }
-    return false;
-  })();
   var DD_NAMES = (function () { try { return new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) { return null; } })();
   function ddFlag(iso) {
     iso = (iso || '').slice(0, 2).toUpperCase();
     if (iso === 'UK') iso = 'GB';
     if (!/^[A-Z]{2}$/.test(iso)) return '<span class="dd__iso">' + escapeHtml(iso || '?') + '</span>';
-    if (DD_FLAGS) return '<span class="dd__flag">' + String.fromCodePoint(0x1F1E6 + iso.charCodeAt(0) - 65, 0x1F1E6 + iso.charCodeAt(1) - 65) + '</span>';
-    return '<span class="dd__iso">' + iso + '</span>';
+    // Real flag artwork (assets/img/flags, from flag-icons) so every OS shows the flag.
+    return '<img class="dd__flagimg" src="./assets/img/flags/' + iso.toLowerCase() + '.svg" alt="" width="22" height="16">';
   }
   function ddCountry(label) {   // "US/CA" -> "United States / Canada"
     if (!DD_NAMES) return label;

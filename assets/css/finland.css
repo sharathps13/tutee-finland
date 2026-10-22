@@ -1376,7 +1376,7 @@ main { overflow-x: clip; }
 .dd__tick { flex: none; opacity: 0; color: var(--fi-blue); }
 .dd__list li[aria-selected=true] .dd__tick { opacity: 1; }
 .dd__empty { padding: 12px; font-size: 13.5px; color: var(--muted); }
-.dd__flag { flex: none; font-size: 18px; line-height: 1; }
+.dd__flagimg { flex: none; width: 22px; height: 16px; border-radius: 3px; object-fit: cover; box-shadow: 0 0 0 1px rgba(6,22,49,.12); }
 .dd__iso { flex: none; min-width: 28px; height: 20px; padding: 0 5px; border-radius: 5px; display: grid; place-items: center; font-size: 10.5px; font-weight: 800; letter-spacing: .04em;
   color: #fff; background: linear-gradient(135deg, var(--fi-blue), #1f6fd6); }
 .phone { grid-template-columns: 136px 1fr; }

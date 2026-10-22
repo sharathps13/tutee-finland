@@ -51,3 +51,8 @@ Trimmed and re-encoded with ffmpeg (no audio): WebM VP9 plus MP4 H.264, with a p
 - `assets/img/services/finance.jpg` — Reviewing and signing papers. Carrie Allen, Unsplash Licence. <https://unsplash.com/photos/1H1LBKvD7ew>
 - `assets/img/services/arrival.jpg` — Arrivals hall, Helsinki Airport. Ypsilon from Finland, CC0. <https://commons.wikimedia.org/wiki/File:Helsinki_airport_arrivals.jpg>
 - `assets/img/services/family.jpg` — Family walking through a meadow. Jessica Rockowitz, Unsplash Licence. <https://unsplash.com/photos/5NLCaz2wJXE>
+
+## Country flags (country-code picker)
+
+`assets/img/flags/*.svg` — 63 flags from the open-source [flag-icons](https://github.com/lipis/flag-icons) package v7.2.3 (4:3 set), MIT licence, served locally.
+
