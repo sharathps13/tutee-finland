@@ -837,8 +837,8 @@ main { overflow-x: clip; }
 
 .hp__copy { position: relative; display: grid; align-items: center; max-width: 620px; min-height: 0; }
 .hp__step { grid-area: 1 / 1; display: grid; gap: 18px; justify-items: start; opacity: 0; transform: translateY(26px); filter: blur(6px); pointer-events: none;
-  transition: opacity .6s var(--ease), transform .7s var(--ease), filter .6s var(--ease); }
-.hp__step.is-on { opacity: 1; transform: none; filter: none; pointer-events: auto; transition-delay: .12s; }
+  transition: opacity .35s var(--ease), transform .4s var(--ease), filter .35s var(--ease); }
+.hp__step.is-on { opacity: 1; transform: none; filter: none; pointer-events: auto; }
 .hp.is-live .hp__step:not(.is-on) { visibility: hidden; transition: opacity .6s var(--ease), transform .7s var(--ease), filter .6s var(--ease), visibility 0s .6s; }
 .hp__h1 { font-size: clamp(2.6rem, 1.4rem + 3.6vw, 4.4rem); line-height: .98; letter-spacing: -.035em; font-weight: 700; }
 .hp__h2 { font-size: clamp(2.2rem, 1.3rem + 3.4vw, 4.4rem); line-height: 1; letter-spacing: -.035em; font-weight: 700; }

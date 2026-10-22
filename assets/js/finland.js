@@ -1417,8 +1417,9 @@
         var dx = tx - p.x, dy = ty - p.y, len = Math.hypot(dx, dy) || 1, bend = (Math.random() - 0.5) * Math.min(260, len * 0.6);
         p.cx = (p.x + tx) / 2 - dy / len * bend; p.cy = (p.y + ty) / 2 + dx / len * bend;
         var order = s ? (tx - minX) / span : Math.random();
-        p.t0 = now + (quick ? 0 : order * 0.5 + Math.random() * 0.22) * 1000;
-        p.dur = (quick ? 0.5 : 1.05 + Math.random() * 0.45) * 1000;
+        // Start immediately; a tiny left-to-right offset keeps the wave without a pause.
+        p.t0 = now + (quick ? 0 : order * 0.08) * 1000;
+        p.dur = (quick ? 0.4 : 0.55 + Math.random() * 0.15) * 1000;
         p.mode = 'fly';
       }
       if (k === 0) mapAt = now + (quick ? 0 : 1500);
