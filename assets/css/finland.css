@@ -1042,6 +1042,9 @@ main { overflow-x: clip; }
 .pc__heart[aria-pressed="true"] .ico { fill: currentColor; }
 .pc__heart.is-pop { animation: pcPop .45s var(--ease); }
 @keyframes pcPop { 40% { transform: scale(1.12); } }
+.pc__heart--front { position: absolute; left: 7%; bottom: 7%; color: #fff; background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.3); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.pc__heart--front:hover { border-color: #fff; background: rgba(255,255,255,.22); }
+.pc__heart--front[aria-pressed="true"] { background: #fff; color: var(--brand); border-color: #fff; }
 .pc__flip--back { position: static; justify-self: start; margin-top: 2px; color: var(--fi-blue); background: transparent; border-color: #d9e3f1; padding: 6px 12px; -webkit-backdrop-filter: none; backdrop-filter: none; }
 .pc__flip--back:hover { background: #fff; }
 .pc__flip--back .ico { color: var(--fi-blue); }

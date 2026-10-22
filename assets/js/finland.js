@@ -915,7 +915,7 @@
     var root = $('[data-pc]');
     if (!root) return;
     var card = $('[data-pc-card]', root), inner = $('[data-pc-inner]', root), front = $('[data-pc-front]', root), back = $('[data-pc-back]', root);
-    var stamps = $$('[data-pc-stamp]', root), big = $('[data-pc-big]', root), postmark = $('[data-pc-postmark]', root), heart = $('[data-pc-heart]', root);
+    var stamps = $$('[data-pc-stamp]', root), big = $('[data-pc-big]', root), postmark = $('[data-pc-postmark]', root), hearts = $$('[data-pc-heart]', root);
     var sel = 0, filt = { type: 'all', field: null }, busy = 0;
     var data = stamps.map(function (b, i) {
       return { i: i, id: b.getAttribute('data-id'), name: b.getAttribute('data-name'), big: b.getAttribute('data-big'), where: b.getAttribute('data-where'),
@@ -964,10 +964,10 @@
       var SL = window.TCShortlist, u = data[sel];
       stamps.forEach(function (b, i) { b.classList.toggle('is-fav', !!(SL && SL.has(data[i].id))); });
       var on = !!(SL && SL.has(u.id));
-      heart.setAttribute('aria-pressed', String(on));
-      heart.lastChild.textContent = on ? 'Shortlisted' : 'Shortlist';
+      hearts.forEach(function (h) { h.setAttribute('aria-pressed', String(on)); h.lastChild.textContent = on ? 'Shortlisted' : 'Shortlist'; });
     }
-    heart.addEventListener('click', function (e) {
+    // One heart on each side of the card; both stay in sync.
+    hearts.forEach(function (heart) { heart.addEventListener('click', function (e) {
       e.stopPropagation();
       var SL = window.TCShortlist, u = data[sel];
       if (!SL) return;
@@ -975,7 +975,7 @@
       syncHeart();
       if (ok === false && !SL.has(u.id)) heart.lastChild.textContent = 'Shortlist full';
       heart.classList.remove('is-pop'); void heart.offsetWidth; heart.classList.add('is-pop');
-    });
+    }); });
     if (window.TCShortlist) window.TCShortlist.onChange(syncHeart);
 
     /* ---------- flip ---------- */
