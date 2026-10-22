@@ -1238,6 +1238,7 @@
 
     var STAGES = 5;
     var W = 0, H = 0, dpr = 1, N = 0, parts = [], shapes = [], cities = [];
+    var outline = [], STEP = 200;   // px of scroll per stage: two wheel notches
     var stage = -1, mapShown = 0, mapAt = 0, mouse = { x: -9999, y: -9999 }, hover = -1, time = 0;
 
     function sample(box, draw) {
@@ -1262,6 +1263,7 @@
       var s = Math.min(box.w / mw, box.h / mh), ox = box.x + (box.w - mw * s) / 2, oy = box.y + (box.h - mh * s) / 2;
       var P = function (lon, lat) { return [ox + (lon - LON0) * KX * s, oy + (LAT0 - lat) * s]; };
       cities = FI_CITIES.map(function (c) { var q = P(c[1], c[2]); return { name: c[0], x: q[0], y: q[1] }; });
+      outline = FI_OUTLINE.map(function (pt) { return P(pt[0], pt[1]); });
       return sample(box, function (x) {
         x.beginPath();
         FI_OUTLINE.forEach(function (pt, i) { var q = P(pt[0], pt[1]); x[i ? 'lineTo' : 'moveTo'](q[0] - box.x, q[1] - box.y); });
@@ -1285,7 +1287,7 @@
       canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       var mobile = W < 860;
-      var mapBox = mobile ? { x: W * 0.12, y: H * 0.1, w: W * 0.76, h: H * 0.44 } : { x: W * 0.52, y: H * 0.11, w: W * 0.4, h: H * 0.78 };
+      var mapBox = mobile ? { x: W * 0.08, y: H * 0.13, w: W * 0.84, h: H * 0.45 } : { x: W * 0.5, y: H * 0.09, w: W * 0.44, h: H * 0.84 };
       var txtBox = mobile ? { x: W * 0.05, y: H * 0.2, w: W * 0.9, h: H * 0.32 } : { x: W * 0.55, y: H * 0.26, w: W * 0.39, h: H * 0.46 };
       var n = Math.round(clamp(W * H / 430, 900, 2600));
       if (n !== N) {
@@ -1395,6 +1397,14 @@
     }
     function drawNetwork() {
       if (mapShown < 0.01 || !cities.length) return;
+      if (outline.length) {
+        ctx.beginPath();
+        outline.forEach(function (q, i) { ctx[i ? 'lineTo' : 'moveTo'](q[0], q[1]); });
+        ctx.closePath();
+        ctx.globalAlpha = 0.1 * mapShown; ctx.fillStyle = '#2fe3b4'; ctx.fill();
+        ctx.globalAlpha = 0.75 * mapShown; ctx.strokeStyle = '#9ff5df'; ctx.lineWidth = 1.6; ctx.lineJoin = 'round';
+        ctx.shadowColor = 'rgba(47,227,180,.8)'; ctx.shadowBlur = 12; ctx.stroke(); ctx.shadowBlur = 0;
+      }
       var hub = cities[0], grow = clamp((performance.now() - mapAt) / 1600, 0, 1);
       ctx.lineWidth = 1.1; ctx.strokeStyle = '#2fe3b4';
       for (var i = 1; i < cities.length; i++) {
@@ -1420,10 +1430,9 @@
     }
 
     function stageForScroll() {
-      var total = sec.offsetHeight - window.innerHeight;
-      var p = total > 0 ? clamp(-sec.getBoundingClientRect().top / total, 0, 0.9999) : 0;
-      sec.style.setProperty('--hp-p', p.toFixed(4));
-      return Math.floor(p * STAGES);
+      var y = Math.max(0, -sec.getBoundingClientRect().top);
+      sec.style.setProperty('--hp-p', clamp(y / (STEP * STAGES), 0, 1).toFixed(4));
+      return clamp(Math.floor(y / STEP), 0, STAGES - 1);
     }
 
     layout();
@@ -1454,8 +1463,7 @@
     // Rail buttons jump to the middle of their chapter.
     ticks.forEach(function (b, i) {
       b.addEventListener('click', function () {
-        var total = sec.offsetHeight - window.innerHeight;
-        window.scrollTo({ top: sec.offsetTop + total * (i + 0.5) / STAGES, behavior: 'smooth' });
+        window.scrollTo({ top: sec.offsetTop + STEP * (i + 0.5), behavior: 'smooth' });
       });
     });
 

@@ -285,15 +285,15 @@ ul { margin: 0; padding: 0; list-style: none; }
 
 /* ============================================================ RAILS */
 @keyframes marquee { to { transform: translateX(-50%); } }
-.rails { background: var(--fi-blue); color: #fff; overflow: hidden; padding: 4px 0 8px; }
+.rails { background: var(--fi-blue); color: #fff; overflow: hidden; padding: 2px 0 6px; }
 .rail { overflow: hidden; }
 .rail__track { display: flex; width: max-content; animation: marquee 40s linear infinite; will-change: transform; }
 .rail[data-velocity="-1"] .rail__track { animation-direction: reverse; }
 .js .rail__track { animation: none; }
-.rail__item { display: inline-flex; align-items: center; gap: 10px; padding: 12px 26px; font-weight: 700; font-size: 14.5px; white-space: nowrap; }
+.rail__item { display: inline-flex; align-items: center; gap: 8px; padding: 8px 22px; font-weight: 700; font-size: 13.5px; white-space: nowrap; }
 .rail__item .ico { color: var(--aurora); }
-.rail--ghost .rail__item { padding: 0 18px; font-size: clamp(1.7rem, 1.2rem + 2.4vw, 3rem); letter-spacing: -.02em; color: transparent; -webkit-text-stroke: 1.2px rgba(255,255,255,.45); gap: 36px; }
-.rail--ghost .rail__item::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--aurora); box-shadow: 0 0 16px var(--aurora); }
+.rail--ghost .rail__item { padding: 0 12px 4px; font-size: clamp(.95rem, .85rem + .4vw, 1.2rem); letter-spacing: -.02em; color: transparent; -webkit-text-stroke: .6px rgba(255,255,255,.55); gap: 22px; }
+.rail--ghost .rail__item::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--aurora); box-shadow: 0 0 16px var(--aurora); }
 .rail--ghost .rail__item:hover { color: #fff; -webkit-text-stroke-color: #fff; }
 
 /* ============================================================ SEASONS */
@@ -877,7 +877,7 @@ main { overflow-x: clip; }
    snow → map of Finland → 36 → 2 YRS → 30 H → snow. Without JS or with
    reduced motion it is a normal full-screen hero showing the map. */
 .hp { position: relative; background: var(--night); }
-.hp.is-live { height: 420vh; height: 420svh; }
+.hp.is-live { height: calc(100vh + 1000px); height: calc(100svh + 1000px); }  /* 5 stages x 200px */
 .hp__pin { position: relative; min-height: 100vh; min-height: 100svh; overflow: hidden; isolation: isolate; color: #fff;
   display: grid; grid-template-rows: auto 1fr auto; gap: 12px;
   padding: calc(var(--header-h) + 12px) max(var(--gutter), calc((100% - var(--container)) / 2 + var(--gutter))) clamp(18px, 3.2vh, 34px); }
