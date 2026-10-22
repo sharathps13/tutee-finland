@@ -1236,100 +1236,69 @@
 
 
   /* ------------------------------------------------------------------ *
-   * Family move planner. The partner switch and the children stepper
-   * rebuild the avatar row and the plan: permits, rights and documents,
-   * each tagged with who it is for. New rows and avatars animate in.
+   * Family — perspectives. A sliding pill marks the active tab; each view
+   * crossfades the photo and staggers in its story and tiles. Views play
+   * on their own while the card is in view (the active tab shows the
+   * countdown) and pause on hover or focus. Reduced motion never autoplays.
    * ------------------------------------------------------------------ */
-  function initFamilyPlanner() {
-    var root = $('[data-fam]');
+  function initFamilyViews() {
+    var root = $('[data-fv]');
     if (!root) return;
-    var partnerBtn = $('[data-fam-partner]', root), minus = $('[data-fam-minus]', root), plus = $('[data-fam-plus]', root);
-    var kidsOut = $('[data-fam-kids]', root), kidsNote = $('[data-fam-kidsnote]', root), avatars = $('[data-fam-avatars]', root);
-    var groups = $('[data-fam-groups]', root), summary = $('[data-fam-summary]', root);
-    var MAX_KIDS = 5, partner = true, kids = 1, shown = {}, avShown = {}, openGroup = 0;
-    var WORDS = ['No children', 'One child', 'Two children', 'Three children', 'Four children', 'Five children'];
-
-    function who(list) {
-      return '<span class="fam__who">' + list.map(function (w) {
-        var cls = w === 'You' ? 'w-you' : w === 'Partner' ? 'w-partner' : w === 'Everyone' ? 'w-all' : 'w-child';
-        return '<span class="' + cls + '">' + w + '</span>';
-      }).join('') + '</span>';
+    var tabs = $$('[data-fv-tab]', root), panes = $$('[data-fv-pane]', root), imgs = $$('[data-fv-img]', root), pill = $('[data-fv-pill]', root);
+    var N = tabs.length, idx = 0, t = 0, last = 0, raf = 0, inView = false, hover = false, MS = 7000;
+    function placePill() {
+      var tb = tabs[idx], box = tb.parentNode;
+      box.style.setProperty('--px', tb.offsetLeft + 'px');
+      box.style.setProperty('--pw', tb.offsetWidth + 'px');
     }
-    function render(first) {
-      var children = [], i;
-      for (i = 1; i <= kids; i++) children.push(kids > 1 ? 'Child ' + i : 'Child');
-      var family = (partner ? ['Partner'] : []).concat(children), anyone = family.length > 0;
-
-      // Avatars: you, then partner, then each child.
-      var av = [{ k: 'you', cls: 'fam__av--you', icon: 'i-cap', label: 'You' }];
-      if (partner) av.push({ k: 'partner', cls: 'fam__av--partner', icon: 'i-heart', label: 'Partner' });
-      children.forEach(function (c, n) { av.push({ k: 'child' + n, cls: 'fam__av--child', icon: 'i-sprout', label: c }); });
-      var nextAv = {};
-      avatars.innerHTML = av.map(function (a) {
-        nextAv[a.k] = 1;
-        return '<span class="fam__av ' + a.cls + (!first && !avShown[a.k] ? ' is-new' : '') + '"><i><svg class="ico"><use href="#' + a.icon + '"/></svg></i><span>' + a.label + '</span></span>';
-      }).join('');
-      avShown = nextAv;
-
-      // The plan, grouped. Each row: key, text, who it is for.
-      var G = [
-        { h: 'Residence permits', rows: [
-          ['p-you', 'Student residence permit (A permit) for your whole degree', ['You']],
-          partner && ['p-partner', 'Residence permit on the basis of family ties', ['Partner']],
-          kids && ['p-kids', kids > 1 ? 'A family-ties residence permit for each child' : 'Residence permit on the basis of family ties', children]
-        ] },
-        { h: 'Rights & everyday life', rows: [
-          partner && ['r-work', 'Unrestricted right to work in any job, from day one', ['Partner']],
-          kids && ['r-school', 'Free basic education, with free school meals', children],
-          ['r-reg', 'Personal identity code and municipality registration', anyone ? ['Everyone'] : ['You']]
-        ] },
-        { h: 'Documents we prepare with you', rows: [
-          ['d-pass', anyone ? 'Valid passports for everyone moving' : 'Valid passport', anyone ? ['Everyone'] : ['You']],
-          partner && ['d-marriage', 'Marriage or registered-partnership certificate', ['Partner']],
-          kids && ['d-birth', kids > 1 ? 'Birth certificate for each child' : 'Birth certificate', children],
-          kids && !partner && ['d-custody', 'Custody papers and the other guardian’s consent, where needed', children],
-          anyone && ['d-funds', 'Evidence of funds for each family member, on top of your own', family]
-        ] }
-      ];
-      var next = {}, docs = 0;
-      groups.innerHTML = G.map(function (g, gi) {
-        var rows = g.rows.filter(Boolean);
-        if (g.h.indexOf('Documents') === 0) docs = rows.length;
-        return '<section class="fam__group' + (gi === openGroup ? ' is-open' : '') + '"><h4><button type="button" aria-expanded="' + (gi === openGroup) + '" data-fam-group="' + gi + '">' + g.h +
-          '<span>' + rows.length + '</span><svg class="ico ico-sm"><use href="#i-down"/></svg></button></h4><ul>' + rows.map(function (r) {
-          next[r[0]] = 1;
-          return '<li class="fam__item' + (!first && !shown[r[0]] ? ' is-new' : '') + '"><svg class="ico ico-sm"><use href="#i-check"/></svg><div><p>' + escapeHtml(r[1]) + '</p>' + who(r[2]) + '</div></li>';
-        }).join('') + '</ul></section>';
-      }).join('');
-      shown = next;
-
-      var permits = 1 + (partner ? 1 : 0) + kids;
-      summary.textContent = permits + ' permit' + (permits > 1 ? 's' : '') + ' · ' + docs + ' document' + (docs > 1 ? 's' : '');
-      kidsOut.textContent = kids;
-      kidsNote.textContent = kids ? WORDS[kids] + ' joining you' : 'Add children under 18';
-      minus.disabled = kids === 0; plus.disabled = kids === MAX_KIDS;
-      partnerBtn.classList.toggle('is-on', partner);
-      partnerBtn.setAttribute('aria-checked', String(partner));
+    function go(i, user) {
+      i = (i + N) % N;
+      if (i === idx && !user) return;
+      var changed = i !== idx;
+      idx = i; t = 0;
+      tabs.forEach(function (b, k) { var on = k === i; b.classList.toggle('is-on', on); b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
+      imgs.forEach(function (im, k) { im.classList.toggle('is-on', k === i); });
+      panes.forEach(function (p, k) {
+        var on = k === i;
+        p.classList.toggle('is-on', on); p.setAttribute('aria-hidden', String(!on));
+        if (on && changed && !reduceMotion && p.animate) {
+          $$('.fv__kicker, .fv__title, .fv__text, .fv__tiles li', p).forEach(function (el, n) {
+            el.animate([{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }], { duration: 520, delay: n * 70, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
+          });
+        }
+      });
+      placePill();
+      root.style.setProperty('--t', 0);
     }
-    // Phones show one plan group at a time; the headers toggle them.
-    groups.addEventListener('click', function (e) {
-      var b = e.target.closest('[data-fam-group]');
-      if (!b) return;
-      var g = +b.getAttribute('data-fam-group');
-      openGroup = openGroup === g ? -1 : g;
-      $$('.fam__group', groups).forEach(function (s, k) { s.classList.toggle('is-open', k === openGroup); $('button', s).setAttribute('aria-expanded', String(k === openGroup)); });
+    function playing() { return inView && !hover && !reduceMotion && !document.hidden; }
+    function frame(now) {
+      raf = 0;
+      if (!playing()) return;
+      t += (now - last) / MS; last = now;
+      if (t >= 1) go(idx + 1);
+      root.style.setProperty('--t', t.toFixed(4));
+      raf = requestAnimationFrame(frame);
+    }
+    function sync() { if (playing() && !raf) { last = performance.now(); raf = requestAnimationFrame(frame); } }
+    tabs.forEach(function (b, i) {
+      b.addEventListener('click', function () { go(i, true); });
+      b.addEventListener('keydown', function (e) {
+        var k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+        if (k) { e.preventDefault(); go(idx + k, true); tabs[idx].focus(); }
+      });
     });
-    partnerBtn.addEventListener('click', function () { partner = !partner; render(); });
-    minus.addEventListener('click', function () { if (kids > 0) { kids--; render(); } });
-    plus.addEventListener('click', function () { if (kids < MAX_KIDS) { kids++; render(); } });
-    $('[data-fam-cta]', root).addEventListener('click', function () {
-      var parts = [];
-      if (partner) parts.push('partner');
-      if (kids) parts.push(kids + (kids > 1 ? ' children' : ' child'));
-      setDestination('Family move: ' + (parts.length ? 'with ' + parts.join(' and ') : 'just me'));
-    });
-    render(true);
+    root.addEventListener('mouseenter', function () { hover = true; });
+    root.addEventListener('mouseleave', function () { hover = false; sync(); });
+    root.addEventListener('focusin', function () { hover = true; });
+    root.addEventListener('focusout', function () { hover = false; sync(); });
+    document.addEventListener('visibilitychange', sync);
+    window.addEventListener('resize', placePill);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(placePill);
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { inView = es[0].isIntersecting; sync(); }, { threshold: 0.4 }).observe(root);
+    $('[data-fv-cta]').addEventListener('click', function () { setDestination('Family permit help: ' + tabs[idx].textContent.trim().toLowerCase()); });
+    go(0, true);
   }
+
 
 
   /* ------------------------------------------------------------------ *
@@ -2055,7 +2024,7 @@
   initPostcards();
   initFundingPlan();
   initJourneyRoute();
-  initFamilyPlanner();
+  initFamilyViews();
   initPointerFx();
   initAccordion();
   initForms();

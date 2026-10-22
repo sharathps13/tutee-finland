@@ -633,64 +633,57 @@
 </section>
 
 <!-- ============================== FAMILY ==============================
-     Family move planner: choose who is moving (partner, children under 18)
-     and the plan card lists the permits, rights and documents for exactly
-     that family; the button carries the family make-up into the form.
-     Four highlight tiles say why families choose Finland. initFamilyPlanner(). -->
-<section class="section fam-sec" id="family">
+     Finland through your family's eyes: one photo card with a perspective
+     switcher (partner, children, whole family). Each view crossfades the
+     photo and swaps the story and three highlight tiles; it plays on its
+     own while in view and pauses on hover. Below, how a family joins you
+     in three steps. initFamilyViews(). -->
+<section class="section fv-sec" id="family">
   <div class="container">
     <div class="section-head section-head--split reveal">
       <div>
         <span class="eyebrow"><span data-decrypt="view">Relocating with your family?</span></span>
         <h2 class="h2" style="margin-top:12px">Bring your family. <span class="text-blue">Finland is built for them.</span></h2>
       </div>
-      <p class="lead">Your partner and children under 18 can join you while you study &mdash; and your partner can work in any job from day one. Tell us who's coming and see your family's plan.</p>
+      <p class="lead">Finland is one of the most family-friendly places to study. See what it offers each of you.</p>
     </div>
 
-    <div class="fam reveal" data-fam>
-      <div class="fam__left">
-        <div class="fam__composer">
-          <span class="fam__label">1 &middot; Who's moving with you?</span>
-          <div class="fam__avatars" data-fam-avatars aria-hidden="true"></div>
-          <div class="fam__controls">
-            <button class="fam__switch is-on" type="button" role="switch" aria-checked="true" data-fam-partner>
-              <span class="fam__swico"><svg class="ico"><use href="#i-heart"/></svg></span>
-              <span class="fam__swtxt"><b>Partner or spouse</b><small>Married or in a registered partnership</small></span>
-              <span class="fam__toggle" aria-hidden="true"><i></i></span>
-            </button>
-            <div class="fam__stepper">
-              <span class="fam__swico"><svg class="ico"><use href="#i-sprout"/></svg></span>
-              <span class="fam__swtxt"><b>Children under 18</b><small data-fam-kidsnote>One child joining you</small></span>
-              <div class="fam__step">
-                <button type="button" aria-label="One fewer child" data-fam-minus>&minus;</button>
-                <output data-fam-kids aria-live="polite">1</output>
-                <button type="button" aria-label="One more child" data-fam-plus>+</button>
-              </div>
-            </div>
+    <div class="fv reveal" data-fv>
+      <div class="fv__media" aria-hidden="false"><img class="fv__img is-on" src="./assets/img/services/career.jpg" alt="Colleagues working together at a laptop" loading="lazy" decoding="async" data-fv-img><img class="fv__img" src="./assets/img/services/family.jpg" alt="A family walking together through a meadow" loading="lazy" decoding="async" data-fv-img><img class="fv__img" src="./assets/img/photos/family.jpg" alt="Töölönlahti park in Helsinki" loading="lazy" decoding="async" data-fv-img></div>
+      <div class="fv__shade" aria-hidden="true"></div>
+      <div class="fv__inner">
+        <div class="fv__tabs" role="tablist" aria-label="See Finland through each family member's eyes"><button class="fv__tab is-on" type="button" role="tab" id="fv-tab-partner" aria-controls="fv-panel" aria-selected="true" data-fv-tab><svg class="ico ico-sm"><use href="#i-heart"/></svg>Partner<i class="fv__tabbar"><b></b></i></button><button class="fv__tab" type="button" role="tab" id="fv-tab-children" aria-controls="fv-panel" aria-selected="false" tabindex="-1" data-fv-tab><svg class="ico ico-sm"><use href="#i-sprout"/></svg>Children<i class="fv__tabbar"><b></b></i></button><button class="fv__tab" type="button" role="tab" id="fv-tab-family" aria-controls="fv-panel" aria-selected="false" tabindex="-1" data-fv-tab><svg class="ico ico-sm"><use href="#i-users"/></svg>Family<i class="fv__tabbar"><b></b></i></button><span class="fv__pill" data-fv-pill aria-hidden="true"></span></div>
+        <div class="fv__panes" id="fv-panel" role="tabpanel" aria-live="polite">
+          <div class="fv__pane is-on" data-fv-pane>
+            <span class="fv__kicker">For your partner</span>
+            <h3 class="fv__title">A career of their own, from day one.</h3>
+            <p class="fv__text">A spouse or registered partner can join you on a residence permit based on family ties &mdash; with an unrestricted right to work, so their career keeps moving while you study.</p>
+            <ul class="fv__tiles"><li><b>Day 1</b><span>Free to work in any job</span></li><li><b>Any field</b><span>No separate work permit</span></li><li><b>Together</b><span>Apply alongside your own application</span></li></ul>
+          </div>
+          <div class="fv__pane" data-fv-pane aria-hidden="true">
+            <span class="fv__kicker">For your children</span>
+            <h3 class="fv__title">A childhood with room to grow.</h3>
+            <p class="fv__text">Children under 18 can join you on a family permit. Basic education is free, school meals are free, and forests and lakes are open to everyone under the everyman&rsquo;s right.</p>
+            <ul class="fv__tiles"><li><b>Under 18</b><span>Join you on a family permit</span></li><li><b>Free</b><span>Basic education and school meals</span></li><li><b>Open</b><span>Forests and lakes for everyone</span></li></ul>
+          </div>
+          <div class="fv__pane" data-fv-pane aria-hidden="true">
+            <span class="fv__kicker">For all of you</span>
+            <h3 class="fv__title">A calm, happy base for your whole family.</h3>
+            <p class="fv__text">Finland topped the World Happiness Report every year from 2018 to 2025. We plan your family&rsquo;s permits, documents and funds as one application, so you arrive together.</p>
+            <ul class="fv__tiles"><li><b>#1</b><span>World Happiness Report, 2018&ndash;2025</span></li><li><b>One plan</b><span>Permits, documents and funds together</span></li><li><b>One team</b><span>Beside you before and after landing</span></li></ul>
           </div>
         </div>
-        <ul class="fam__facts">
-          <li><b>Day 1</b><span>Your partner can work in any job</span></li>
-          <li><b>Under 18</b><span>Children join you on a family permit</span></li>
-          <li><b>Free</b><span>Basic education and school meals</span></li>
-          <li><b>#1</b><span>World Happiness Report, 2018&ndash;2025</span></li>
-        </ul>
       </div>
+    </div>
 
-      <article class="fam__plan" aria-live="polite">
-        <div class="fam__hero">
-          <img src="./assets/img/services/family.jpg" alt="" loading="lazy" decoding="async">
-          <div>
-            <span class="fam__label fam__label--light">2 &middot; Your family's plan</span>
-            <b class="fam__summary" data-fam-summary>3 permits &middot; 4 documents</b>
-          </div>
-        </div>
-        <div class="fam__groups" data-fam-groups></div>
-        <div class="fam__foot">
-          <p>Migri asks for a set monthly amount of funds for each family member on top of your own &mdash; we build it into your budget from the start.</p>
-          <a class="btn btn-primary" href="#contact" data-fam-cta data-magnet>Get my family plan<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
-        </div>
-      </article>
+    <div class="fv__steps reveal">
+      <span class="fv__stepslabel">How your family joins you</span>
+      <ol>
+        <li><b>01</b><div><h4>Your study place</h4><p>You are admitted and apply for your own A permit on Enter Finland.</p></div></li>
+        <li><b>02</b><div><h4>Family applications</h4><p>Your partner and children apply on the basis of family ties, with certificates and evidence of funds.</p></div></li>
+        <li><b>03</b><div><h4>Arrive together</h4><p>Identity codes, registration, school places and work &mdash; sorted with you on arrival.</p></div></li>
+      </ol>
+      <a class="btn btn-primary" href="#contact" data-fv-cta data-magnet>Get family permit help<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
     </div>
   </div>
 </section>
