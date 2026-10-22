@@ -662,24 +662,51 @@
 
 
   /* ------------------------------------------------------------------ *
-   * Services tabs, fed by FI_SERVICES
+   * What we do — the service dial. Drag or flick the ring (it keeps a
+   * little momentum, then snaps), click an icon, or use the arrow keys;
+   * whichever service lands in the glowing slot fills the panel. The ring
+   * angle lives in --rot; nodes counter-rotate in CSS to stay upright.
    * ------------------------------------------------------------------ */
   function initServices() {
     var services = window.FI_SERVICES || [];
-    var tabs = $$('[data-svc-tabs] [role="tab"]');
-    if (!tabs.length || !services.length) return;
-    var icon = $('[data-svc-icon]'), title = $('[data-svc-title]'), tag = $('[data-svc-tagline]'), desc = $('[data-svc-desc]');
-    var count = $('[data-svc-count]');
-    var panel = $('#svc-panel');
-    var idx = 0;
+    var root = $('[data-orb]');
+    if (!root || !services.length) return;
+    var dial = $('[data-orb-dial]', root), ring = $('[data-orb-ring]', root), nodes = $$('[data-orb-node]', root);
+    var slot = $('[data-orb-slot]', root), num = $('[data-orb-num]', root), name = $('[data-orb-name]', root);
+    var panel = $('#svc-panel'), content = $('[data-svc-content]', root), mark = $('[data-svc-mark]', root);
+    var title = $('[data-svc-title]', root), tag = $('[data-svc-tagline]', root), desc = $('[data-svc-desc]', root), count = $('[data-svc-count]', root);
+    var N = nodes.length, STEP = 360 / N, idx = 0, rot = 0, raf = 0, lastFrame = 0;
+    var wide = window.matchMedia ? window.matchMedia('(min-width: 960px)') : null;
+    var P = wide && wide.matches ? 0 : 90;
+    function pad(n) { return ('0' + n).slice(-2); }
+    function mod(i) { return ((i % N) + N) % N; }
 
-    /* First paragraph always shows; the rest sits behind "Read more" so the
-       panel stays compact, especially on phones. */
-    function renderDesc(s) {
-      if (!desc) return;
-      var paras = String(s.desc).split(/\n\s*\n/).map(function (p) {
-        return '<p>' + escapeHtml(p.trim()) + '</p>';
+    /* ---------- ring motion ---------- */
+    function setRot(r) { rot = r; ring.style.setProperty('--rot', r.toFixed(2) + 'deg'); }
+    function nearest(r) { return mod(Math.round((P - r) / STEP)); }
+    function targetFor(i, from) { var t = P - i * STEP; return t + 360 * Math.round(((from == null ? rot : from) - t) / 360); }
+    function tween(to, ms) {
+      cancelAnimationFrame(raf);
+      if (reduceMotion || !ms) { setRot(to); return; }
+      var from = rot, t0 = performance.now();
+      raf = requestAnimationFrame(function step(now) {
+        var k = Math.min(1, Math.max(0, now - t0) / ms), e = 1 - Math.pow(1 - k, 3);
+        setRot(from + (to - from) * e);
+        lastFrame = now;
+        raf = k < 1 ? requestAnimationFrame(step) : 0;
       });
+    }
+    function preview(i) {
+      root.classList.toggle('is-preview', i !== idx);
+      num.textContent = pad(i + 1);
+      name.textContent = nodes[i].getAttribute('data-short');
+      nodes.forEach(function (b, k) { b.classList.toggle('is-near', k === i && i !== idx); });
+    }
+
+    /* ---------- panel ---------- */
+    /* First paragraph always shows; the rest sits behind "Read more". */
+    function renderDesc(s) {
+      var paras = String(s.desc).split(/\n\s*\n/).map(function (p) { return '<p>' + escapeHtml(p.trim()) + '</p>'; });
       desc.innerHTML = paras[0] + (paras.length > 1
         ? '<div class="svc__extra" id="svc-extra" hidden>' + paras.slice(1).join('') + '</div>' +
           '<button class="svc__more" type="button" aria-expanded="false" aria-controls="svc-extra">Read more' +
@@ -693,49 +720,119 @@
         more.firstChild.textContent = open ? 'Show less' : 'Read more';
       });
     }
-
-    function select(i, focus) {
-      idx = (i + tabs.length) % tabs.length;
-      var s = services[idx];
-      tabs.forEach(function (t, j) {
-        var on = j === idx;
-        t.setAttribute('aria-selected', on ? 'true' : 'false');
-        t.tabIndex = on ? 0 : -1;
+    function select(i, opts) {
+      opts = opts || {};
+      i = mod(i);
+      var prev = idx, s = services[i], node = nodes[i];
+      idx = i;
+      nodes.forEach(function (b, k) {
+        var on = k === i;
+        b.classList.toggle('is-on', on); b.classList.remove('is-near');
+        b.setAttribute('aria-selected', on ? 'true' : 'false'); b.tabIndex = on ? 0 : -1;
       });
-      if (focus) tabs[idx].focus();
-      var strip = tabs[idx].parentNode;
-      if (strip.scrollWidth > strip.clientWidth) {
-        strip.scrollTo({ left: tabs[idx].offsetLeft - 16, behavior: reduceMotion ? 'auto' : 'smooth' });
-      }
-      if (!s) return;
-      if (icon) icon.innerHTML = s.icon;
-      if (title) title.textContent = s.title;
-      if (tag) tag.textContent = s.tagline;
-      if (count) count.textContent = ('0' + (idx + 1)).slice(-2) + ' / ' + ('0' + tabs.length).slice(-2);
+      if (opts.focus) node.focus({ preventScroll: true });
+      root.classList.remove('is-preview');
+      num.textContent = pad(i + 1);
+      name.textContent = node.getAttribute('data-short');
+      root.style.setProperty('--pp', ((i + 1) / N * 100).toFixed(2));
+      if (opts.spin !== false) tween(targetFor(i), 600);
+      if (i === prev && !opts.force) return;
+      title.textContent = node.getAttribute('data-title');
+      tag.textContent = s.tagline;
+      count.textContent = pad(i + 1) + ' / ' + pad(N);
+      if (mark) mark.setAttribute('href', '#' + node.getAttribute('data-icon'));
+      if (panel) panel.setAttribute('aria-labelledby', node.id);
       renderDesc(s);
-      if (panel) {
-        panel.classList.remove('svc__fade');
-        void panel.offsetWidth;
-        panel.classList.add('svc__fade');
+      if (!reduceMotion && i !== prev) {
+        var dir = mod(i - prev) <= N / 2 ? 1 : -1;
+        if (content.animate) content.animate([{ opacity: 0, transform: 'translateX(' + (18 * dir) + 'px)' }, { opacity: 1, transform: 'none' }],
+          { duration: 320, easing: 'cubic-bezier(.2,.7,.2,1)' });
+        slot.classList.remove('is-pulse'); void slot.offsetWidth; slot.classList.add('is-pulse');
       }
     }
-    tabs.forEach(function (t, i) {
-      t.addEventListener('click', function () { select(i); });
-      t.addEventListener('keydown', function (e) {
-        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); select(idx + 1, true); }
-        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); select(idx - 1, true); }
-        if (e.key === 'Home') { e.preventDefault(); select(0, true); }
-        if (e.key === 'End') { e.preventDefault(); select(tabs.length - 1, true); }
+
+    /* ---------- drag / flick ---------- */
+    var drag = null, swallowClick = false;
+    function angleOf(e, c) { return Math.atan2(e.clientY - c.y, e.clientX - c.x) * 180 / Math.PI; }
+    function wrap(d) { return d > 180 ? d - 360 : d < -180 ? d + 360 : d; }
+    dial.addEventListener('pointerdown', function (e) {
+      if (e.button !== 0) return;
+      var r = dial.getBoundingClientRect(), c = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      drag = { c: c, a: angleOf(e, c), r0: rot, acc: 0, x: e.clientX, y: e.clientY, t: performance.now(), v: 0, live: false, id: e.pointerId };
+      swallowClick = false;
+    });
+    dial.addEventListener('pointermove', function (e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      if (!drag.live) {
+        if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 6) return;
+        drag.live = true;
+        cancelAnimationFrame(raf);
+        drag.r0 = rot;
+        try { dial.setPointerCapture(e.pointerId); } catch (err) {}
+        root.classList.add('is-dragging', 'is-touched');
+      }
+      var a = angleOf(e, drag.c), d = wrap(a - drag.a), now = performance.now(), dt = Math.max(1, now - drag.t);
+      drag.a = a; drag.t = now; drag.acc += d;
+      drag.v = drag.v * 0.7 + (d / dt) * 0.3;
+      setRot(drag.r0 + drag.acc);
+      preview(nearest(rot));
+    });
+    function release(e) {
+      if (!drag || (e && e.pointerId !== drag.id)) return;
+      var d = drag;
+      drag = null;
+      if (!d.live) return;
+      swallowClick = true;
+      root.classList.remove('is-dragging');
+      var proj = rot + clamp(d.v * 240, -150, 150), i = nearest(proj);
+      select(i, { spin: false });
+      tween(targetFor(i, proj), 520);
+    }
+    dial.addEventListener('pointerup', release);
+    dial.addEventListener('pointercancel', release);
+    dial.addEventListener('lostpointercapture', release);
+
+    /* ---------- clicks, hover, keys ---------- */
+    nodes.forEach(function (b, i) {
+      b.addEventListener('click', function () {
+        if (swallowClick) { swallowClick = false; return; }
+        root.classList.add('is-touched');
+        select(i);
+      });
+      b.addEventListener('mouseenter', function () { if (!drag) preview(i); });
+      b.addEventListener('mouseleave', function () { if (!drag) preview(idx); });
+      b.addEventListener('keydown', function (e) {
+        var k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+        if (k) { e.preventDefault(); select(idx + k, { focus: true }); }
+        else if (e.key === 'Home') { e.preventDefault(); select(0, { focus: true }); }
+        else if (e.key === 'End') { e.preventDefault(); select(N - 1, { focus: true }); }
       });
     });
-    var prev = $('[data-svc-prev]'), next = $('[data-svc-next]');
-    if (prev) prev.addEventListener('click', function () { select(idx - 1); });
-    if (next) next.addEventListener('click', function () { select(idx + 1); });
-    var cta = $('[data-svc-cta]');
-    if (cta) cta.addEventListener('click', function () { setDestination(services[idx] ? 'Service: ' + services[idx].title : ''); });
+    var prevBtn = $('[data-svc-prev]', root), nextBtn = $('[data-svc-next]', root);
+    if (prevBtn) prevBtn.addEventListener('click', function () { select(idx - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { select(idx + 1); });
+    var cta = $('[data-svc-cta]', root);
+    if (cta) cta.addEventListener('click', function () { setDestination('Service: ' + nodes[idx].getAttribute('data-title').replace('&amp;', '&')); });
 
-    // Static HTML carries a short version of the first description.
-    if (services[0]) renderDesc(services[0]);
+    // The slot moves from the right (desktop) to the bottom (phones).
+    function syncP() { P = wide && wide.matches ? 0 : 90; tween(targetFor(idx), 0); }
+    if (wide) { if (wide.addEventListener) wide.addEventListener('change', syncP); else if (wide.addListener) wide.addListener(syncP); }
+
+    select(0, { spin: false, force: true });
+    // The dial spins into place the first time it scrolls into view.
+    if (reduceMotion || !('IntersectionObserver' in window)) { setRot(targetFor(0)); return; }
+    setRot(targetFor(0) - 140);
+    var io = new IntersectionObserver(function (es) {
+      if (!es[0].isIntersecting) return;
+      io.disconnect();
+      tween(targetFor(idx), 1300);
+      // If frames were held back (e.g. a reload that lands on the dial), settle anyway.
+      setTimeout(function () {
+        if (drag || Math.abs(rot - targetFor(idx)) < 0.5 || (raf && performance.now() - lastFrame < 200)) return;
+        cancelAnimationFrame(raf); raf = 0; setRot(targetFor(idx));
+      }, 1600);
+    }, { threshold: 0.35 });
+    io.observe(dial);
   }
 
   /* ------------------------------------------------------------------ *

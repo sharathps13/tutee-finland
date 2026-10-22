@@ -305,34 +305,49 @@
       <p class="lead">We scrutinise every profile from the view of Migri case officers, then choose the right pathway &mdash; that is how we keep a 99% success rate on Finnish residence permits.</p>
     </div>
 
-    <div class="svc reveal">
-      <div class="svc__tabs" role="tablist" aria-label="Our services" data-svc-tabs>
-        <button class="svc__tab" role="tab" aria-selected="true" aria-controls="svc-panel" type="button"><span class="svc__tab-ico"><svg class="ico"><use href="#i-msg"/></svg></span>Career Consultation<span class="svc__num">01</span></button>
-        <button class="svc__tab" role="tab" aria-selected="false" aria-controls="svc-panel" type="button" tabindex="-1"><span class="svc__tab-ico"><svg class="ico"><use href="#i-clip"/></svg></span>Language Test<span class="svc__num">02</span></button>
-        <button class="svc__tab" role="tab" aria-selected="false" aria-controls="svc-panel" type="button" tabindex="-1"><span class="svc__tab-ico"><svg class="ico"><use href="#i-cap"/></svg></span>College Selection<span class="svc__num">03</span></button>
-        <button class="svc__tab" role="tab" aria-selected="false" aria-controls="svc-panel" type="button" tabindex="-1"><span class="svc__tab-ico"><svg class="ico"><use href="#i-pen"/></svg></span>Documentation<span class="svc__num">04</span></button>
-        <button class="svc__tab" role="tab" aria-selected="false" aria-controls="svc-panel" type="button" tabindex="-1"><span class="svc__tab-ico"><svg class="ico"><use href="#i-plane"/></svg></span>Residence Permit &amp; Documents<span class="svc__num">05</span></button>
-        <button class="svc__tab" role="tab" aria-selected="false" aria-controls="svc-panel" type="button" tabindex="-1"><span class="svc__tab-ico"><svg class="ico"><use href="#i-brief"/></svg></span>E2E Settlement<span class="svc__num">06</span></button>
-        <button class="svc__tab" role="tab" aria-selected="false" aria-controls="svc-panel" type="button" tabindex="-1"><span class="svc__tab-ico"><svg class="ico"><use href="#i-euro"/></svg></span>Financial Aid<span class="svc__num">07</span></button>
-        <button class="svc__tab" role="tab" aria-selected="false" aria-controls="svc-panel" type="button" tabindex="-1"><span class="svc__tab-ico"><svg class="ico"><use href="#i-house"/></svg></span>Post-Landing<span class="svc__num">08</span></button>
-        <button class="svc__tab" role="tab" aria-selected="false" aria-controls="svc-panel" type="button" tabindex="-1"><span class="svc__tab-ico"><svg class="ico"><use href="#i-users"/></svg></span>Family Migration<span class="svc__num">09</span></button>
+    <!-- Service dial: drag/flick the ring, tap an icon or use the arrow keys;
+         the service in the glowing slot fills the panel. initServices(). -->
+    <div class="orb reveal" data-orb>
+      <div class="orb__stage">
+        <div class="orb__dial" data-orb-dial>
+          <div class="orb__orbit" aria-hidden="true"></div>
+          <div class="orb__track" aria-hidden="true"></div>
+          <div class="orb__ring" data-orb-ring role="tablist" aria-label="Our services">
+            <svg class="orb__ticks" viewBox="0 0 200 200" aria-hidden="true"><line x1="199.00" y1="100.00" x2="193.00" y2="100.00" class="is-long"/><line x1="198.62" y1="108.63" x2="195.63" y2="108.37"/><line x1="197.50" y1="117.19" x2="194.54" y2="116.67"/><line x1="195.63" y1="125.62" x2="192.73" y2="124.85"/><line x1="193.03" y1="133.86" x2="190.21" y2="132.83"/><line x1="189.72" y1="141.84" x2="187.01" y2="140.57"/><line x1="185.74" y1="149.50" x2="183.14" y2="148.00"/><line x1="181.10" y1="156.78" x2="178.64" y2="155.06"/><line x1="175.84" y1="163.64" x2="171.24" y2="159.78" class="is-long"/><line x1="170.00" y1="170.00" x2="167.88" y2="167.88"/><line x1="163.64" y1="175.84" x2="161.71" y2="173.54"/><line x1="156.78" y1="181.10" x2="155.06" y2="178.64"/><line x1="149.50" y1="185.74" x2="148.00" y2="183.14"/><line x1="141.84" y1="189.72" x2="140.57" y2="187.01"/><line x1="133.86" y1="193.03" x2="132.83" y2="190.21"/><line x1="125.62" y1="195.63" x2="124.85" y2="192.73"/><line x1="117.19" y1="197.50" x2="116.15" y2="191.59" class="is-long"/><line x1="108.63" y1="198.62" x2="108.37" y2="195.63"/><line x1="100.00" y1="199.00" x2="100.00" y2="196.00"/><line x1="91.37" y1="198.62" x2="91.63" y2="195.63"/><line x1="82.81" y1="197.50" x2="83.33" y2="194.54"/><line x1="74.38" y1="195.63" x2="75.15" y2="192.73"/><line x1="66.14" y1="193.03" x2="67.17" y2="190.21"/><line x1="58.16" y1="189.72" x2="59.43" y2="187.01"/><line x1="50.50" y1="185.74" x2="53.50" y2="180.54" class="is-long"/><line x1="43.22" y1="181.10" x2="44.94" y2="178.64"/><line x1="36.36" y1="175.84" x2="38.29" y2="173.54"/><line x1="30.00" y1="170.00" x2="32.12" y2="167.88"/><line x1="24.16" y1="163.64" x2="26.46" y2="161.71"/><line x1="18.90" y1="156.78" x2="21.36" y2="155.06"/><line x1="14.26" y1="149.50" x2="16.86" y2="148.00"/><line x1="10.28" y1="141.84" x2="12.99" y2="140.57"/><line x1="6.97" y1="133.86" x2="12.61" y2="131.81" class="is-long"/><line x1="4.37" y1="125.62" x2="7.27" y2="124.85"/><line x1="2.50" y1="117.19" x2="5.46" y2="116.67"/><line x1="1.38" y1="108.63" x2="4.37" y2="108.37"/><line x1="1.00" y1="100.00" x2="4.00" y2="100.00"/><line x1="1.38" y1="91.37" x2="4.37" y2="91.63"/><line x1="2.50" y1="82.81" x2="5.46" y2="83.33"/><line x1="4.37" y1="74.38" x2="7.27" y2="75.15"/><line x1="6.97" y1="66.14" x2="12.61" y2="68.19" class="is-long"/><line x1="10.28" y1="58.16" x2="12.99" y2="59.43"/><line x1="14.26" y1="50.50" x2="16.86" y2="52.00"/><line x1="18.90" y1="43.22" x2="21.36" y2="44.94"/><line x1="24.16" y1="36.36" x2="26.46" y2="38.29"/><line x1="30.00" y1="30.00" x2="32.12" y2="32.12"/><line x1="36.36" y1="24.16" x2="38.29" y2="26.46"/><line x1="43.22" y1="18.90" x2="44.94" y2="21.36"/><line x1="50.50" y1="14.26" x2="53.50" y2="19.46" class="is-long"/><line x1="58.16" y1="10.28" x2="59.43" y2="12.99"/><line x1="66.14" y1="6.97" x2="67.17" y2="9.79"/><line x1="74.38" y1="4.37" x2="75.15" y2="7.27"/><line x1="82.81" y1="2.50" x2="83.33" y2="5.46"/><line x1="91.37" y1="1.38" x2="91.63" y2="4.37"/><line x1="100.00" y1="1.00" x2="100.00" y2="4.00"/><line x1="108.63" y1="1.38" x2="108.37" y2="4.37"/><line x1="117.19" y1="2.50" x2="116.15" y2="8.41" class="is-long"/><line x1="125.62" y1="4.37" x2="124.85" y2="7.27"/><line x1="133.86" y1="6.97" x2="132.83" y2="9.79"/><line x1="141.84" y1="10.28" x2="140.57" y2="12.99"/><line x1="149.50" y1="14.26" x2="148.00" y2="16.86"/><line x1="156.78" y1="18.90" x2="155.06" y2="21.36"/><line x1="163.64" y1="24.16" x2="161.71" y2="26.46"/><line x1="170.00" y1="30.00" x2="167.88" y2="32.12"/><line x1="175.84" y1="36.36" x2="171.24" y2="40.22" class="is-long"/><line x1="181.10" y1="43.22" x2="178.64" y2="44.94"/><line x1="185.74" y1="50.50" x2="183.14" y2="52.00"/><line x1="189.72" y1="58.16" x2="187.01" y2="59.43"/><line x1="193.03" y1="66.14" x2="190.21" y2="67.17"/><line x1="195.63" y1="74.38" x2="192.73" y2="75.15"/><line x1="197.50" y1="82.81" x2="194.54" y2="83.33"/><line x1="198.62" y1="91.37" x2="195.63" y2="91.63"/></svg>
+            <button class="orb__node is-on" type="button" role="tab" id="svc-tab-1" aria-controls="svc-panel" aria-selected="true" data-orb-node data-title="Career Consultation" data-short="Career consultation" data-icon="i-msg" style="--a:0deg"><svg class="ico"><use href="#i-msg"/></svg><span class="sr-only">Career Consultation</span></button>
+            <button class="orb__node" type="button" role="tab" id="svc-tab-2" aria-controls="svc-panel" aria-selected="false" tabindex="-1" data-orb-node data-title="Language Test" data-short="Language test" data-icon="i-clip" style="--a:40deg"><svg class="ico"><use href="#i-clip"/></svg><span class="sr-only">Language Test</span></button>
+            <button class="orb__node" type="button" role="tab" id="svc-tab-3" aria-controls="svc-panel" aria-selected="false" tabindex="-1" data-orb-node data-title="College Selection" data-short="College selection" data-icon="i-cap" style="--a:80deg"><svg class="ico"><use href="#i-cap"/></svg><span class="sr-only">College Selection</span></button>
+            <button class="orb__node" type="button" role="tab" id="svc-tab-4" aria-controls="svc-panel" aria-selected="false" tabindex="-1" data-orb-node data-title="Documentation" data-short="Documentation" data-icon="i-pen" style="--a:120deg"><svg class="ico"><use href="#i-pen"/></svg><span class="sr-only">Documentation</span></button>
+            <button class="orb__node" type="button" role="tab" id="svc-tab-5" aria-controls="svc-panel" aria-selected="false" tabindex="-1" data-orb-node data-title="Residence Permit &amp; Documents" data-short="Residence permit" data-icon="i-plane" style="--a:160deg"><svg class="ico"><use href="#i-plane"/></svg><span class="sr-only">Residence Permit &amp; Documents</span></button>
+            <button class="orb__node" type="button" role="tab" id="svc-tab-6" aria-controls="svc-panel" aria-selected="false" tabindex="-1" data-orb-node data-title="E2E Settlement" data-short="End-to-end settlement" data-icon="i-brief" style="--a:200deg"><svg class="ico"><use href="#i-brief"/></svg><span class="sr-only">E2E Settlement</span></button>
+            <button class="orb__node" type="button" role="tab" id="svc-tab-7" aria-controls="svc-panel" aria-selected="false" tabindex="-1" data-orb-node data-title="Financial Aid" data-short="Financial aid" data-icon="i-euro" style="--a:240deg"><svg class="ico"><use href="#i-euro"/></svg><span class="sr-only">Financial Aid</span></button>
+            <button class="orb__node" type="button" role="tab" id="svc-tab-8" aria-controls="svc-panel" aria-selected="false" tabindex="-1" data-orb-node data-title="Post-Landing" data-short="Post-landing support" data-icon="i-house" style="--a:280deg"><svg class="ico"><use href="#i-house"/></svg><span class="sr-only">Post-Landing</span></button>
+            <button class="orb__node" type="button" role="tab" id="svc-tab-9" aria-controls="svc-panel" aria-selected="false" tabindex="-1" data-orb-node data-title="Family Migration" data-short="Family migration" data-icon="i-users" style="--a:320deg"><svg class="ico"><use href="#i-users"/></svg><span class="sr-only">Family Migration</span></button>
+          </div>
+          <span class="orb__slot" data-orb-slot aria-hidden="true"></span>
+          <span class="orb__beam" aria-hidden="true"></span>
+          <div class="orb__hub" aria-hidden="true">
+            <svg class="orb__arc" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48.5" pathLength="100" data-orb-arc/></svg>
+            <span class="orb__num" data-orb-num>01</span>
+            <span class="orb__of">of 09</span>
+            <span class="orb__name" data-orb-name>Career consultation</span>
+          </div>
+        </div>
+        <span class="orb__hint" aria-hidden="true"><svg class="ico ico-sm"><use href="#i-spark"/></svg><span class="orb__hint-fine">Drag the dial or click an icon</span><span class="orb__hint-touch">Swipe the dial or tap an icon</span></span>
       </div>
 
-      <article class="svc__panel" id="svc-panel" role="tabpanel" aria-live="polite" data-spot>
-        <div class="svc__panel-head">
-          <div class="svc__panel-ico" data-svc-icon><svg class="ico"><use href="#i-msg"/></svg></div>
-          <div>
-            <p data-svc-tagline>Expert Guidance for Your Finland Journey</p>
-            <h3 class="h3" data-svc-title>Career Consultation</h3>
+      <article class="orb__panel" id="svc-panel" role="tabpanel" aria-labelledby="svc-tab-1" aria-live="polite" data-spot>
+        <svg class="ico orb__mark" aria-hidden="true"><use href="#i-msg" data-svc-mark/></svg>
+        <div class="orb__content" data-svc-content>
+          <div class="orb__meta"><span class="orb__tag" data-svc-tagline>Expert Guidance for Your Finland Journey</span><span class="orb__count" data-svc-count>01 / 09</span></div>
+          <h3 class="orb__title" data-svc-title>Career Consultation</h3>
+          <div class="orb__desc" data-svc-desc>
+            <p>Tutee Connect provides an invaluable career consultation at free of cost. The results of this consultation will enhance your self-awareness regarding your profile and illuminate potential pathways for career advancement in Finland.</p>
           </div>
-          <span class="svc__count" data-svc-count>01 / 09</span>
         </div>
-        <div class="svc__panel-body" data-svc-desc>
-          <p>Tutee Connect provides an invaluable career consultation at free of cost. The results of this consultation will enhance your self-awareness regarding your profile and illuminate potential pathways for career advancement in Finland.</p>
-        </div>
-        <div class="svc__panel-foot">
+        <div class="orb__foot">
           <a class="btn btn-primary btn-sm" href="#contact" data-svc-cta data-magnet>Request this service<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>
-          <div class="svc__nav">
+          <div class="orb__nav">
             <button class="round-btn" type="button" aria-label="Previous service" data-svc-prev><svg class="ico ico-sm"><use href="#i-left"/></svg></button>
             <button class="round-btn" type="button" aria-label="Next service" data-svc-next><svg class="ico ico-sm"><use href="#i-right"/></svg></button>
           </div>
