@@ -399,7 +399,7 @@
   var WF_VS = 'attribute vec2 p; varying vec2 v; void main(){ v = p * .5 + .5; gl_Position = vec4(p, 0., 1.); }';
   var WF_FS = [
     'precision mediump float;',
-    'uniform sampler2D uA, uB; uniform vec2 uRes, uSa, uSb; uniform float uMix, uTime;',
+    'uniform sampler2D uA, uB; uniform vec2 uRes, uSa, uSb; uniform float uMix, uTime, uWave;',
     'uniform vec3 uRip[12];',
     'varying vec2 v;',
     'vec2 cover(vec2 uv, vec2 img) { float rs = uRes.x / uRes.y, ri = img.x / img.y;',
@@ -415,13 +415,15 @@
     '    vec2 q = uv - r.xy; q.x *= asp; float dist = length(q);',
     '    float front = age * .32, band = exp(-pow((dist - front) * 14., 2.));',
     '    float w = sin((dist - front) * 70.) * band * exp(-age * 1.15) * (1. - smoothstep(.0, .9, dist));',
-    '    d += (q / max(dist, .0001)) * w * .014; shine += w;',
+    '    d += (q / max(dist, .0001)) * w * .026; shine += w;',
     '  }',
     '  d += vec2(sin(uv.y * 38. + uTime * 1.3), cos(uv.x * 30. + uTime * 1.1)) * .0009;',
+    '  d += vec2(sin(uv.y * 16. + uTime * 5.), cos(uv.x * 13. + uTime * 4.)) * .028 * uWave;',
     '  vec4 a = texture2D(uA, cover(uv + d, uSa)), b = texture2D(uB, cover(uv + d, uSb));',
     '  float edge = n(uv * 3.2 + uTime * .04) * .65 + uv.x * .35;',
     '  float t = smoothstep(edge - .12, edge + .12, uMix * 1.24 - .12);',
-    '  vec3 c = mix(a.rgb, b.rgb, t) + vec3(.55, .85, 1.) * max(shine, 0.) * .16;',
+    '  float rim = t * (1. - t) * 4. * step(.001, uMix) * step(uMix, .999);',
+    '  vec3 c = mix(a.rgb, b.rgb, t) + vec3(.55, .85, 1.) * max(shine, 0.) * .3 + vec3(.18, .89, .71) * rim * .9;',
     '  gl_FragColor = vec4(c, 1.);',
     '}'
   ].join('\n');
@@ -449,7 +451,7 @@
       var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
       var loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-      ['uA', 'uB', 'uRes', 'uSa', 'uSb', 'uMix', 'uTime', 'uRip'].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
+      ['uA', 'uB', 'uRes', 'uSa', 'uSb', 'uMix', 'uTime', 'uWave', 'uRip'].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
       gl.uniform1i(U.uA, 0); gl.uniform1i(U.uB, 1);
       for (var i = 0; i < 12; i++) ripples.push([0, 0, -99]);
       return true;
@@ -480,14 +482,15 @@
       var A = tex[fromI], B = tex[toI] || A;
       if (!A) return;
       var t = (now - start) / 1000;
-      if (mix < 1) mix = Math.min(1, (now - mixT0) / 1300);
+      if (mix < 1) mix = Math.min(1, (now - mixT0) / 950);
       if (mix >= 1 && fromI !== toI && B) { fromI = toI; }
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, A.t);
       gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, B.t);
       gl.uniform2f(U.uRes, canvas.width, canvas.height);
       gl.uniform2f(U.uSa, A.w, A.h); gl.uniform2f(U.uSb, B.w, B.h);
-      var e = mix < .5 ? 4 * mix * mix * mix : 1 - Math.pow(-2 * mix + 2, 3) / 2;
+      var e = 1 - Math.pow(1 - mix, 3);   // ease-out: the change is visible from the first frame
       gl.uniform1f(U.uMix, fromI === toI ? 0 : e); gl.uniform1f(U.uTime, t);
+      gl.uniform1f(U.uWave, fromI === toI ? 0 : Math.sin(Math.PI * mix));
       var flat = [];
       ripples.forEach(function (r) { flat.push(r[0], r[1], r[2]); });
       gl.uniform3fv(U.uRip, flat);
