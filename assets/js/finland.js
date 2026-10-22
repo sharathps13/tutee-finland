@@ -1351,28 +1351,32 @@
       mapShown += (want - mapShown) * Math.min(1, dt * (want ? 2.2 : 6));
     }
 
-    // Lantern: snow near the cursor glows brighter and a little larger.
+    /* Round, softly anti-aliased dots (pre-rendered once) instead of squares,
+       so the map stays crisp at any size. */
+    function dotSprite(rgb) {
+      var c = document.createElement('canvas'), z = 16, g;
+      c.width = c.height = z;
+      var x = c.getContext('2d');
+      g = x.createRadialGradient(z / 2, z / 2, 0, z / 2, z / 2, z / 2);
+      g.addColorStop(0, 'rgba(' + rgb + ',1)'); g.addColorStop(0.45, 'rgba(' + rgb + ',.95)'); g.addColorStop(1, 'rgba(' + rgb + ',0)');
+      x.fillStyle = g; x.fillRect(0, 0, z, z);
+      return c;
+    }
+    var DOTS = [dotSprite('234,242,255'), dotSprite('125,243,211')];
+
+    // Lantern: snow near the cursor brightens gently; size and position never change.
     function draw() {
       ctx.clearRect(0, 0, W, H);
-      var lantern = mouse.x > -999, R = 150, R2 = R * R;
-      for (var pass = 0; pass < 2; pass++) {
-        ctx.fillStyle = pass ? '#7df3d3' : '#eaf2ff';
-        for (var i = 0; i < parts.length; i++) {
-          var p = parts[i];
-          if (p.g !== !!pass) continue;
-          var a = 0.62 + 0.38 * Math.sin(time * p.tw * 2 + i), s = p.r * 1.85;
-          if (lantern) {
-            var dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
-            if (d2 < R2) { var k = 1 - Math.sqrt(d2) / R; a = Math.min(1, a + k * 0.9); s *= 1 + k * 1.1; }
-          }
-          ctx.globalAlpha = a;
-          ctx.fillRect(p.x - s / 2, p.y - s / 2, s, s);
+      var lantern = mouse.x > -999, R = 160, R2 = R * R;
+      for (var i = 0; i < parts.length; i++) {
+        var p = parts[i];
+        var a = 0.62 + 0.38 * Math.sin(time * p.tw * 2 + i), s = p.r * 2.6;
+        if (lantern) {
+          var dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
+          if (d2 < R2) { var k = 1 - Math.sqrt(d2) / R; a = Math.min(1, a + k * k * 0.35); }
         }
-      }
-      if (lantern && mapShown < 0.99) {
-        var gl = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, R);
-        gl.addColorStop(0, 'rgba(125,243,211,.10)'); gl.addColorStop(1, 'rgba(125,243,211,0)');
-        ctx.globalAlpha = 1; ctx.fillStyle = gl; ctx.fillRect(mouse.x - R, mouse.y - R, R * 2, R * 2);
+        ctx.globalAlpha = a;
+        ctx.drawImage(DOTS[p.g ? 1 : 0], p.x - s / 2, p.y - s / 2, s, s);
       }
       drawNetwork();
       ctx.globalAlpha = 1;
