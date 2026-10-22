@@ -1608,6 +1608,149 @@
     sync();
   }
 
+  /* ------------------------------------------------------------------ *
+   * Modern dropdowns. Each select.select gets a styled trigger + listbox;
+   * the native <select> stays in the form (hidden) and is kept in sync both
+   * ways, so submission, filters and change listeners keep working. The
+   * country-code list adds flags (or ISO badges where the OS can't draw
+   * flag emoji), country names and a search box.
+   * ------------------------------------------------------------------ */
+  var DD_FLAGS = (function () {
+    try {
+      var c = document.createElement('canvas'), x = c.getContext('2d');
+      c.width = c.height = 16; x.textBaseline = 'top'; x.font = '14px sans-serif';
+      x.fillText('🇫🇮', 0, 0);
+      var d = x.getImageData(0, 0, 16, 16).data;
+      for (var i = 0; i < d.length; i += 4) if (d[i + 3] && (Math.abs(d[i] - d[i + 1]) > 30 || Math.abs(d[i + 1] - d[i + 2]) > 30)) return true;
+    } catch (e) { /* no canvas */ }
+    return false;
+  })();
+  var DD_NAMES = (function () { try { return new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) { return null; } })();
+  function ddFlag(iso) {
+    iso = (iso || '').slice(0, 2).toUpperCase();
+    if (iso === 'UK') iso = 'GB';
+    if (!/^[A-Z]{2}$/.test(iso)) return '<span class="dd__iso">' + escapeHtml(iso || '?') + '</span>';
+    if (DD_FLAGS) return '<span class="dd__flag">' + String.fromCodePoint(0x1F1E6 + iso.charCodeAt(0) - 65, 0x1F1E6 + iso.charCodeAt(1) - 65) + '</span>';
+    return '<span class="dd__iso">' + iso + '</span>';
+  }
+  function ddCountry(label) {   // "US/CA" -> "United States / Canada"
+    if (!DD_NAMES) return label;
+    return label.split('/').map(function (c) { var n = c === 'UK' ? 'GB' : c; try { return DD_NAMES.of(n) || c; } catch (e) { return c; } }).join(' / ');
+  }
+
+  function enhanceSelect(sel) {
+    if (sel.dataset.ddReady) return;
+    sel.dataset.ddReady = '1';
+    var cc = sel.hasAttribute('data-cc');
+    var wrap = document.createElement('div');
+    wrap.className = 'dd' + (cc ? ' dd--cc' : '') + (sel.classList.contains('select--ico') ? ' dd--ico' : '');
+    sel.parentNode.insertBefore(wrap, sel);
+    wrap.appendChild(sel);
+    sel.classList.add('dd__native'); sel.tabIndex = -1; sel.setAttribute('aria-hidden', 'true');
+    var id = 'dd' + Math.random().toString(36).slice(2, 8), lbl = escapeHtml(sel.getAttribute('aria-label') || '');
+    wrap.insertAdjacentHTML('beforeend',
+      '<button type="button" class="dd__btn" aria-haspopup="listbox" aria-expanded="false" aria-controls="' + id + '" aria-label="' + lbl + '">' +
+      '<span class="dd__val"></span><svg class="ico ico-sm dd__chev" aria-hidden="true"><use href="#i-down"/></svg></button>' +
+      '<div class="dd__panel" id="' + id + '" hidden>' + (cc ? '<input class="dd__search" type="search" placeholder="Search country or code" aria-label="Search country or code">' : '') +
+      '<ul class="dd__list" role="listbox" aria-label="' + lbl + '"></ul></div>');
+    var btn = $('.dd__btn', wrap), val = $('.dd__val', wrap), panel = $('.dd__panel', wrap), list = $('.dd__list', wrap), search = $('.dd__search', wrap), active = -1;
+
+    function parts(o) {   // country options read "IN +91"
+      if (!cc) return { lead: '', name: o.textContent, sub: '' };
+      var m = o.textContent.match(/^(\S+)\s+(\+\d+)$/) || [null, '', o.value];
+      return { lead: ddFlag(m[1]), name: ddCountry(m[1]), sub: m[2], iso: m[1] };
+    }
+    function paint() {
+      var o = sel.options[sel.selectedIndex];
+      if (!o) { val.textContent = ''; return; }
+      var p = parts(o);
+      val.innerHTML = cc ? p.lead + '<b>' + escapeHtml(p.sub) + '</b>' : escapeHtml(o.textContent);
+    }
+    function items() { return $$('[role=option]', list); }
+    function mark() {
+      items().forEach(function (li, k) { li.classList.toggle('is-active', k === active); });
+      var a = items()[active];   // scroll inside the list only, never the page
+      if (a) {
+        if (a.offsetTop < list.scrollTop) list.scrollTop = a.offsetTop - 4;
+        else if (a.offsetTop + a.offsetHeight > list.scrollTop + list.clientHeight) list.scrollTop = a.offsetTop + a.offsetHeight - list.clientHeight + 4;
+      }
+    }
+    function build() {
+      var q = search ? search.value.trim().toLowerCase() : '';
+      list.innerHTML = Array.prototype.map.call(sel.options, function (o, i) {
+        var p = parts(o);
+        if (q && (p.name + ' ' + p.sub + ' ' + (p.iso || '') + ' ' + o.textContent).toLowerCase().indexOf(q) < 0) return '';
+        return '<li role="option" data-i="' + i + '" aria-selected="' + (i === sel.selectedIndex) + '">' + p.lead +
+          '<span class="dd__name">' + escapeHtml(p.name) + '</span>' + (p.sub ? '<span class="dd__sub">' + escapeHtml(p.sub) + '</span>' : '') +
+          '<svg class="ico ico-sm dd__tick" aria-hidden="true"><use href="#i-check"/></svg></li>';
+      }).join('') || '<li class="dd__empty">No matches</li>';
+      active = -1;
+      items().forEach(function (li, k) { if (li.getAttribute('aria-selected') === 'true') active = k; });
+      mark();
+    }
+    function open() {
+      if (!panel.hidden) return;
+      $$('.dd.is-open').forEach(function (d) { if (d !== wrap && d.ddClose) d.ddClose(); });
+      if (search) search.value = '';
+      if (panel.parentNode !== document.body) document.body.appendChild(panel);   // escape transformed/clipping ancestors
+      panel.hidden = false; wrap.classList.add('is-open'); btn.setAttribute('aria-expanded', 'true');
+      place();
+      build();   // after showing and placing, so the current choice scrolls into view
+      (search || btn).focus({ preventScroll: true });
+    }
+    // The panel is fixed to the viewport so scrolling or clipping containers
+    // (like the directory's filter bar) can't cut it off; it opens upwards
+    // when there is no room below.
+    function place() {
+      var r = btn.getBoundingClientRect(), vw = window.innerWidth, vh = window.innerHeight;
+      var w = Math.min(Math.max(r.width, cc ? 300 : 220), vw - 16), left = Math.min(Math.max(8, r.left), vw - w - 8);
+      var up = vh - r.bottom < 300 && r.top > vh - r.bottom;
+      panel.style.width = w + 'px'; panel.style.left = left + 'px';
+      panel.style.top = up ? 'auto' : (r.bottom + 8) + 'px';
+      panel.style.bottom = up ? (vh - r.top + 8) + 'px' : 'auto';
+      panel.classList.toggle('is-up', up);
+    }
+    function close(refocus) {
+      if (panel.hidden) return;
+      panel.hidden = true; wrap.classList.remove('is-open'); btn.setAttribute('aria-expanded', 'false');
+      if (refocus) btn.focus({ preventScroll: true });
+    }
+    wrap.ddClose = function () { close(false); };
+    function choose(i) {
+      if (sel.selectedIndex !== i) {
+        sel.selectedIndex = i;
+        sel.dispatchEvent(new Event('input', { bubbles: true }));
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      paint();
+      close(true);
+    }
+    btn.addEventListener('click', function () { if (panel.hidden) open(); else close(true); });
+    list.addEventListener('click', function (e) { var li = e.target.closest('[role=option]'); if (li) choose(+li.getAttribute('data-i')); });
+    function keys(e) {
+      var n = items().length;
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (panel.hidden) { open(); return; } active = Math.min(n - 1, active + 1); mark(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); active = Math.max(0, active - 1); mark(); }
+      else if (e.key === 'Enter' && !panel.hidden) { e.preventDefault(); var a = items()[active]; if (a) choose(+a.getAttribute('data-i')); }
+      else if (e.key === 'Escape') close(true);
+      else if (e.key === 'Tab') close(false);
+    }
+    btn.addEventListener('keydown', keys);
+    if (search) { search.addEventListener('keydown', keys); search.addEventListener('input', function () { build(); active = items().length ? 0 : -1; mark(); }); }
+    document.addEventListener('click', function (e) { if (!wrap.contains(e.target) && !panel.contains(e.target)) close(false); });
+    window.addEventListener('scroll', function (e) { if (!panel.hidden && !panel.contains(e.target)) close(false); }, true);
+    window.addEventListener('resize', function () { if (!panel.hidden) place(); });
+
+    // Keep in sync with code that rewrites options or sets .value directly.
+    if ('MutationObserver' in window) new MutationObserver(function () { paint(); if (!panel.hidden) build(); }).observe(sel, { childList: true, subtree: true });
+    var proto = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+    if (proto && proto.set) Object.defineProperty(sel, 'value', { configurable: true, get: function () { return proto.get.call(sel); }, set: function (v) { proto.set.call(sel, v); paint(); } });
+    sel.addEventListener('change', paint);
+    if (sel.form) sel.form.addEventListener('reset', function () { setTimeout(paint, 0); });
+    paint();
+  }
+  function initSelects() { $$('select.select').forEach(enhanceSelect); }
+
   function syncShortlist() {
     var SL = window.TCShortlist;
     if (!SL) return;
@@ -2135,6 +2278,7 @@
   initForms();
   initLeadFlow();
   initShortlistFab();
+  initSelects();
   initChat();
   initClickSpark();
   initCredits();

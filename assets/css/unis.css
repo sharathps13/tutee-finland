@@ -231,3 +231,7 @@ body.has-dock .fab-stack { transform: translateY(-64px); }
   .uni-photo { animation: none; }
   ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
 }
+
+/* Custom dropdowns in the directory bar stay compact. */
+.dir-bar .dd { flex: none; width: auto; }
+.dir-bar .dd__btn { min-height: 42px; padding: 8px 12px; font-size: 14px; background: #fff; }

@@ -1347,3 +1347,39 @@ main { overflow-x: clip; }
 @media (max-width: 899px) { .slfab { bottom: calc(84px + env(safe-area-inset-bottom)); padding: 6px 14px 6px 6px; } .slfab__heart { width: 36px; height: 36px; } }
 @media (prefers-reduced-motion: reduce) { .slfab, .slfab__go { transition: none; } .slfab.is-bump .slfab__heart { animation: none; } }
 
+/* ========================================================== DROPDOWNS
+   Custom trigger + listbox over a hidden native <select>. */
+.dd { position: relative; width: 100%; }
+.dd__native { position: absolute !important; inset: 0; width: 100%; height: 100%; opacity: 0; pointer-events: none; }
+.dd__btn { width: 100%; min-height: 50px; display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--ice);
+  font-size: 15px; font-weight: 600; color: var(--ink); text-align: left; transition: border-color .2s, background .2s, box-shadow .2s; }
+.dd--ico .dd__btn { padding-left: 44px; }
+.dd__btn:hover { border-color: #c3d2e6; }
+.dd.is-open .dd__btn, .dd__btn:focus-visible { outline: none; border-color: var(--fi-blue); background: #fff; box-shadow: 0 0 0 4px rgba(0,53,128,.1); }
+.dd__val { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.dd__val b { font-weight: 700; }
+.dd__chev { flex: none; color: var(--muted); transition: transform .25s var(--ease); }
+.dd.is-open .dd__chev { transform: rotate(180deg); color: var(--fi-blue); }
+.dd__panel { position: fixed; z-index: 120; padding: 6px; border-radius: 16px; background: #fff; border: 1px solid var(--line);
+  box-shadow: 0 24px 50px -20px rgba(6,22,49,.45); transform-origin: top left; animation: ddIn .2s var(--ease); }
+.dd__panel.is-up { transform-origin: bottom left; }
+.dd__panel[hidden] { display: none; }
+@keyframes ddIn { from { opacity: 0; transform: translateY(-6px) scale(.97); } }
+.dd__search { width: 100%; margin-bottom: 6px; padding: 9px 12px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--ice); font: inherit; font-size: 14px; outline: none; }
+.dd__search:focus { border-color: var(--fi-blue); background: #fff; }
+.dd__list { position: relative; list-style: none; margin: 0; padding: 0; max-height: 260px; overflow-y: auto; overscroll-behavior: contain; }
+.dd__list li[role=option] { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--ink-2); }
+.dd__list li.is-active, .dd__list li[role=option]:hover { background: var(--ice); color: var(--ink); }
+.dd__list li[aria-selected=true] { color: var(--fi-blue); }
+.dd__name { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.dd__sub { flex: none; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.dd__tick { flex: none; opacity: 0; color: var(--fi-blue); }
+.dd__list li[aria-selected=true] .dd__tick { opacity: 1; }
+.dd__empty { padding: 12px; font-size: 13.5px; color: var(--muted); }
+.dd__flag { flex: none; font-size: 18px; line-height: 1; }
+.dd__iso { flex: none; min-width: 28px; height: 20px; padding: 0 5px; border-radius: 5px; display: grid; place-items: center; font-size: 10.5px; font-weight: 800; letter-spacing: .04em;
+  color: #fff; background: linear-gradient(135deg, var(--fi-blue), #1f6fd6); }
+.phone { grid-template-columns: 136px 1fr; }
+.phone .dd__btn { padding-inline: 12px; gap: 6px; }
+@media (prefers-reduced-motion: reduce) { .dd__panel { animation: none; } .dd__chev { transition: none; } }
+
