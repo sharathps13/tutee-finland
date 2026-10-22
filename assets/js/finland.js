@@ -391,194 +391,30 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * Why Finland — the lake of four seasons. Each season photo is drawn
-   * as a lake surface (WebGL1) that ripples where the cursor or a finger
-   * moves; seasons change every 200px of scroll (two wheel notches) with
-   * a liquid dissolve. Falls back to cross-fading <img>s without WebGL.
+   * Why Finland — season story. The card nearest the middle of the screen
+   * is in focus and the sticky photo cross-fades to its season. Native
+   * scrolling only; no canvas, no pinning.
    * ------------------------------------------------------------------ */
-  var WF_VS = 'attribute vec2 p; varying vec2 v; void main(){ v = p * .5 + .5; gl_Position = vec4(p, 0., 1.); }';
-  var WF_FS = [
-    'precision mediump float;',
-    'uniform sampler2D uA, uB; uniform vec2 uRes, uSa, uSb; uniform float uMix, uTime, uWave;',
-    'uniform vec3 uRip[12];',
-    'varying vec2 v;',
-    'vec2 cover(vec2 uv, vec2 img) { float rs = uRes.x / uRes.y, ri = img.x / img.y;',
-    '  vec2 s = rs > ri ? vec2(1., ri / rs) : vec2(rs / ri, 1.); return (uv - .5) * s + .5; }',
-    'float h(vec2 q) { return fract(sin(dot(q, vec2(127.1, 311.7))) * 43758.5453); }',
-    'float n(vec2 q) { vec2 i = floor(q), f = fract(q); f = f * f * (3. - 2. * f);',
-    '  return mix(mix(h(i), h(i + vec2(1, 0)), f.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), f.x), f.y); }',
-    'void main() {',
-    '  vec2 uv = v, d = vec2(0.); float shine = 0.; float asp = uRes.x / uRes.y;',
-    '  for (int i = 0; i < 12; i++) {',
-    '    vec3 r = uRip[i]; float age = uTime - r.z;',
-    '    if (age < 0. || age > 3.2) continue;',
-    '    vec2 q = uv - r.xy; q.x *= asp; float dist = length(q);',
-    '    float front = age * .32, band = exp(-pow((dist - front) * 14., 2.));',
-    '    float w = sin((dist - front) * 70.) * band * exp(-age * 1.15) * (1. - smoothstep(.0, .9, dist));',
-    '    d += (q / max(dist, .0001)) * w * .007; shine += w;',
-    '  }',
-    '  d += vec2(sin(uv.y * 38. + uTime * 1.3), cos(uv.x * 30. + uTime * 1.1)) * .0004;',
-    '  d += vec2(sin(uv.y * 16. + uTime * 5.), cos(uv.x * 13. + uTime * 4.)) * .012 * uWave;',
-    '  vec4 a = texture2D(uA, cover(uv + d, uSa)), b = texture2D(uB, cover(uv + d, uSb));',
-    '  float edge = n(uv * 3.2 + uTime * .04) * .65 + uv.x * .35;',
-    '  float t = smoothstep(edge - .12, edge + .12, uMix * 1.24 - .12);',
-    '  float rim = t * (1. - t) * 4. * step(.001, uMix) * step(uMix, .999);',
-    '  vec3 c = mix(a.rgb, b.rgb, t) + vec3(.55, .85, 1.) * max(shine, 0.) * .06 + vec3(.18, .89, .71) * rim * .55;',
-    '  gl_FragColor = vec4(c, 1.);',
-    '}'
-  ].join('\n');
-
-  function initLakeSeasons() {
-    var sec = $('[data-wf]');
-    if (!sec) return;
-    var pin = $('.wf__pin', sec), canvas = $('[data-wf-gl]', sec);
-    var imgs = $$('[data-wf-img]', sec), panels = $$('[data-wf-panel]', sec), words = $$('.wf__word', sec);
-    var tabs = $$('[data-wf-tab]', sec), stat = $('[data-wf-stat]', sec), label = $('[data-wf-label]', sec);
-    var STEP = 200, N = tabs.length, stage = 0;
-    var live = !reduceMotion;
-    if (live) sec.classList.add('is-live');
-
-    /* ---------- WebGL lake ---------- */
-    var gl = live && canvas.getContext && (canvas.getContext('webgl', { antialias: false, premultipliedAlpha: false }) || canvas.getContext('experimental-webgl'));
-    var U = {}, tex = [], ripples = [], rIdx = 0, mix = 1, fromI = 0, toI = 0, mixT0 = 0, start = performance.now();
-    function setupGL() {
-      function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null; }
-      var vs = sh(gl.VERTEX_SHADER, WF_VS), fs = sh(gl.FRAGMENT_SHADER, WF_FS);
-      if (!vs || !fs) return false;
-      var prog = gl.createProgram(); gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
-      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return false;
-      gl.useProgram(prog);
-      var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
-      var loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-      ['uA', 'uB', 'uRes', 'uSa', 'uSb', 'uMix', 'uTime', 'uWave', 'uRip'].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
-      gl.uniform1i(U.uA, 0); gl.uniform1i(U.uB, 1);
-      for (var i = 0; i < 12; i++) ripples.push([0, 0, -99]);
-      return true;
+  function initWhySeasons() {
+    var root = $('[data-why]');
+    if (!root) return;
+    var cards = $$('[data-why-card]', root), figs = $$('[data-why-fig]', root);
+    var step = $('[data-why-step]', root), bar = $('[data-why-bar]', root), active = 0;
+    function show(i) {
+      if (i === active) return;
+      active = i;
+      cards.forEach(function (c, k) { c.classList.toggle('is-on', k === i); });
+      figs.forEach(function (f, k) { f.classList.toggle('is-on', k === i); });
+      if (step) step.textContent = ('0' + (i + 1)).slice(-2);
+      if (bar) bar.style.width = ((i + 1) / cards.length * 100) + '%';
     }
-    function loadTex(i) {
-      var img = imgs[i];
-      function make() {
-        var t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
-        ['TEXTURE_WRAP_S', 'TEXTURE_WRAP_T'].forEach(function (k) { gl.texParameteri(gl.TEXTURE_2D, gl[k], gl.CLAMP_TO_EDGE); });
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        tex[i] = { t: t, w: img.naturalWidth, h: img.naturalHeight };
-      }
-      img.removeAttribute('loading');
-      if (img.complete && img.naturalWidth) make(); else img.addEventListener('load', make, { once: true });
-    }
-    if (gl && !setupGL()) gl = null;
-    if (gl) { sec.classList.add('has-gl'); imgs.forEach(function (_, i) { loadTex(i); }); }
-
-    function resize() {
-      if (!gl) return;
-      var r = pin.getBoundingClientRect(), k = Math.min(window.devicePixelRatio || 1, 1.25);
-      canvas.width = Math.round(r.width * k); canvas.height = Math.round(r.height * k);
-      gl.viewport(0, 0, canvas.width, canvas.height);
-    }
-    function draw(now) {
-      var A = tex[fromI], B = tex[toI] || A;
-      if (!A) return;
-      var t = (now - start) / 1000;
-      if (mix < 1) mix = Math.min(1, (now - mixT0) / 950);
-      if (mix >= 1 && fromI !== toI && B) { fromI = toI; }
-      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, A.t);
-      gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, B.t);
-      gl.uniform2f(U.uRes, canvas.width, canvas.height);
-      gl.uniform2f(U.uSa, A.w, A.h); gl.uniform2f(U.uSb, B.w, B.h);
-      var e = 1 - Math.pow(1 - mix, 3);   // ease-out: the change is visible from the first frame
-      gl.uniform1f(U.uMix, fromI === toI ? 0 : e); gl.uniform1f(U.uTime, t);
-      gl.uniform1f(U.uWave, fromI === toI ? 0 : Math.sin(Math.PI * mix));
-      var flat = [];
-      ripples.forEach(function (r) { flat.push(r[0], r[1], r[2]); });
-      gl.uniform3fv(U.uRip, flat);
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
-    }
-    function addRipple(x, y) {
-      ripples[rIdx] = [x, y, (performance.now() - start) / 1000];
-      rIdx = (rIdx + 1) % ripples.length;
-    }
-
-    /* ---------- seasons ---------- */
-    function show(i, quick) {
-      if (i === stage && !quick) return;
-      var prev = stage; stage = i;
-      tabs.forEach(function (b, j) { var on = j === i; b.classList.toggle('is-on', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); });
-      panels.forEach(function (p, j) { p.classList.toggle('is-on', j === i); });
-      words.forEach(function (w, j) { w.classList.toggle('is-on', j === i); });
-      imgs.forEach(function (im, j) { im.classList.toggle('is-on', j === i); });
-      sec.style.setProperty('--wf-p', ((i + 1) / N).toFixed(3));
-      var b = tabs[i], target = Number(b.getAttribute('data-stat')), disp = b.getAttribute('data-disp');
-      label.textContent = b.getAttribute('data-label');
-      if (reduceMotion || quick) stat.textContent = disp;
-      else {
-        var t0 = performance.now(), suffix = disp.replace(/^[0-9]+/, '');
-        (function tick(now) {
-          var k = Math.min(1, (now - t0) / 900), v = Math.round(target * (1 - Math.pow(1 - k, 3)));
-          stat.textContent = v + suffix;
-          if (k < 1 && stage === i) requestAnimationFrame(tick);
-        })(t0);
-      }
-      if (gl && prev !== i) {
-        if (mix < 1) fromI = toI;          // finish an interrupted change from where it was heading
-        toI = i; mixT0 = performance.now(); mix = 0;
-        addRipple(0.72, 0.42);             // a drop lands as the season changes
-      }
-    }
-    function stageForScroll() {
-      var y = Math.max(0, -sec.getBoundingClientRect().top);
-      return clamp(Math.floor(y / STEP), 0, N - 1);
-    }
-    tabs.forEach(function (b, i) {
-      b.addEventListener('click', function () {
-        if (live) window.scrollTo({ top: sec.offsetTop + STEP * (i + 0.5), behavior: 'smooth' });
-        else show(i);
-      });
-    });
-    show(0, true);
-    if (!live) return;
-    window.addEventListener('scroll', function () { show(stageForScroll()); }, { passive: true });
-    show(stageForScroll(), true);
-    fromI = toI = stage;
-
-    if (!gl) return;
-    var lastX = -1, lastY = -1, lastT = 0, touched = false;
-    pin.addEventListener('pointermove', function (e) {
-      var r = pin.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = 1 - (e.clientY - r.top) / r.height, now = performance.now();
-      if (Math.hypot((x - lastX) * r.width, (y - lastY) * r.height) > 110 || now - lastT > 450) {
-        addRipple(x, y); lastX = x; lastY = y; lastT = now;
-      }
-      touched = true;
-    });
-    pin.addEventListener('pointerdown', function (e) {
-      var r = pin.getBoundingClientRect();
-      addRipple((e.clientX - r.left) / r.width, 1 - (e.clientY - r.top) / r.height);
-    });
-    resize();
-    var rt = 0;
-    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(resize, 120); });
-    var running = false, raf = 0, nextDrop = 0;
-    function frame(now) {
-      // Without a pointer (phones), the odd raindrop keeps the lake alive.
-      if (!touched || !finePointer) {
-        if (now > nextDrop) { addRipple(0.45 + Math.random() * 0.5, 0.15 + Math.random() * 0.5); nextDrop = now + 4000 + Math.random() * 3000; }
-      }
-      draw(now);
-      if (running) raf = requestAnimationFrame(frame);
-    }
-    function sync(on) {
-      var want = on && !document.hidden;
-      if (want === running) return;
-      running = want;
-      if (running) raf = requestAnimationFrame(frame); else cancelAnimationFrame(raf);
-    }
-    var inView = false;
-    if ('IntersectionObserver' in window) new IntersectionObserver(function (e) { inView = e[0].isIntersecting; sync(inView); }).observe(pin);
-    else sync(inView = true);
-    document.addEventListener('visibilitychange', function () { sync(inView); });
+    if (!('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) show(cards.indexOf(e.target)); });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    cards.forEach(function (c) { io.observe(c); });
   }
+
 
   /* ------------------------------------------------------------------ *
    * Services tabs, fed by FI_SERVICES
@@ -1629,7 +1465,7 @@
   initHeroPointer();
   initSnow();
   initVelocityRails();
-  initLakeSeasons();
+  initWhySeasons();
   initServices();
   initQuiz();
   initCarousel('uni');
