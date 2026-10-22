@@ -662,177 +662,144 @@
 
 
   /* ------------------------------------------------------------------ *
-   * What we do — the service dial. Drag or flick the ring (it keeps a
-   * little momentum, then snaps), click an icon, or use the arrow keys;
-   * whichever service lands in the glowing slot fills the panel. The ring
-   * angle lives in --rot; nodes counter-rotate in CSS to stay upright.
+   * What we do — photo bento + service sheet. Every service is visible at
+   * once; a spotlight follows the cursor and lights the nearest card
+   * edges, the hovered card tilts and sparks. One click opens a <dialog>
+   * revealed from that card, with the full text and next/previous.
    * ------------------------------------------------------------------ */
   function initServices() {
     var services = window.FI_SERVICES || [];
-    var root = $('[data-orb]');
-    if (!root || !services.length) return;
-    var dial = $('[data-orb-dial]', root), ring = $('[data-orb-ring]', root), nodes = $$('[data-orb-node]', root);
-    var slot = $('[data-orb-slot]', root), num = $('[data-orb-num]', root), name = $('[data-orb-name]', root);
-    var panel = $('#svc-panel'), content = $('[data-svc-content]', root), mark = $('[data-svc-mark]', root);
-    var title = $('[data-svc-title]', root), tag = $('[data-svc-tagline]', root), desc = $('[data-svc-desc]', root), count = $('[data-svc-count]', root);
-    var N = nodes.length, STEP = 360 / N, idx = 0, rot = 0, raf = 0, lastFrame = 0;
-    var wide = window.matchMedia ? window.matchMedia('(min-width: 960px)') : null;
-    var P = wide && wide.matches ? 0 : 90;
+    var root = $('[data-bx]'), sheet = $('[data-sx]');
+    if (!root || !sheet || !services.length || typeof sheet.showModal !== 'function') return;
+    var cards = $$('[data-bx-card]', root), spot = $('[data-bx-spot]', root);
+    var inner = $('[data-sx-inner]', sheet), content = $('[data-sx-content]', sheet), img = $('[data-sx-img]', sheet);
+    var N = cards.length, idx = 0, closing = false;
+    var fx = finePointer && !reduceMotion;
     function pad(n) { return ('0' + n).slice(-2); }
-    function mod(i) { return ((i % N) + N) % N; }
 
-    /* ---------- ring motion ---------- */
-    function setRot(r) { rot = r; ring.style.setProperty('--rot', r.toFixed(2) + 'deg'); }
-    function nearest(r) { return mod(Math.round((P - r) / STEP)); }
-    function targetFor(i, from) { var t = P - i * STEP; return t + 360 * Math.round(((from == null ? rot : from) - t) / 360); }
-    function tween(to, ms) {
-      cancelAnimationFrame(raf);
-      if (reduceMotion || !ms) { setRot(to); return; }
-      var from = rot, t0 = performance.now();
-      raf = requestAnimationFrame(function step(now) {
-        var k = Math.min(1, Math.max(0, now - t0) / ms), e = 1 - Math.pow(1 - k, 3);
-        setRot(from + (to - from) * e);
-        lastFrame = now;
-        raf = k < 1 ? requestAnimationFrame(step) : 0;
-      });
-    }
-    function preview(i) {
-      root.classList.toggle('is-preview', i !== idx);
-      num.textContent = pad(i + 1);
-      name.textContent = nodes[i].getAttribute('data-short');
-      nodes.forEach(function (b, k) { b.classList.toggle('is-near', k === i && i !== idx); });
-    }
-
-    /* ---------- panel ---------- */
-    /* First paragraph always shows; the rest sits behind "Read more". */
-    function renderDesc(s) {
-      var paras = String(s.desc).split(/\n\s*\n/).map(function (p) { return '<p>' + escapeHtml(p.trim()) + '</p>'; });
-      desc.innerHTML = paras[0] + (paras.length > 1
-        ? '<div class="svc__extra" id="svc-extra" hidden>' + paras.slice(1).join('') + '</div>' +
-          '<button class="svc__more" type="button" aria-expanded="false" aria-controls="svc-extra">Read more' +
-          '<svg class="ico ico-sm"><use href="#i-down"/></svg></button>'
-        : '');
-      var more = $('.svc__more', desc), extra = $('.svc__extra', desc);
-      if (more) more.addEventListener('click', function () {
-        var open = more.getAttribute('aria-expanded') !== 'true';
-        more.setAttribute('aria-expanded', String(open));
-        extra.hidden = !open;
-        more.firstChild.textContent = open ? 'Show less' : 'Read more';
-      });
-    }
-    function select(i, opts) {
-      opts = opts || {};
-      i = mod(i);
-      var prev = idx, s = services[i], node = nodes[i];
-      idx = i;
-      nodes.forEach(function (b, k) {
-        var on = k === i;
-        b.classList.toggle('is-on', on); b.classList.remove('is-near');
-        b.setAttribute('aria-selected', on ? 'true' : 'false'); b.tabIndex = on ? 0 : -1;
-      });
-      if (opts.focus) node.focus({ preventScroll: true });
-      root.classList.remove('is-preview');
-      num.textContent = pad(i + 1);
-      name.textContent = node.getAttribute('data-short');
-      root.style.setProperty('--pp', ((i + 1) / N * 100).toFixed(2));
-      if (opts.spin !== false) tween(targetFor(i), 600);
-      if (i === prev && !opts.force) return;
-      title.textContent = node.getAttribute('data-title');
-      tag.textContent = s.tagline;
-      count.textContent = pad(i + 1) + ' / ' + pad(N);
-      if (mark) mark.setAttribute('href', '#' + node.getAttribute('data-icon'));
-      if (panel) panel.setAttribute('aria-labelledby', node.id);
-      renderDesc(s);
-      if (!reduceMotion && i !== prev) {
-        var dir = mod(i - prev) <= N / 2 ? 1 : -1;
-        if (content.animate) content.animate([{ opacity: 0, transform: 'translateX(' + (18 * dir) + 'px)' }, { opacity: 1, transform: 'none' }],
-          { duration: 320, easing: 'cubic-bezier(.2,.7,.2,1)' });
-        slot.classList.remove('is-pulse'); void slot.offsetWidth; slot.classList.add('is-pulse');
+    /* ---------- spotlight, edge glow, tilt, sparks ---------- */
+    if (fx) {
+      var px = 0, py = 0, queued = false;
+      function paint() {
+        queued = false;
+        var g = root.getBoundingClientRect();
+        spot.style.transform = 'translate(' + (px - g.left) + 'px,' + (py - g.top) + 'px)';
+        cards.forEach(function (c) {
+          var r = c.getBoundingClientRect();
+          c.style.setProperty('--gx', (px - r.left).toFixed(0) + 'px');
+          c.style.setProperty('--gy', (py - r.top).toFixed(0) + 'px');
+        });
       }
+      root.addEventListener('pointermove', function (e) {
+        px = e.clientX; py = e.clientY;
+        root.classList.add('is-lit');
+        if (!queued) { queued = true; requestAnimationFrame(paint); }
+      });
+      root.addEventListener('pointerleave', function () {
+        root.classList.remove('is-lit');
+        cards.forEach(function (c) { c.style.removeProperty('--gx'); c.style.removeProperty('--gy'); });
+      });
+      cards.forEach(function (c) {
+        c.addEventListener('pointermove', function (e) {
+          var r = c.getBoundingClientRect(), u = (e.clientX - r.left) / r.width - 0.5, v = (e.clientY - r.top) / r.height - 0.5;
+          c.style.setProperty('--ry', (u * 6).toFixed(2) + 'deg');
+          c.style.setProperty('--rx', (-v * 6).toFixed(2) + 'deg');
+          c.style.setProperty('--tx', (u * 6).toFixed(1) + 'px');
+          c.style.setProperty('--ty', (v * 6).toFixed(1) + 'px');
+        });
+        c.addEventListener('pointerleave', function () { ['--rx', '--ry', '--tx', '--ty'].forEach(function (k) { c.style.removeProperty(k); }); });
+        c.addEventListener('pointerenter', function () {
+          for (var k = 0; k < 6; k++) {
+            var s = document.createElement('span');
+            s.className = 'bx__spark';
+            s.style.left = (10 + Math.random() * 80) + '%';
+            s.style.top = (35 + Math.random() * 55) + '%';
+            s.style.animationDelay = (k * 0.09) + 's';
+            s.addEventListener('animationend', function () { this.remove(); });
+            c.appendChild(s);
+          }
+        });
+      });
     }
 
-    /* ---------- drag / flick ---------- */
-    var drag = null, swallowClick = false;
-    function angleOf(e, c) { return Math.atan2(e.clientY - c.y, e.clientX - c.x) * 180 / Math.PI; }
-    function wrap(d) { return d > 180 ? d - 360 : d < -180 ? d + 360 : d; }
-    dial.addEventListener('pointerdown', function (e) {
-      if (e.button !== 0) return;
-      var r = dial.getBoundingClientRect(), c = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
-      drag = { c: c, a: angleOf(e, c), r0: rot, acc: 0, x: e.clientX, y: e.clientY, t: performance.now(), v: 0, live: false, id: e.pointerId };
-      swallowClick = false;
-    });
-    dial.addEventListener('pointermove', function (e) {
-      if (!drag || e.pointerId !== drag.id) return;
-      if (!drag.live) {
-        if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 6) return;
-        drag.live = true;
-        cancelAnimationFrame(raf);
-        drag.r0 = rot;
-        try { dial.setPointerCapture(e.pointerId); } catch (err) {}
-        root.classList.add('is-dragging', 'is-touched');
-      }
-      var a = angleOf(e, drag.c), d = wrap(a - drag.a), now = performance.now(), dt = Math.max(1, now - drag.t);
-      drag.a = a; drag.t = now; drag.acc += d;
-      drag.v = drag.v * 0.7 + (d / dt) * 0.3;
-      setRot(drag.r0 + drag.acc);
-      preview(nearest(rot));
-    });
-    function release(e) {
-      if (!drag || (e && e.pointerId !== drag.id)) return;
-      var d = drag;
-      drag = null;
-      if (!d.live) return;
-      swallowClick = true;
-      root.classList.remove('is-dragging');
-      var proj = rot + clamp(d.v * 240, -150, 150), i = nearest(proj);
-      select(i, { spin: false });
-      tween(targetFor(i, proj), 520);
+    /* ---------- sheet ---------- */
+    function fill(i) {
+      idx = ((i % N) + N) % N;
+      var s = services[idx], c = cards[idx];
+      img.src = c.getAttribute('data-img');
+      $('[data-sx-num]', sheet).textContent = pad(idx + 1);
+      $('[data-sx-place]', sheet).textContent = c.getAttribute('data-place');
+      $('[data-sx-icon]', sheet).setAttribute('href', '#' + c.getAttribute('data-icon'));
+      $('[data-sx-tag]', sheet).textContent = s.tagline;
+      $('[data-sx-title]', sheet).textContent = c.getAttribute('data-title');
+      $('[data-sx-count]', sheet).textContent = pad(idx + 1) + ' / ' + pad(N);
+      $('[data-sx-desc]', sheet).innerHTML = String(s.desc).split(/\n\s*\n/).map(function (p) { return '<p>' + escapeHtml(p.trim()) + '</p>'; }).join('');
+      content.scrollTop = 0;
     }
-    dial.addEventListener('pointerup', release);
-    dial.addEventListener('pointercancel', release);
-    dial.addEventListener('lostpointercapture', release);
+    // Reveal the sheet through a window that grows from (or shrinks to) the card.
+    function insetFrom(card) {
+      var a = card.getBoundingClientRect(), b = inner.getBoundingClientRect();
+      return 'inset(' + Math.max(0, a.top - b.top) + 'px ' + Math.max(0, b.right - a.right) + 'px ' +
+        Math.max(0, b.bottom - a.bottom) + 'px ' + Math.max(0, a.left - b.left) + 'px round 22px)';
+    }
+    function visible(el) { var r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; }
+    function open(i) {
+      fill(i);
+      document.documentElement.classList.add('is-locked');
+      sheet.showModal();
+      if (reduceMotion || !inner.animate) return;
+      inner.animate([{ clipPath: insetFrom(cards[idx]) }, { clipPath: 'inset(0px 0px 0px 0px round 28px)' }],
+        { duration: 520, easing: 'cubic-bezier(.2,.8,.2,1)' });
+      content.animate([{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }],
+        { duration: 380, delay: 180, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
+    }
+    function close(quick) {
+      if (!sheet.open || closing) return;
+      var card = cards[idx];
+      if (quick || reduceMotion || !inner.animate) { sheet.close(); return; }
+      closing = true;
+      var anim = visible(card)
+        ? inner.animate([{ clipPath: 'inset(0px 0px 0px 0px round 28px)' }, { clipPath: insetFrom(card) }], { duration: 380, easing: 'cubic-bezier(.4,0,.2,1)' })
+        : inner.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(24px)' }], { duration: 260, easing: 'ease-in' });
+      anim.onfinish = function () { closing = false; sheet.close(); };
+    }
+    function step(d) {
+      fill(idx + d);
+      if (reduceMotion || !content.animate) return;
+      content.animate([{ opacity: 0, transform: 'translateX(' + (16 * d) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'cubic-bezier(.2,.7,.2,1)' });
+      img.animate([{ opacity: 0.2, transform: 'scale(1.06)' }, { opacity: 1, transform: 'none' }], { duration: 500, easing: 'cubic-bezier(.2,.7,.2,1)' });
+    }
 
-    /* ---------- clicks, hover, keys ---------- */
-    nodes.forEach(function (b, i) {
-      b.addEventListener('click', function () {
-        if (swallowClick) { swallowClick = false; return; }
-        root.classList.add('is-touched');
-        select(i);
-      });
-      b.addEventListener('mouseenter', function () { if (!drag) preview(i); });
-      b.addEventListener('mouseleave', function () { if (!drag) preview(idx); });
-      b.addEventListener('keydown', function (e) {
-        var k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
-        if (k) { e.preventDefault(); select(idx + k, { focus: true }); }
-        else if (e.key === 'Home') { e.preventDefault(); select(0, { focus: true }); }
-        else if (e.key === 'End') { e.preventDefault(); select(N - 1, { focus: true }); }
+    cards.forEach(function (c, i) {
+      c.addEventListener('click', function (e) {
+        if (!reduceMotion && e.clientX) {
+          var r = c.getBoundingClientRect(), rip = document.createElement('span');
+          rip.className = 'bx__ripple';
+          rip.style.left = (e.clientX - r.left) + 'px'; rip.style.top = (e.clientY - r.top) + 'px';
+          rip.addEventListener('animationend', function () { rip.remove(); });
+          c.appendChild(rip);
+        }
+        open(i);
       });
     });
-    var prevBtn = $('[data-svc-prev]', root), nextBtn = $('[data-svc-next]', root);
-    if (prevBtn) prevBtn.addEventListener('click', function () { select(idx - 1); });
-    if (nextBtn) nextBtn.addEventListener('click', function () { select(idx + 1); });
-    var cta = $('[data-svc-cta]', root);
-    if (cta) cta.addEventListener('click', function () { setDestination('Service: ' + nodes[idx].getAttribute('data-title').replace('&amp;', '&')); });
-
-    // The slot moves from the right (desktop) to the bottom (phones).
-    function syncP() { P = wide && wide.matches ? 0 : 90; tween(targetFor(idx), 0); }
-    if (wide) { if (wide.addEventListener) wide.addEventListener('change', syncP); else if (wide.addListener) wide.addListener(syncP); }
-
-    select(0, { spin: false, force: true });
-    // The dial spins into place the first time it scrolls into view.
-    if (reduceMotion || !('IntersectionObserver' in window)) { setRot(targetFor(0)); return; }
-    setRot(targetFor(0) - 140);
-    var io = new IntersectionObserver(function (es) {
-      if (!es[0].isIntersecting) return;
-      io.disconnect();
-      tween(targetFor(idx), 1300);
-      // If frames were held back (e.g. a reload that lands on the dial), settle anyway.
-      setTimeout(function () {
-        if (drag || Math.abs(rot - targetFor(idx)) < 0.5 || (raf && performance.now() - lastFrame < 200)) return;
-        cancelAnimationFrame(raf); raf = 0; setRot(targetFor(idx));
-      }, 1600);
-    }, { threshold: 0.35 });
-    io.observe(dial);
+    $('[data-sx-close]', sheet).addEventListener('click', function () { close(); });
+    $('[data-sx-prev]', sheet).addEventListener('click', function () { step(-1); });
+    $('[data-sx-next]', sheet).addEventListener('click', function () { step(1); });
+    sheet.addEventListener('cancel', function (e) { e.preventDefault(); close(); });          // Esc
+    sheet.addEventListener('click', function (e) { if (e.target === sheet) close(); });         // backdrop
+    sheet.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
+    });
+    sheet.addEventListener('close', function () {
+      document.documentElement.classList.remove('is-locked');
+      cards[idx].focus({ preventScroll: true });
+    });
+    $('[data-sx-cta]', sheet).addEventListener('click', function () {
+      setDestination('Service: ' + cards[idx].getAttribute('data-title').replace('&amp;', '&'));
+      document.documentElement.classList.remove('is-locked');
+      close(true);
+    });
   }
 
   /* ------------------------------------------------------------------ *
