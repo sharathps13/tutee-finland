@@ -235,62 +235,60 @@
   </div>
 </div>
 
-<!-- ============================== WHY FINLAND (season story) ==============================
-     Split screen: a season photo stays in view while four reason cards
-     scroll past natively; the card in the middle of the screen is in focus
-     and the photo cross-fades to its season. Logic: initWhySeasons(). -->
-<section class="section why2-sec" id="why">
-  <div class="container">
-    <div class="section-head section-head--split reveal">
-      <div>
-        <span class="eyebrow">Why Finland</span>
-        <h2 class="h2" style="margin-top:12px">Four seasons. Four reasons <span class="text-blue">to choose Finland.</span></h2>
-      </div>
-      <p class="lead">From your first autumn semester to a career under the midnight sun &mdash; here is what a Finnish degree gives you, season by season.</p>
-    </div>
-    <div class="why2" data-why>
-      <div class="why2__media" aria-hidden="true">
-        <div class="why2__frame">
-        <figure class="why2__fig is-on" data-why-fig><img src="./assets/img/seasons/autumn.jpg" alt="Autumn in Finland: Saana fell, Lapland" loading="lazy" decoding="async"><figcaption><span class="why2__word">Ruska</span><span class="why2__place"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Saana fell, Lapland</span></figcaption></figure>
-        <figure class="why2__fig" data-why-fig><img src="./assets/img/seasons/winter.jpg" alt="Winter in Finland: Aurora over Inari" loading="lazy" decoding="async"><figcaption><span class="why2__word">Revontulet</span><span class="why2__place"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Aurora over Inari</span></figcaption></figure>
-        <figure class="why2__fig" data-why-fig><img src="./assets/img/seasons/spring.jpg" alt="Spring in Finland: Cherry blossom, Helsinki" loading="lazy" decoding="async"><figcaption><span class="why2__word">Vappu</span><span class="why2__place"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Cherry blossom, Helsinki</span></figcaption></figure>
-        <figure class="why2__fig" data-why-fig><img src="./assets/img/seasons/summer.jpg" alt="Summer in Finland: Midnight sun, Inari" loading="lazy" decoding="async"><figcaption><span class="why2__word">Yötön yö</span><span class="why2__place"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Midnight sun, Inari</span></figcaption></figure>
-          <div class="why2__progress"><span data-why-step>01</span> / 04<i><b data-why-bar></b></i></div>
+<!-- ============================== WHY FINLAND (season stage) ==============================
+     Pinned like the hero (desktop): every 200px of scroll is one season.
+     Reading column on solid night blue; all motion lives in the photo
+     window (season particles, cursor wind, click gusts, circle wipe).
+     Phones: not pinned; tap a season or swipe the window. initSeasonStage(). -->
+<section class="ws" id="why" data-ws>
+  <div class="ws__pin">
+    <div class="container ws__grid">
+      <div class="ws__copy">
+        <span class="eyebrow ws__eyebrow">Why Finland</span>
+        <h2 class="h2 ws__title">Four seasons. Four reasons <span class="text-blue">to choose Finland.</span></h2>
+        <div class="ws__tabs" role="tablist" aria-label="Seasons">
+            <button class="ws__tab is-on" type="button" role="tab" id="ws-tab-autumn" aria-controls="ws-autumn" aria-selected="true" data-ws-tab><svg class="ico ico-sm"><use href="#i-leaf"/></svg><span>Autumn<small>Sep &ndash; Nov</small></span></button>
+            <button class="ws__tab" type="button" role="tab" id="ws-tab-winter" aria-controls="ws-winter" aria-selected="false" tabindex="-1" data-ws-tab><svg class="ico ico-sm"><use href="#i-moon"/></svg><span>Winter<small>Dec &ndash; Feb</small></span></button>
+            <button class="ws__tab" type="button" role="tab" id="ws-tab-spring" aria-controls="ws-spring" aria-selected="false" tabindex="-1" data-ws-tab><svg class="ico ico-sm"><use href="#i-sprout"/></svg><span>Spring<small>Mar &ndash; May</small></span></button>
+            <button class="ws__tab" type="button" role="tab" id="ws-tab-summer" aria-controls="ws-summer" aria-selected="false" tabindex="-1" data-ws-tab><svg class="ico ico-sm"><use href="#i-sun"/></svg><span>Summer<small>Jun &ndash; Aug</small></span></button>
+          <i class="ws__track" aria-hidden="true"><b data-ws-bar></b></i>
+        </div>
+        <div class="ws__panels">
+            <article class="ws__panel is-on" role="tabpanel" id="ws-autumn" aria-labelledby="ws-tab-autumn" data-ws-panel>
+              <div class="ws__stat"><b><span data-ws-num="12">12</span></b><span>institutions ranked in QS Europe 2026</span></div>
+              <h3 class="ws__h">World-class teaching from week one.</h3>
+              <p class="ws__p">Term starts as the forests turn red and gold. Twelve Finnish institutions appear in the QS World University Rankings: Europe 2026, and teaching is hands-on and project-based from the first week.</p>
+              <ul class="ws__facts"><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Tutor groups help every newcomer settle in</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>One national application service: Studyinfo</li></ul>
+            </article>
+            <article class="ws__panel" role="tabpanel" id="ws-winter" aria-labelledby="ws-tab-winter" data-ws-panel>
+              <div class="ws__stat"><b><span data-ws-num="1">1</span></b><span>residence permit for your entire degree</span></div>
+              <h3 class="ws__h">One permit for your whole degree.</h3>
+              <p class="ws__p">While the northern lights dance over Lapland, your studies run on a continuous A permit for the whole length of your degree, with no credibility interview.</p>
+              <ul class="ws__facts"><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Saunas, skating and ski trails in every campus town</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Campuses and transport run smoothly all winter</li></ul>
+            </article>
+            <article class="ws__panel" role="tabpanel" id="ws-spring" aria-labelledby="ws-tab-spring" data-ws-panel>
+              <div class="ws__stat"><b><span data-ws-num="600">600</span>+</b><span>English-taught degree programmes</span></div>
+              <h3 class="ws__h">Your degree, taught in English.</h3>
+              <p class="ws__p">As the snow melts, students in white caps celebrate Vappu, Finland's biggest student festival. Choose from more than 600 English-taught degree programmes across 36 institutions.</p>
+              <ul class="ws__facts"><li><svg class="ico ico-sm"><use href="#i-check"/></svg>From ICT and engineering to arts and health</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Student unions host events all year round</li></ul>
+            </article>
+            <article class="ws__panel" role="tabpanel" id="ws-summer" aria-labelledby="ws-tab-summer" data-ws-panel>
+              <div class="ws__stat"><b><span data-ws-num="30">30</span> h</b><span>average weekly work allowance</span></div>
+              <h3 class="ws__h">Earn while you study. Stay after.</h3>
+              <p class="ws__p">Under the midnight sun many students work full time: the 30-hour weekly allowance is averaged across the year. After graduating, you get up to two years to find work.</p>
+              <ul class="ws__facts"><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Everyman's right: forests and lakes are open to all</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>2-year permit to look for work or start a business</li></ul>
+            </article>
         </div>
       </div>
-      <div class="why2__list">
-        <article class="why2__card is-on" data-why-card>
-          <img class="why2__mphoto" src="./assets/img/seasons/autumn.jpg" alt="" loading="lazy" decoding="async">
-          <span class="why2__season"><svg class="ico ico-sm"><use href="#i-leaf"/></svg>Autumn &middot; Ruska</span>
-          <div class="why2__stat"><b><span data-count="12">12</span></b><span>institutions ranked in QS Europe 2026</span></div>
-          <h3 class="why2__h">World-class teaching from week one.</h3>
-          <p class="why2__p">Term starts as the forests turn red and gold. Twelve Finnish institutions appear in the QS World University Rankings: Europe 2026, and teaching is hands-on and project-based from the first week.</p>
-          <ul class="why2__facts"><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Tutor groups help every newcomer settle in</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>One national application service: Studyinfo</li></ul>
-        </article>
-        <article class="why2__card" data-why-card>
-          <img class="why2__mphoto" src="./assets/img/seasons/winter.jpg" alt="" loading="lazy" decoding="async">
-          <span class="why2__season"><svg class="ico ico-sm"><use href="#i-moon"/></svg>Winter &middot; Revontulet</span>
-          <div class="why2__stat"><b><span data-count="1">1</span></b><span>residence permit for your entire degree</span></div>
-          <h3 class="why2__h">One permit for your whole degree.</h3>
-          <p class="why2__p">While the northern lights dance over Lapland, your studies run on a continuous A permit for the whole length of your degree, with no credibility interview.</p>
-          <ul class="why2__facts"><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Saunas, skating and ski trails in every campus town</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Campuses and transport run smoothly all winter</li></ul>
-        </article>
-        <article class="why2__card" data-why-card>
-          <img class="why2__mphoto" src="./assets/img/seasons/spring.jpg" alt="" loading="lazy" decoding="async">
-          <span class="why2__season"><svg class="ico ico-sm"><use href="#i-sprout"/></svg>Spring &middot; Vappu</span>
-          <div class="why2__stat"><b><span data-count="600">600</span>+</b><span>English-taught degree programmes</span></div>
-          <h3 class="why2__h">600+ degrees taught in English.</h3>
-          <p class="why2__p">As the snow melts, students in white caps celebrate Vappu, Finland's biggest student festival. Choose from more than 600 English-taught degree programmes across 36 institutions.</p>
-          <ul class="why2__facts"><li><svg class="ico ico-sm"><use href="#i-check"/></svg>From ICT and engineering to arts and health</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Student unions host events all year round</li></ul>
-        </article>
-        <article class="why2__card" data-why-card>
-          <img class="why2__mphoto" src="./assets/img/seasons/summer.jpg" alt="" loading="lazy" decoding="async">
-          <span class="why2__season"><svg class="ico ico-sm"><use href="#i-sun"/></svg>Summer &middot; Yötön yö</span>
-          <div class="why2__stat"><b><span data-count="30">30</span> h</b><span>average weekly work allowance</span></div>
-          <h3 class="why2__h">Earn while you study. Stay after.</h3>
-          <p class="why2__p">Under the midnight sun many students work full time: the 30-hour weekly allowance is averaged across the year. After graduating, you get up to two years to find work.</p>
-          <ul class="why2__facts"><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Everyman's right: forests and lakes are open to all</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>2-year permit to look for work or start a business</li></ul>
-        </article>
+      <div class="ws__window" data-ws-window aria-hidden="true">
+        <div class="ws__tilt" data-ws-tilt>
+          <figure class="ws__fig is-on" data-ws-fig><img src="./assets/img/seasons/autumn.jpg" alt="Autumn in Finland: Saana fell, Lapland" decoding="async"><figcaption><span class="ws__word">Ruska</span><span class="ws__place"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Saana fell, Lapland</span></figcaption></figure>
+          <figure class="ws__fig" data-ws-fig><img src="./assets/img/seasons/winter.jpg" alt="Winter in Finland: Aurora over Inari" decoding="async" loading="lazy"><figcaption><span class="ws__word">Revontulet</span><span class="ws__place"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Aurora over Inari</span></figcaption></figure>
+          <figure class="ws__fig" data-ws-fig><img src="./assets/img/seasons/spring.jpg" alt="Spring in Finland: Cherry blossom, Helsinki" decoding="async" loading="lazy"><figcaption><span class="ws__word">Vappu</span><span class="ws__place"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Cherry blossom, Helsinki</span></figcaption></figure>
+          <figure class="ws__fig" data-ws-fig><img src="./assets/img/seasons/summer.jpg" alt="Summer in Finland: Midnight sun, Inari" decoding="async" loading="lazy"><figcaption><span class="ws__word">Yötön yö</span><span class="ws__place"><svg class="ico ico-sm"><use href="#i-pin"/></svg>Midnight sun, Inari</span></figcaption></figure>
+          <canvas class="ws__fx" data-ws-fx></canvas>
+          <span class="ws__hint"><svg class="ico ico-sm"><use href="#i-spark"/></svg><span class="ws__hint-fine">Move to stir the air &middot; click for a gust</span><span class="ws__hint-touch">Swipe for the next season</span></span>
+        </div>
       </div>
     </div>
   </div>

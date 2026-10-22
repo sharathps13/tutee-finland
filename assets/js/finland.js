@@ -391,29 +391,255 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * Why Finland — season story. The card nearest the middle of the screen
-   * is in focus and the sticky photo cross-fades to its season. Native
-   * scrolling only; no canvas, no pinning.
+   * Why Finland — season stage. Pinned like the hero on desktop (200px of
+   * scroll per season); tabs and swipes work everywhere. The reading
+   * column only fades. All motion is inside the photo window: a circle
+   * wipe between seasons, a pointer tilt, and season particles (leaves,
+   * snow, petals, fireflies) that the cursor stirs and a click gusts.
    * ------------------------------------------------------------------ */
-  function initWhySeasons() {
-    var root = $('[data-why]');
-    if (!root) return;
-    var cards = $$('[data-why-card]', root), figs = $$('[data-why-fig]', root);
-    var step = $('[data-why-step]', root), bar = $('[data-why-bar]', root), active = 0;
-    function show(i) {
-      if (i === active) return;
-      active = i;
-      cards.forEach(function (c, k) { c.classList.toggle('is-on', k === i); });
-      figs.forEach(function (f, k) { f.classList.toggle('is-on', k === i); });
-      if (step) step.textContent = ('0' + (i + 1)).slice(-2);
-      if (bar) bar.style.width = ((i + 1) / cards.length * 100) + '%';
+  function seasonFx(canvas) {
+    var ctx = canvas.getContext && canvas.getContext('2d');
+    if (!ctx) return null;
+    var W = 0, H = 0, dpr = 1, kind = 0, parts = [], t = 0;
+    var DENSITY = [26, 80, 34, 30];               // per 600x600 window
+    var LEAF = ['#e2582a', '#f2a93b', '#c8321e', '#f4c04a', '#b5461d'];
+    var PETAL = ['#ffd1dc', '#ffb6c8', '#fff0f4', '#f7a8bf'];
+    function sprite(rgb) {
+      var c = document.createElement('canvas'), z = 32, x = c.getContext('2d');
+      c.width = c.height = z;
+      var g = x.createRadialGradient(z / 2, z / 2, 0, z / 2, z / 2, z / 2);
+      g.addColorStop(0, 'rgba(' + rgb + ',1)'); g.addColorStop(0.3, 'rgba(' + rgb + ',.8)'); g.addColorStop(1, 'rgba(' + rgb + ',0)');
+      x.fillStyle = g; x.fillRect(0, 0, z, z);
+      return c;
     }
-    if (!('IntersectionObserver' in window)) return;
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) { if (e.isIntersecting) show(cards.indexOf(e.target)); });
-    }, { rootMargin: '-45% 0px -45% 0px' });
-    cards.forEach(function (c) { io.observe(c); });
+    var SNOW = sprite('255,255,255'), FLY = sprite('255,214,120');
+    function rnd(a, b) { return a + Math.random() * (b - a); }
+    function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
+    function spawn(k, x, y) {
+      var p = { k: k, x: x == null ? rnd(0, W) : x, y: y == null ? rnd(0, H) : y, ex: 0, ey: 0, a: 0, ph: rnd(0, 6.28), r: rnd(0, 6.28), vr: rnd(-1.6, 1.6), out: false, ttl: -1 };
+      if (k === 0) { p.s = rnd(5, 9); p.vx = rnd(-8, 8); p.vy = rnd(28, 55); p.c = pick(LEAF); }
+      else if (k === 1) { p.s = rnd(1, 2.6); p.vx = rnd(-6, 6); p.vy = rnd(18, 42); }
+      else if (k === 2) { p.s = rnd(3.5, 6); p.vx = rnd(12, 30); p.vy = rnd(16, 32); p.c = pick(PETAL); }
+      else { p.s = rnd(2, 3.6); p.vx = rnd(-6, 6); p.vy = rnd(-16, -5); }
+      parts.push(p);
+      return p;
+    }
+    function target() { return Math.round(DENSITY[kind] * Math.min(1.4, W * H / 360000)); }
+    function resize() {
+      var r = canvas.getBoundingClientRect();
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      W = r.width; H = r.height;
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    }
+    function step(dt) {
+      t += dt;
+      var alive = 0, damp = Math.exp(-2.4 * dt);
+      for (var i = parts.length - 1; i >= 0; i--) {
+        var p = parts[i], sx = 0, sy = 0;
+        if (p.ttl > 0 && (p.ttl -= dt) <= 0) p.out = true;
+        p.ex *= damp; p.ey *= damp;
+        if (p.k === 0) sx = Math.sin(t * 1.3 + p.ph) * 22;
+        else if (p.k === 1) sx = Math.sin(t * 0.8 + p.ph) * 8;
+        else if (p.k === 2) sx = Math.sin(t * 1.8 + p.ph) * 12;
+        else { sx = Math.sin(t * 0.7 + p.ph) * 10; sy = Math.cos(t * 0.9 + p.ph) * 6; }
+        p.x += (p.vx + sx + p.ex) * dt; p.y += (p.vy + sy + p.ey) * dt; p.r += p.vr * dt;
+        p.a = p.out ? p.a - dt * 1.6 : Math.min(1, p.a + dt * 1.2);
+        if (p.out) { if (p.a <= 0) parts.splice(i, 1); continue; }
+        if (p.x < -24) p.x = W + 20; else if (p.x > W + 24) p.x = -20;
+        if (p.vy > 0 && p.y > H + 24) { p.y = -20; p.x = rnd(0, W); }
+        if (p.vy < 0 && p.y < -24) { p.y = H + 20; p.x = rnd(0, W); }
+        if (p.y < -60 || p.y > H + 60) p.y = p.vy > 0 ? -20 : H + 20;
+        if (p.ttl < 0) alive++;
+      }
+      for (var n = target() - alive, m = 0; n > 0 && m < 3; n--, m++) spawn(kind);
+    }
+    function draw() {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < parts.length; i++) {
+        var p = parts[i];
+        if (p.a <= 0) continue;
+        if (p.k === 1) {
+          ctx.globalAlpha = p.a * 0.9;
+          ctx.drawImage(SNOW, p.x - p.s * 2, p.y - p.s * 2, p.s * 4, p.s * 4);
+        } else if (p.k === 3) {
+          ctx.globalAlpha = p.a * (0.45 + 0.55 * Math.abs(Math.sin(t * 1.6 + p.ph)));
+          ctx.drawImage(FLY, p.x - p.s * 3, p.y - p.s * 3, p.s * 6, p.s * 6);
+        } else {
+          ctx.save();
+          ctx.translate(p.x, p.y); ctx.rotate(p.r);
+          ctx.scale(1, 0.25 + 0.75 * Math.abs(Math.cos(t * 2 + p.ph)));   // tumbling
+          ctx.globalAlpha = p.a * 0.95;
+          ctx.fillStyle = p.c;
+          ctx.beginPath(); ctx.ellipse(0, 0, p.s, p.s * (p.k === 0 ? 0.48 : 0.62), 0, 0, 6.2832); ctx.fill();
+          if (p.k === 0) { ctx.globalAlpha = p.a * 0.5; ctx.strokeStyle = 'rgba(60,20,0,.6)'; ctx.lineWidth = 0.8; ctx.beginPath(); ctx.moveTo(-p.s, 0); ctx.lineTo(p.s * 1.3, 0); ctx.stroke(); }
+          ctx.restore();
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+    return {
+      resize: resize,
+      frame: function (dt) { step(dt); draw(); },
+      season: function (k, fill) {
+        kind = k;
+        parts.forEach(function (p) { if (p.k !== k) p.out = true; });
+        if (fill) for (var n = target(); n > 0; n--) spawn(k).a = Math.random();
+      },
+      stir: function (x, y, dx, dy) {
+        for (var i = 0; i < parts.length; i++) {
+          var p = parts[i], d = Math.hypot(p.x - x, p.y - y);
+          if (d > 130) continue;
+          var f = (1 - d / 130) * 3.2;
+          p.ex = clamp(p.ex + dx * f, -420, 420); p.ey = clamp(p.ey + dy * f, -420, 420);
+        }
+      },
+      gust: function (x, y) {
+        for (var i = 0; i < parts.length; i++) {
+          var p = parts[i], ddx = p.x - x, ddy = p.y - y, d = Math.hypot(ddx, ddy) || 1;
+          if (d > 220) continue;
+          var f = (1 - d / 220) * 320;
+          p.ex += ddx / d * f; p.ey += ddy / d * f;
+        }
+        for (var k = 0; k < 12; k++) {
+          var q = spawn(kind, x, y), ang = rnd(0, 6.2832), sp = rnd(120, 300);
+          q.a = 1; q.ttl = rnd(1.8, 3); q.ex = Math.cos(ang) * sp; q.ey = Math.sin(ang) * sp;
+        }
+      }
+    };
   }
+
+  function initSeasonStage() {
+    var sec = $('[data-ws]');
+    if (!sec) return;
+    var tabs = $$('[data-ws-tab]', sec), panels = $$('[data-ws-panel]', sec), figs = $$('[data-ws-fig]', sec);
+    var win = $('[data-ws-window]', sec), tilt = $('[data-ws-tilt]', sec), bar = $('[data-ws-bar]', sec);
+    var N = tabs.length, STEP = 200, stage = -1, seen = false, lastPointer = null;
+    var pinMq = window.matchMedia ? window.matchMedia('(min-width: 900px) and (min-height: 620px)') : null;
+    function pinned() { return !reduceMotion && !!pinMq && pinMq.matches; }
+    function syncLive() { sec.classList.toggle('is-live', pinned()); }
+    syncLive();
+    if (pinMq) { if (pinMq.addEventListener) pinMq.addEventListener('change', syncLive); else if (pinMq.addListener) pinMq.addListener(syncLive); }
+    window.addEventListener('load', function () { figs.forEach(function (f) { $('img', f).loading = 'eager'; }); });
+
+    var fx = reduceMotion ? null : seasonFx($('[data-ws-fx]', sec));
+    if (fx) fx.resize();
+
+    function countUp(panel, quick) {
+      var el = $('[data-ws-num]', panel), to = Number(el.getAttribute('data-ws-num'));
+      if (quick || reduceMotion) { el.textContent = to; return; }
+      var t0 = performance.now(), mine = stage;
+      (function tick(now) {
+        var k = Math.min(1, (now - t0) / 850);
+        el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3)));
+        if (k < 1 && stage === mine) requestAnimationFrame(tick); else el.textContent = to;
+      })(t0);
+    }
+    function show(i, quick) {
+      if (i === stage) return;
+      var prev = stage, fig = figs[i];
+      stage = i;
+      tabs.forEach(function (b, k) {
+        var on = k === i;
+        b.classList.toggle('is-on', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); b.tabIndex = on ? 0 : -1;
+      });
+      panels.forEach(function (p, k) { p.classList.toggle('is-on', k === i); });
+      // The new photo wipes open from the pointer, or from the side the year is moving towards.
+      var o = lastPointer || (i > prev ? [8, 100] : [92, 0]);
+      fig.style.setProperty('--ox', o[0] + '%'); fig.style.setProperty('--oy', o[1] + '%');
+      if (quick) fig.style.transition = 'none';
+      void fig.offsetWidth;               // commit the origin first so only the radius animates
+      figs.forEach(function (f, k) { f.classList.toggle('is-prev', k === prev); f.classList.toggle('is-on', k === i); });
+      if (quick) { void fig.offsetWidth; fig.style.transition = ''; }
+      if (bar) bar.style.width = ((i + 1) / N * 100) + '%';
+      if (seen) countUp(panels[i], quick);
+      if (fx) fx.season(i, quick);
+    }
+    function stageForScroll() {
+      return clamp(Math.floor(Math.max(0, -sec.getBoundingClientRect().top) / STEP), 0, N - 1);
+    }
+    function goTo(i) {
+      i = clamp(i, 0, N - 1);
+      if (pinned()) window.scrollTo({ top: sec.offsetTop + STEP * (i + 0.5), behavior: 'smooth' });
+      else show(i);
+    }
+    tabs.forEach(function (b, i) {
+      b.addEventListener('click', function () { lastPointer = null; goTo(i); });
+      b.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (!d) return;
+        e.preventDefault();
+        var k = (i + d + N) % N;
+        tabs[k].focus(); lastPointer = null; goTo(k);
+      });
+    });
+    show(0, true);
+    window.addEventListener('scroll', function () { if (pinned()) show(stageForScroll()); }, { passive: true });
+    if (pinned()) show(stageForScroll(), true);
+
+    // Swipe the window (touch) to move through the year.
+    var sx = null, sy = 0;
+    win.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse') { sx = e.clientX; sy = e.clientY; } });
+    win.addEventListener('pointerup', function (e) {
+      if (sx == null) return;
+      var dx = e.clientX - sx, dy = e.clientY - sy;
+      sx = null;
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3) { lastPointer = null; goTo(stage + (dx < 0 ? 1 : -1)); sec.classList.add('is-stirred'); }
+    });
+    win.addEventListener('pointercancel', function () { sx = null; });
+
+    function local(e) {
+      var r = win.getBoundingClientRect();
+      return { x: e.clientX - r.left, y: e.clientY - r.top, w: r.width, h: r.height };
+    }
+    var px = null, py = null, moved = 0;
+    if (finePointer && !reduceMotion) {
+      win.addEventListener('pointermove', function (e) {
+        var p = local(e), u = p.x / p.w, v = p.y / p.h;
+        tilt.style.setProperty('--ry', ((u - 0.5) * 6).toFixed(2) + 'deg');
+        tilt.style.setProperty('--rx', ((0.5 - v) * 4).toFixed(2) + 'deg');
+        tilt.style.setProperty('--px', ((0.5 - u) * 18).toFixed(1) + 'px');
+        tilt.style.setProperty('--py', ((0.5 - v) * 12).toFixed(1) + 'px');
+        lastPointer = [Math.round(u * 100), Math.round(v * 100)];
+        if (px != null && fx) fx.stir(p.x, p.y, p.x - px, p.y - py);
+        if (px != null && (moved += Math.abs(p.x - px) + Math.abs(p.y - py)) > 400) sec.classList.add('is-stirred');
+        px = p.x; py = p.y;
+      });
+      win.addEventListener('pointerleave', function () {
+        px = py = null; lastPointer = null;
+        ['--rx', '--ry', '--px', '--py'].forEach(function (k) { tilt.style.removeProperty(k); });
+      });
+    }
+    if (fx) win.addEventListener('click', function (e) { var p = local(e); fx.gust(p.x, p.y); sec.classList.add('is-stirred'); });
+
+    // Count the first stat when the section arrives; animate only while visible.
+    var running = false, raf = 0, last = 0, inView = false;
+    function frame(now) {
+      var dt = Math.min(0.05, (now - last) / 1000 || 0.016);
+      last = now;
+      fx.frame(dt);
+      if (running) raf = requestAnimationFrame(frame);
+    }
+    function sync() {
+      var want = !!fx && inView && !document.hidden;
+      if (want === running) return;
+      running = want;
+      if (running) { last = performance.now(); raf = requestAnimationFrame(frame); } else cancelAnimationFrame(raf);
+    }
+    if (fx) {
+      var rt = 0;
+      window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(fx.resize, 120); });
+      document.addEventListener('visibilitychange', sync);
+    }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) {
+        inView = es[0].isIntersecting;
+        if (inView && !seen) { seen = true; countUp(panels[stage], false); }
+        sync();
+      }, { threshold: 0.15 }).observe(win);
+    } else { seen = true; inView = true; sync(); }
+  }
+
 
 
   /* ------------------------------------------------------------------ *
@@ -1465,7 +1691,7 @@
   initHeroPointer();
   initSnow();
   initVelocityRails();
-  initWhySeasons();
+  initSeasonStage();
   initServices();
   initQuiz();
   initCarousel('uni');
