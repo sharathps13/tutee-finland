@@ -1020,18 +1020,36 @@ main { overflow-x: clip; }
 
 .pc__back { transform: rotateY(180deg); display: grid; grid-template-columns: 1.1fr 1fr; gap: 0; padding: 6% 5.5%; color: var(--ink); container-type: inline-size;
   background: linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,0)), repeating-linear-gradient(0deg, #fbf8f1 0 2px, #f8f4ea 2px 4px); }
-.pc__msg { display: grid; gap: 2.2cqi; align-content: start; padding-right: 5%; border-right: 1.5px solid #d9cfbb; }
+/* Airmail stripes around the back. */
+.pc__back::before { content: ""; position: absolute; inset: 0; padding: 7px; border-radius: inherit; pointer-events: none;
+  background: repeating-linear-gradient(-45deg, var(--brand) 0 12px, transparent 12px 18px, var(--fi-blue) 18px 30px, transparent 30px 36px);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+.pc__msg { position: relative; display: grid; gap: 2cqi; align-content: start; padding-right: 5%; border-right: 1.5px dashed #cdbfa3;
+  background-image: repeating-linear-gradient(180deg, transparent 0 25px, rgba(0,53,128,.09) 25px 26px); }
 .pc__hand { font-size: clamp(15px, 3.4cqi, 22px); font-weight: 700; font-style: italic; color: var(--fi-blue); }
 .pc__msg p { font-size: clamp(13px, 2.4cqi, 15.5px); line-height: 1.55; color: var(--ink-2); }
 .pc__fields { display: flex; flex-wrap: wrap; gap: 6px; }
-.pc__fields span { padding: 4px 9px; border-radius: 8px; font-size: clamp(11.5px, 2cqi, 13px); font-weight: 700; color: var(--fi-blue); background: #fff; border: 1px solid #d9e3f1; }
+.pc__fields span { padding: 4px 9px; border-radius: 6px; transform: rotate(-2deg); border-style: dashed !important; border-width: 1.5px !important; font-size: clamp(11.5px, 2cqi, 13px); font-weight: 700; color: var(--fi-blue); background: #fff; border: 1px solid #d9e3f1; }
 .pc__fields span.is-match { color: var(--night); background: var(--aurora); border-color: var(--aurora); }
+.pc__fields span:nth-child(even) { transform: rotate(2deg); }
+.pc__snap { position: relative; justify-self: start; width: min(50%, 170px); margin: 4px 0 0 4px; padding: 6px 6px 22px; background: #fff; transform: rotate(-4deg);
+  box-shadow: 0 10px 22px -12px rgba(6,22,49,.5); }
+.pc__snap::before { content: ""; position: absolute; top: -9px; left: 50%; width: 56px; height: 18px; margin-left: -28px; background: rgba(242,169,59,.45); transform: rotate(3deg); }
+.pc__snap img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.pc__snap figcaption { position: absolute; left: 0; right: 0; bottom: 3px; text-align: center; font-size: 12px; font-style: italic; font-weight: 700; color: var(--fi-blue); }
 .pc__sign { margin-top: auto; font-size: clamp(13px, 2.4cqi, 16px); font-style: italic; font-weight: 700; color: var(--brand); }
 .pc__addr { position: relative; display: grid; gap: 1.6cqi; align-content: start; padding-left: 6%; }
-.pc__mini { justify-self: end; width: 12cqi; aspect-ratio: 4 / 5; display: grid; place-items: center; padding: 6px; background: var(--fi-blue); color: #fff; font-size: 2.6cqi; font-weight: 800;
+.pc__addrtop { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.pc__airmail { padding: 4px 8px; border: 1.5px solid var(--brand); border-radius: 4px; font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; line-height: 1.25; color: var(--brand); transform: rotate(-3deg); }
+.pc__mini { position: relative; width: 13cqi; aspect-ratio: 4 / 5; display: grid; place-items: end start; padding: 6px; color: #fff; font-size: 2.6cqi; font-weight: 800;
+  background-color: var(--fi-blue); background-size: cover; background-position: center; background-origin: content-box; background-clip: content-box;
   -webkit-mask: linear-gradient(#000 0 0) content-box, radial-gradient(circle at 4px 4px, transparent 2px, #000 2.4px) -4px -4px / 8px 8px;
   mask: linear-gradient(#000 0 0) content-box, radial-gradient(circle at 4px 4px, transparent 2px, #000 2.4px) -4px -4px / 8px 8px; }
+.pc__mini > span { position: relative; z-index: 1; padding: 0 0 2px 4px; text-shadow: 0 1px 6px rgba(0,0,0,.7); }
 .pc__mini b { font-size: 5cqi; line-height: 1; }
+/* Wavy cancellation over the stamp. */
+.pc__mini::after { content: ""; position: absolute; left: -40%; top: 18%; width: 90%; height: 34%; border-radius: 50%;
+  background: repeating-linear-gradient(180deg, rgba(4,16,42,.55) 0 1.5px, transparent 1.5px 5px); transform: rotate(-12deg); }
 .pc__line { display: grid; padding-bottom: 4px; border-bottom: 1.5px solid #d9cfbb; }
 .pc__line small { font-size: clamp(10px, 1.8cqi, 11.5px); font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #9a8f78; }
 .pc__line b { font-size: clamp(13px, 2.5cqi, 16px); line-height: 1.3; color: var(--ink); }
@@ -1045,14 +1063,16 @@ main { overflow-x: clip; }
 .pc__heart--front { position: absolute; left: 7%; bottom: 7%; color: #fff; background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.3); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
 .pc__heart--front:hover { border-color: #fff; background: rgba(255,255,255,.22); }
 .pc__heart--front[aria-pressed="true"] { background: #fff; color: var(--brand); border-color: #fff; }
-.pc__flip--back { position: static; justify-self: start; margin-top: 2px; color: var(--fi-blue); background: transparent; border-color: #d9e3f1; padding: 6px 12px; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.pc__flip--back { position: absolute; right: 16px; bottom: 16px; z-index: 2; width: 38px; height: 38px; padding: 0; justify-content: center; font-size: 0; gap: 0; color: var(--fi-blue); background: #fff; border-color: #d9e3f1; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.pc__flip--back .ico { width: 16px; height: 16px; }
 .pc__flip--back:hover { background: #fff; }
 .pc__flip--back .ico { color: var(--fi-blue); }
 @media (max-width: 560px) {
   .pc__card { aspect-ratio: auto; height: 420px; }
   .pc__back { grid-template-columns: 1fr; gap: 10px; padding: 22px 20px; }
   .pc__msg { border-right: 0; padding-right: 0; gap: 8px; }
-  .pc__sign { display: none; }
+  .pc__sign, .pc__snap, .pc__airmail { display: none; }
+  .pc__flip--back { top: 16px; bottom: auto; }
   .pc__addr { padding-left: 0; gap: 8px; }
   .pc__mini { display: none; }
 }

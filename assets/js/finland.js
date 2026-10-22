@@ -1002,6 +1002,9 @@
       set('[data-pc-kind]', u.uas ? 'University of applied sciences' : 'University');
       set('[data-pc-note]', u.name + ' is ranked #' + (u.i + 1) + ' in Finland. Its broad strengths:');
       $('[data-pc-link]', root).setAttribute('href', './university.html?id=' + u.id);
+      $('[data-pc-snap]', root).setAttribute('src', u.img);
+      set('[data-pc-snapcap]', u.big);
+      $('[data-pc-mini]', root).style.backgroundImage = 'url(' + u.img + ')';
       renderFields(u);
       syncHeart();
     }
