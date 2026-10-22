@@ -920,92 +920,62 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * Funding passes — five ways to fund a degree. A tab swaps the
-   * holographic pass (it turns edge-on, changes, and turns back) and the
-   * detail panel; the foil and glare follow the pointer across the pass.
+   * Funding departures — split-flap headline figures settle row by row
+   * when the board first scrolls into view (and again on hover); each
+   * row opens its boarding pass, one at a time.
    * ------------------------------------------------------------------ */
-  function initFundingPasses() {
-    var root = $('[data-fp]');
+  function initFundingBoard() {
+    var root = $('[data-fb]');
     if (!root) return;
-    var tabs = $$('[data-fp-tab]', root), pass = $('[data-fp-pass]', root), passin = $('[data-fp-passin]', root);
-    var stage = $('[data-fp-stage]', root), panel = $('[data-fp-panel]', root), logos = $('[data-fp-logos]', root);
-    var idx = 0, N = tabs.length;
-    function set(sel, text) { var n = $(sel, root); if (n) n.textContent = text; }
-    function fill(i) {
-      var t = tabs[i], d = function (k) { return t.getAttribute('data-' + k); };
-      pass.setAttribute('data-key', d('key'));
-      root.setAttribute('data-key', d('key'));
-      set('[data-fp-value]', d('value')); set('[data-fp-sub]', d('sub'));
-      set('[data-fp-name]', t.querySelector('b').textContent);
-      set('[data-fp-for]', d('for')); set('[data-fp-by]', d('by'));
-      set('[data-fp-no]', ('0' + (i + 1)).slice(-2) + ' / ' + ('0' + N).slice(-2));
-      set('[data-fp-title]', d('title')); set('[data-fp-text]', d('text'));
-      $('[data-fp-points]', root).innerHTML = d('points').split('|').map(function (p) {
-        return '<li><svg class="ico ico-sm"><use href="#i-check"/></svg>' + escapeHtml(p) + '</li>';
-      }).join('');
-      logos.hidden = d('key') !== 'loans';
-      var cta = $('[data-fp-cta]', root);
-      cta.firstChild.textContent = d('cta');
-      panel.setAttribute('aria-labelledby', t.id);
-    }
-    function select(i, focus) {
-      i = (i + N) % N;
-      if (i === idx) return;
-      var dir = i > idx ? 1 : -1;
-      idx = i;
-      tabs.forEach(function (t, k) {
-        var on = k === i;
-        t.classList.toggle('is-on', on); t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1;
-      });
-      if (focus) tabs[i].focus();
-      var strip = tabs[i].parentNode;
-      if (strip.scrollWidth > strip.clientWidth) strip.scrollTo({ left: tabs[i].offsetLeft - 16, behavior: reduceMotion ? 'auto' : 'smooth' });
-      if (reduceMotion || !pass.animate) { fill(i); return; }
-      // Turn the pass edge-on, swap it, turn it back; the panel slides in.
-      var a = passin.animate([{ transform: 'none', opacity: 1 }, { transform: 'translateY(' + (-8 * dir) + 'px)', opacity: 0 }], { duration: 160, easing: 'ease-in', fill: 'forwards' });
-      pass.animate([{ transform: 'rotateY(0deg)' }, { transform: 'rotateY(' + (90 * dir) + 'deg)' }], { duration: 200, easing: 'ease-in', composite: 'add' });
-      a.onfinish = function () {
-        fill(i);
-        a.cancel();
-        pass.animate([{ transform: 'rotateY(' + (-90 * dir) + 'deg)' }, { transform: 'rotateY(0deg)' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)', composite: 'add' });
-        passin.animate([{ transform: 'translateY(' + (10 * dir) + 'px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 380, delay: 120, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
-        panel.animate([{ opacity: 0, transform: 'translateX(14px)' }, { opacity: 1, transform: 'none' }], { duration: 360, easing: 'cubic-bezier(.2,.7,.2,1)' });
-      };
-    }
-    tabs.forEach(function (t, i) {
-      t.addEventListener('click', function () { select(i); });
-      t.addEventListener('keydown', function (e) {
-        var k = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
-        if (k) { e.preventDefault(); select(idx + k, true); }
-      });
-    });
-    $('[data-fp-cta]', root).addEventListener('click', function () { setDestination('Funding: ' + tabs[idx].querySelector('b').textContent); });
+    var rows = $$('[data-fb-row]', root);
+    var GLYPHS = 'ABCDEFGHIJKLMNOPRSTUVWXYZ0123456789%-';
 
-    // Holographic foil, glare and tilt follow the pointer.
-    if (finePointer && !reduceMotion) {
-      stage.addEventListener('pointermove', function (e) {
-        var r = pass.getBoundingClientRect(), u = clamp((e.clientX - r.left) / r.width, 0, 1), v = clamp((e.clientY - r.top) / r.height, 0, 1);
-        pass.style.setProperty('--mx', (u * 100).toFixed(1) + '%'); pass.style.setProperty('--my', (v * 100).toFixed(1) + '%');
-        pass.style.setProperty('--ry', ((u - 0.5) * 16).toFixed(2) + 'deg'); pass.style.setProperty('--rx', ((0.5 - v) * 12).toFixed(2) + 'deg');
+    // Each tile cycles through glyphs, then lands on its own character.
+    function flapRow(row, delay) {
+      if (reduceMotion) return;
+      $$('.fb__flap', row).forEach(function (f, k) {
+        var target = f.getAttribute('data-ch'), spins = 6 + k * 2 + Math.floor(Math.random() * 4), n = 0;
+        if (target === ' ') return;
+        setTimeout(function tick() {
+          f.classList.remove('is-flip'); void f.offsetWidth; f.classList.add('is-flip');
+          if (++n >= spins) { f.textContent = target; return; }
+          f.textContent = GLYPHS.charAt(Math.floor(Math.random() * GLYPHS.length));
+          setTimeout(tick, 70);
+        }, delay);
       });
-      stage.addEventListener('pointerleave', function () { ['--mx', '--my', '--rx', '--ry'].forEach(function (k) { pass.style.removeProperty(k); }); });
-    } else if (!reduceMotion) {
-      // Without a pointer the foil drifts slowly on its own.
-      var t0 = performance.now(), live = false;
-      function drift(now) {
-        if (!live) return;
-        var k = (now - t0) / 6000;
-        pass.style.setProperty('--mx', (50 + Math.sin(k * 2 * Math.PI) * 40).toFixed(1) + '%');
-        pass.style.setProperty('--my', (50 + Math.cos(k * 2 * Math.PI) * 30).toFixed(1) + '%');
-        requestAnimationFrame(drift);
-      }
-      if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
-        var was = live; live = es[0].isIntersecting;
-        if (live && !was) requestAnimationFrame(drift);
-      }).observe(pass);
     }
-    root.setAttribute('data-key', tabs[0].getAttribute('data-key'));
+    function open(row) {
+      rows.forEach(function (r) {
+        var on = r === row && !r.classList.contains('is-open');
+        r.classList.toggle('is-open', on);
+        $('[data-fb-toggle]', r).setAttribute('aria-expanded', String(on));
+        var pass = $('[data-fb-pass]', r);
+        if (on) {
+          pass.hidden = false;
+          if (!reduceMotion && pass.animate) pass.animate([{ opacity: 0, transform: 'translateY(-8px)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'cubic-bezier(.2,.7,.2,1)' });
+        } else pass.hidden = true;
+      });
+    }
+    rows.forEach(function (r) {
+      var btn = $('[data-fb-toggle]', r), last = 0;
+      btn.addEventListener('click', function () { open(r); });
+      btn.addEventListener('mouseenter', function () {
+        var now = performance.now();
+        if (now - last > 2500) { last = now; flapRow(r, 0); }
+      });
+      var cta = $('[data-fb-cta]', r);
+      if (cta) cta.addEventListener('click', function () { setDestination('Funding: ' + cta.getAttribute('data-fund')); });
+    });
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) {
+        if (!es[0].isIntersecting) return;
+        io.disconnect();
+        rows.forEach(function (r, i) { flapRow(r, i * 220); });
+      }, { threshold: 0.3 });
+      io.observe(root);
+    }
   }
+
 
   /* ------------------------------------------------------------------ *
    * Universities — postcards from Finland. Each stamp "mails" its
@@ -1961,7 +1931,7 @@
   initSeasonStage();
   initServices();
   initPostcards();
-  initFundingPasses();
+  initFundingBoard();
   initJourney();
   initParallax();
   initPointerFx();
