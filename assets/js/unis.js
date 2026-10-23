@@ -456,7 +456,7 @@
         var name = String(p.n).replace(/\s*\((\d+(?:[.,]\d+)?)\s*yrs?\)\s*$/, '');
         return '<div class="umc" style="animation-delay:' + Math.min(i, 12) * 25 + 'ms">' +
           '<span class="umc__lvl">' + esc(p.lvl) + '</span>' +
-          (p.url ? '<a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(name) + ICON.up + '</a>' : '<b>' + esc(name) + '</b>') +
+          '<b>' + esc(name) + '</b>' +
           '<div class="umc__meta">' + meta + (p.sch ? '<span class="umc__sch">Scholarship available</span>' : '') + '</div></div>';
       }).join('');
     }
@@ -520,7 +520,6 @@
     text('[data-um-type]', isUas(u) ? 'University of Applied Sciences' : 'University');
     text('[data-um-loc]', u.location || city);
     html('[data-um-cities]', cityNames.map(function (c) { return '<span>' + esc(c) + '</span>'; }).join(''));
-    html('[data-um-site]', u.url ? '<a href="' + esc(u.url) + '" target="_blank" rel="noopener">' + esc(u.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')) + ' ' + ICON.up + '</a>' : 'Not published');
     text('[data-um-names]', String(u.alt || '').split(/\s*,\s*/).filter(function (n) { return n && cityNames.indexOf(n) < 0 && n !== city; }).slice(0, 6).join(' · ') || '—');
     $('[data-um-aland]', um).hidden = u.branch !== 'aland';
     syncModalHeart();

@@ -2497,8 +2497,7 @@
     $$('[data-photo-credits-list]').forEach(function (ul) {
       ul.innerHTML = Object.keys(credits).map(function (k) {
         var c = credits[k];
-        return '<li>' + escapeHtml(c.subject) + ' &mdash; <a href="' + escapeHtml(c.url) + '" target="_blank" rel="noopener">' +
-          escapeHtml(c.author) + '</a>, ' + escapeHtml(c.licence) + '</li>';
+        return '<li>' + escapeHtml(c.subject) + ' &mdash; ' + escapeHtml(c.author) + ', ' + escapeHtml(c.licence) + '</li>';
       }).join('');
     });
   }

@@ -88,7 +88,7 @@
         .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
         .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, function (m, t, u) {
           u = u.replace(/&amp;/g, '&');
-          var local = /^(\.\/|#)/.test(u), official = /^https:\/\/(opintopolku\.fi|migri\.fi|enterfinland\.fi|www\.studyinfinland\.fi|wa\.me|www\.tuteeconnect\.com)\//.test(u);
+          var local = /^(\.\/|#)/.test(u), official = /^https:\/\/(wa\.me|www\.tuteeconnect\.com)\//.test(u);
           if (!local && !official && !/^(tel|mailto):/.test(u)) return t;
           var uni = /[?&]open=([^&]+)/.exec(u);
           return '<a href="' + esc(u) + '"' + (official ? ' target="_blank" rel="noopener"' : '') +
@@ -425,7 +425,6 @@
       '- **' + plural(ps.length, 'course', 'courses') + ' taught in English** (' + [lv.b ? lv.b + ' bachelor’s' : '', lv.m ? lv.m + ' master’s' : '', lv.d ? lv.d + ' doctoral' : ''].filter(Boolean).join(', ') + ')\n' +
       (f.length ? '- **Study fields:** ' + f.join(', ') + '\n' : '') +
       '- **Teaches in:** ' + cities.join(', ') + '\n' +
-      (u.url ? '- **Website:** ' + u.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '') + '\n' : '') +
       '\n' + uniLink(u) + ' to see all its courses and shortlist it.';
     return { text: t, chips: ['What courses does ' + shortName(u) + ' offer?', 'Master’s at ' + shortName(u), 'Evaluate my profile'] };
   }
@@ -586,7 +585,7 @@
         if (COURSE_HINT.test(q) || levelOf(q) || /\b(scholarship)\b/.test(q) || FIELD_WORDS.some(function (fw) { return fw[0].test(q); })) return courseAnswer(q, { uni: uni });
         if (/\b(rank|ranked|ranking|position)\b/.test(q)) return { text: uni.ranked ? '**' + uni.name + '** is ranked **#' + uni.rank + ' in Finland** in the QS World University Rankings: Europe 2026.' : '**' + uni.name + '** isn\'t covered by the QS Europe 2026 ranking. ' + uniLink(uni) + ' for its courses.', chips: ['Show me the top ranked universities', 'What courses does ' + shortName(uni) + ' offer?'] };
         if (/\b(where|city|located|location|campus|campuses)\b/.test(q)) return { text: '**' + uni.name + '** is based in **' + uni.city + '**' + (citiesOf(uni).length > 1 ? ', and teaches English-taught courses in ' + citiesOf(uni).join(', ') : '') + '. ' + uniLink(uni) + '.', chips: ['What courses does ' + shortName(uni) + ' offer?'] };
-        if (/\b(website|site|url|link)\b/.test(q)) return { text: (uni.url ? '**' + uni.name + '**: ' + uni.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '') + '. ' : '') + uniLink(uni) + ' for its details here.', chips: ['What courses does ' + shortName(uni) + ' offer?'] };
+        if (/\b(website|site|url|link)\b/.test(q)) return { text: 'Everything you need about **' + uni.name + '** is right here — ' + uniLink(uni) + ' for its details and all its English-taught courses. A counsellor can help with anything more.', chips: ['What courses does ' + shortName(uni) + ' offer?', 'Talk to a counsellor'] };
         ctx.lastWasUni = true;
         return uniSummary(uni);
       }
