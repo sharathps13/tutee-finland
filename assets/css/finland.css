@@ -1514,3 +1514,141 @@ main { overflow-x: clip; }
   .lp { padding: 18px; gap: 12px; }
   .acc { gap: 8px; }
 }
+
+/* ======================================================= MOBILE LAYOUTS
+   Phones get their own take on each section rather than the desktop
+   columns stacked: swipeable rows, a half dial and one-at-a-time cards,
+   so each section stays close to a single screen. */
+@media (max-width: 699px) {
+  /* Swipe rows share one look: edge-to-edge, snapping, no scrollbar. */
+  .m-swipe { display: flex !important; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain;
+    margin-inline: calc(var(--gutter) * -1); padding: 2px var(--gutter) 6px; scroll-padding-inline: var(--gutter); }
+  .m-swipe::-webkit-scrollbar { display: none; }
+  .m-swipe > * { flex: none; scroll-snap-align: start; }
+
+  /* ---- Services: a half dial. The active slot sits at the bottom, so the
+     top of the wheel tucks away and the hub + lower arc stay in view. */
+  .orb { gap: 12px; }
+  .orb__stage { --d: min(88vw, 330px); display: flex; justify-content: center; align-items: flex-end; height: calc(var(--d) * .75 + 60px); padding: 0 0 18px; }
+  .orb__dial { width: var(--d); flex: none; }
+  .orb__place { display: none; }
+  .orb__hint { top: 10px; padding: 5px 10px; font-size: 12px; }
+  .orb__content { padding: 18px 18px 6px; gap: 12px; }
+  .orb__head { gap: 12px; padding-right: 44px; }
+  .orb__chip { width: 42px; height: 42px; }
+  .orb__title { font-size: 1.3rem; }
+  .orb__tag { display: none; }
+  .orb__ghost { font-size: 5rem; top: -6px; }
+  .orb__desc { font-size: 14.5px; }
+  .orb__desc > p:first-child { -webkit-line-clamp: 2; }
+  .orb__points li { width: 74%; padding: 11px 12px 11px 14px; font-size: 14px; }
+  .orb__foot { flex-wrap: nowrap; padding: 12px 18px; gap: 10px; }
+  .orb__foot .btn { flex: 1; justify-content: center; }
+
+  /* ---- Universities: the stamp album becomes a tray you swipe through. */
+  .pc { gap: 14px; }
+  .pc__filters { gap: 6px; }
+  .pc__card { height: 365px; }
+  .pc__side { gap: 10px; }
+  .pc__stamps { padding: 12px var(--gutter) 14px !important; border-radius: 0; gap: 12px !important; }
+  .pc__stamps > li { width: 86px; }
+  .pc .pc__stamp-in { aspect-ratio: 4 / 5; }
+  .pc__all { padding: 12px 16px; }
+  .pc__all small { display: none; }
+
+  /* ---- Funding: options swipe sideways; the plan stays compact below. */
+  .fpl { gap: 14px; }
+  .fpl__srcs { gap: 8px; }
+  .fpl__label { margin-bottom: 2px; }
+  .fpl__src { width: 62%; min-height: 0; flex-direction: column; align-items: flex-start; gap: 8px; padding: 12px 14px; }
+  .fpl__srcico { width: 38px; height: 38px; border-radius: 12px; }
+  .fpl__toggle { position: absolute; top: 14px; right: 12px; }
+  .fpl__srctxt b { font-size: 14.5px; }
+  .fpl__srctxt em { font-size: 12.5px; }
+  .fpl__hero { min-height: 92px; padding: 12px 16px 16px; }
+  .fpl__costs { gap: 8px; padding: 12px 12px 4px; }
+  .fpl__cost { grid-template-columns: 28px minmax(0, 1fr); column-gap: 8px; row-gap: 4px; align-items: center; padding: 10px; }
+  .fpl__cost > :not(.fpl__costico) { grid-column: 1 / -1; }
+  .fpl__costico { grid-row: 1; grid-column: 1; width: 28px; height: 28px; border-radius: 8px; }
+  .fpl__cost > b { grid-row: 1; grid-column: 2 !important; font-size: 14px; line-height: 1.2; }
+  .fpl__tags span { font-size: 10.5px; padding: 2px 7px; white-space: nowrap; }
+  .fpl__state { font-size: 11.5px; }
+  .fpl__help { margin: 8px 12px 0; padding: 11px 12px; }
+  .fpl__help p { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 13px; }
+  .fpl__foot { flex-wrap: nowrap; padding: 12px; }
+  .fpl__foot .btn { flex: none; padding-inline: 14px; font-size: 14px; }
+  .fpl__partners { margin-top: 16px; gap: 8px; }
+
+  /* ---- Family: the photo fills the card behind the story; facts and
+     steps become swipe cards. */
+  .fv { min-height: 0; }
+  .fv__media { position: absolute; inset: 0; height: auto; z-index: -2; }
+  .fv__shade { display: block; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(4,16,42,.55) 0%, rgba(4,16,42,.35) 30%, rgba(4,16,42,.92) 72%); }
+  .fv__inner { gap: 14px; padding: 16px 16px 18px; min-height: 470px; align-content: space-between; }
+  .fv__pane { gap: 10px; }
+  .fv__title { font-size: 1.55rem; }
+  .fv__text { font-size: 14.5px; line-height: 1.6; }
+  .fv__tiles { margin: 2px 0 0 !important; }
+  .fv__tiles li { width: 44%; padding: 10px 12px; display: grid !important; grid-template-columns: minmax(0, 1fr) !important; gap: 4px; align-content: start; }
+  .fv__tiles b { font-size: 1.15rem; }
+  .fv__steps { padding: 14px 0 14px; gap: 10px; margin-top: 12px; border-radius: 20px; overflow: hidden; }
+  .fv__stepslabel { max-width: none; padding-inline: 16px; }
+  .fv__steps ol { margin: 0 !important; padding-inline: 16px !important; scroll-padding-inline: 16px !important; }
+  .fv__steps li { width: 78%; padding: 12px; border-radius: 16px; background: var(--ice); border: 1px solid var(--line); }
+  .fv__steps .btn { margin-inline: 16px; justify-self: stretch; justify-content: center; }
+
+  /* ---- FAQ: help becomes a slim strip; answers use the full width. */
+  .faq { gap: 16px; }
+  .faq__aside { gap: 12px; }
+  .help { grid-template-columns: minmax(0, 1fr); padding: 14px; gap: 8px; }
+  .help p { display: none; }
+  .acc__q { padding: 13px 14px; gap: 12px; font-size: 15px; }
+  .acc__n { width: 28px; height: 28px; }
+  .acc__a p { padding: 0 14px 14px; font-size: 14.5px; line-height: 1.6; }
+
+  /* ---- Contact: the live profile card folds to its header; tap to open. */
+  .lf { gap: 14px; }
+  .lp { cursor: pointer; }
+  .lp:not(.is-open) .lp__rows, .lp:not(.is-open) .lp__stamp { display: none; }
+  .lp__top::after { content: "Tap to view"; font-size: 11px; font-weight: 700; color: #8ea3c4; }
+  .lp.is-open .lp__top::after { content: "Tap to fold"; }
+  .lf__trust li { padding: 10px; font-size: 11.5px; }
+  .lf__contact { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); }
+  .lf__contact::-webkit-scrollbar { display: none; }
+  .lf__contact a { flex: none; }
+}
+
+/* ---- Journey (phones and tablets): the milestones form a rail you tap or
+   swipe along, with one card open beneath it. */
+@media (max-width: 999px) {
+  .rm__steps { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px 0; }
+  .rm__step { display: contents; }
+  .rm__node { grid-row: 1; justify-self: center; width: 44px; height: 44px; cursor: pointer; }
+  .rm__step:nth-child(1) .rm__node { grid-column: 1; } .rm__step:nth-child(2) .rm__node { grid-column: 2; }
+  .rm__step:nth-child(3) .rm__node { grid-column: 3; } .rm__step:nth-child(4) .rm__node { grid-column: 4; }
+  .rm__step:nth-child(5) .rm__node { grid-column: 5; } .rm__step:nth-child(6) .rm__node { grid-column: 6; }
+  .rm__card { grid-row: 2; grid-column: 1 / -1; touch-action: pan-y; }
+  .rm__step:not(.is-on) .rm__card { display: none; }
+  .rm__step.is-on .rm__card { animation: rmCardIn .4s var(--ease); }
+  .rm__step.is-on .rm__card::after { content: none; }
+  .rm__swipe { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 12px; font-weight: 700; color: #8ea3c4; }
+  .rm__swipe b { color: var(--aurora); letter-spacing: .06em; }
+}
+@keyframes rmCardIn { from { opacity: 0; transform: translateX(var(--rm-from, 18px)); } }
+@media (min-width: 1000px) { .rm__swipe { display: none; } }
+@media (prefers-reduced-motion: reduce) { .rm__step.is-on .rm__card { animation: none; } }
+@media (max-width: 699px) {
+  /* The funding row keeps its "Choose your funding" label above the cards. */
+  .fpl__srcs.m-swipe { position: relative; padding-top: 26px; }
+  .fpl__srcs .fpl__label { position: absolute; top: 2px; left: var(--gutter); }
+}
+@media (max-width: 699px) {
+  /* Contact choices: icon beside the label, so the four options take two short rows. */
+  .lf__choices { gap: 8px; }
+  .lf__choice { grid-template-columns: 32px minmax(0, 1fr); column-gap: 10px; row-gap: 0; align-items: center; padding: 10px 12px; border-radius: 14px; }
+  .lf__cico { grid-row: 1 / span 2; width: 32px; height: 32px; margin: 0; border-radius: 10px; }
+  .lf__choice b { font-size: 14px; line-height: 1.2; }
+  .lf__choice small { font-size: 11.5px; }
+  .lf__tick { top: 8px; right: 8px; width: 20px; height: 20px; }
+  .lf__q { font-size: 1.25rem; }
+}

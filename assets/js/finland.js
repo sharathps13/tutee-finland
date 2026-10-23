@@ -1185,6 +1185,7 @@
       if (i === active) return;
       active = i;
       steps.forEach(function (s, k) { s.classList.toggle('is-on', k === i); s.classList.toggle('is-past', k < i); });
+      if (count) count.textContent = pad(i + 1) + ' / ' + pad(steps.length);
       // On phones the opened card changes the layout, so redraw the route around it.
       if (!wide.matches) { build(); return; }
       var from = pos, to = stops[i];
@@ -1211,7 +1212,30 @@
       c.addEventListener('focus', function () { hover = true; clearTimeout(timer); go(i); });
       c.addEventListener('blur', function () { hover = false; tour(); });
       c.addEventListener('click', function () { go(i); });
+      nodes[i].addEventListener('click', function () { slide(i); });
     });
+    // Phones and tablets: the milestones form a rail with one card open below
+    // it. Tap a milestone, or swipe the card sideways, to move along the route.
+    function slide(i) {
+      i = clamp(i, 0, steps.length - 1);
+      if (i === active) return;
+      root.style.setProperty('--rm-from', (i > active ? 18 : -18) + 'px');
+      go(i);
+    }
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    var hint = document.createElement('div'), count;
+    hint.className = 'rm__swipe';
+    hint.innerHTML = '<span>Swipe the card or tap a milestone</span><b data-rm-count>01 / ' + pad(steps.length) + '</b>';
+    root.appendChild(hint);
+    count = $('[data-rm-count]', hint);
+    var sx = null, sy = 0;
+    root.addEventListener('touchstart', function (e) { if (!wide.matches && e.touches.length === 1) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; } }, { passive: true });
+    root.addEventListener('touchend', function (e) {
+      if (sx == null) return;
+      var t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+      sx = null;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) slide(active + (dx < 0 ? 1 : -1));
+    }, { passive: true });
     build();
     go(0);
     if ('IntersectionObserver' in window) {
@@ -1359,6 +1383,10 @@
    * ------------------------------------------------------------------ */
   function initAccordion() {
     var items = $$('[data-acc] .acc__item');
+    // Phones start with every answer folded, so the questions fit on screen.
+    if (window.matchMedia && window.matchMedia('(max-width: 699px)').matches) {
+      items.forEach(function (o) { o.classList.remove('is-open'); $('.acc__q', o).setAttribute('aria-expanded', 'false'); });
+    }
     items.forEach(function (item) {
       var q = $('.acc__q', item);
       q.addEventListener('click', function () {
@@ -1515,6 +1543,8 @@
     if (!root) return;
     var form = $('form', root), steps = $$('[data-lf-step]', root), bars = $$('.lf__progress i', root), card = $('[data-lp]', root);
     var nameEl = $('[data-lp-name]', root), status = $('[data-lp-status]', root), step = 0, sentTimer = 0;
+    // Phones show the profile card folded to its header; a tap unfolds it.
+    if (card) card.addEventListener('click', function () { card.classList.toggle('is-open'); });
     function go(i, focus) {
       if (i === step) return;
       var back = i < step;
