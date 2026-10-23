@@ -948,6 +948,26 @@
     io.observe(dial);
   }
 
+  /* ------------------------------------------------------------------ *
+   * Funding guide — five cards to read through, one per funding route.
+   * On phones the cards become a swipe row and the dots follow along.
+   * ------------------------------------------------------------------ */
+  function initFundingGuide() {
+    var root = $('[data-fg]');
+    if (!root) return;
+    $('[data-fg-cta]', root).addEventListener('click', function () { setDestination('Funding plan'); });
+    var track = $('[data-fg-track]', root), cards = $$('.fg__card', root), dots = $$('.fg__dots i', root), raf = 0;
+    function sync() {
+      raf = 0;
+      var x = track.scrollLeft, best = 0;
+      cards.forEach(function (c, i) { if (Math.abs(c.offsetLeft - track.offsetLeft - x) < Math.abs(cards[best].offsetLeft - track.offsetLeft - x)) best = i; });
+      if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 4) best = cards.length - 1;
+      dots.forEach(function (d, i) { d.classList.toggle('is-on', i === best); });
+    }
+    track.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(sync); }, { passive: true });
+    sync();
+  }
+
   /* Funding on phones: a detail card for the source last tapped (amount,
      who it is for, how we help). It lives beside the switches and is only
      shown on phones, where the switches become round pucks. */
@@ -2625,6 +2645,7 @@
   initNewsTicker();
   initFundingPlan();
   initFundingFocus();
+  initFundingGuide();
   initJourneyRoute();
   initFamilyViews();
   initFamilySteps();
