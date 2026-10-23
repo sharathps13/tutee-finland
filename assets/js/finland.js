@@ -1109,7 +1109,16 @@
     }
     function applyFilter() {
       var shown = 0;
-      data.forEach(function (u) { var ok = matches(u); stamps[u.i].classList.toggle('is-out', !ok); if (ok) shown++; });
+      // Matching stamps move to the front of the album (in rank order) and
+      // the dimmed ones follow, so a filter brings its results up first.
+      data.forEach(function (u) {
+        var ok = matches(u), li = stamps[u.i].closest('li') || stamps[u.i];
+        stamps[u.i].classList.toggle('is-out', !ok);
+        li.style.order = ok ? u.i : 100 + u.i;
+        if (ok) shown++;
+      });
+      var album = stamps[0] && stamps[0].closest('ol, ul');
+      if (album && album.scrollLeft) album.scrollTo({ left: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
       set('[data-pc-count]', shown + ' shown');
       if (!matches(data[sel])) { var first = data.filter(matches)[0]; if (first) select(first.i); }
       else renderFields(data[sel]);

@@ -2142,3 +2142,45 @@ main { overflow-x: clip; }
   .ft__talk b { overflow-wrap: normal; white-space: nowrap; }
   .ft__talk a { align-items: center; }
 }
+
+/* ======================================== PHONE BAR · TUTEE AI IN THE BAR
+   The bottom bar carries the Tutee AI launcher next to WhatsApp, so the
+   floating button steps aside while the bar is showing. */
+.mbar .btn-ai { flex: none; width: 46px; padding: 0; background: #fff; border: 1.5px solid var(--line); position: relative; }
+.mbar .btn-ai img { width: 26px; height: 26px; object-fit: contain; }
+.mbar .btn-ai::after { content: ""; position: absolute; inset: -3px; border-radius: inherit; border: 2px solid var(--aurora); opacity: .7; animation: ping 2.4s var(--ease) infinite; pointer-events: none; }
+@media (max-width: 767px) { body.mbar-on .fab--ai { opacity: 0; pointer-events: none; transform: scale(.6); } }
+@media (prefers-reduced-motion: reduce) { .mbar .btn-ai::after { animation: none; } }
+
+@media (max-width: 699px) {
+  /* ---- Funding: loan partners get their own row under a label, clear of
+     the plan button above. */
+  .fpl__plan > .fpl__foot { margin-bottom: 6px; }
+  .fpl__partners { grid-template-columns: minmax(0, 1fr) !important; gap: 8px !important; margin-top: 10px !important; padding-top: 12px; border-top: 1px solid var(--line); }
+  .fpl__partners-label { max-width: none !important; font-size: 11px !important; letter-spacing: .1em !important; }
+  .fpl__partners .logos { width: 100%; }
+  .fpl__partners .logos__item { height: 46px !important; width: 108px !important; }
+
+  /* ---- Family steps: a three-stop journey track; the chosen stop's
+     description sits in a bubble pointing at it, the button spans below. */
+  .fv__steps { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: "label" "list" "btn" !important; gap: 12px !important; padding: 14px 14px 14px !important;
+    border-radius: 22px; background: linear-gradient(180deg, #fff, var(--ice)); }
+  .fv__stepslabel { text-align: center; letter-spacing: .14em !important; }
+  .fv__steps .btn { justify-self: stretch !important; justify-content: center; min-height: 42px !important; font-size: 13.5px !important; }
+  .fv__steps .btn .ico-arrow { display: inline-block !important; }
+  .fv__steps ol.m-swipe { position: relative; column-gap: 0 !important; row-gap: 6px !important; }
+  .fv__steps ol.m-swipe::before { content: ""; position: absolute; top: 15px; left: 16.66%; right: 16.66%; height: 2px; border-radius: 2px;
+    background: linear-gradient(90deg, var(--fi-blue) var(--fv-fill, 0%), #d3deec var(--fv-fill, 0%)); transition: background .3s; }
+  .fv__steps ol.m-swipe:has(li:nth-child(2).is-sel) { --fv-fill: 50%; }
+  .fv__steps ol.m-swipe:has(li:nth-child(3).is-sel) { --fv-fill: 100%; }
+  .fv__steps ol.m-swipe li > b { position: relative; z-index: 1; justify-self: center !important; width: 32px !important; height: 32px !important; border-radius: 50% !important;
+    color: var(--fi-blue); background: #fff; border: 2px solid #c9d6e8; box-shadow: none !important; transform: none !important; }
+  .fv__steps ol.m-swipe li.is-sel > b { color: #fff; background: var(--fi-blue); border-color: var(--fi-blue); box-shadow: 0 0 0 5px rgba(0,53,128,.12) !important; }
+  .fv__steps ol.m-swipe h4 { text-align: center; padding-inline: 4px; font-size: 12.5px !important; }
+  .fv__steps ol.m-swipe p { position: relative; margin-top: 8px !important; padding: 10px 12px !important; border-radius: 14px !important; background: #fff !important;
+    border: 1px solid var(--line); box-shadow: 0 10px 22px -18px rgba(6,22,49,.5); font-size: 12.5px !important; line-height: 1.5 !important; color: var(--ink-2); }
+  .fv__steps ol.m-swipe p::before { content: ""; position: absolute; top: -7px; width: 12px; height: 12px; margin-left: -6px; background: #fff; border-left: 1px solid var(--line); border-top: 1px solid var(--line); transform: rotate(45deg); }
+  .fv__steps ol.m-swipe li:nth-child(1) p::before { left: 16.66%; }
+  .fv__steps ol.m-swipe li:nth-child(2) p::before { left: 50%; }
+  .fv__steps ol.m-swipe li:nth-child(3) p::before { left: 83.33%; }
+}
