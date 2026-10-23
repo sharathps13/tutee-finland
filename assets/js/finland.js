@@ -2192,7 +2192,7 @@
     // a fast flick or a trackpad swipe can't skip past one. A gesture ends once
     // the wheel has been quiet for a moment (trackpad momentum keeps firing
     // events), and past the first or last chapter the page scrolls on as normal.
-    var lastWheel = 0, stepUntil = 0, stepAt = -1e9;
+    var lastWheel = 0, stepUntil = 0, stepAt = -1e9, target = 0;
     window.addEventListener('wheel', function (e) {
       if (e.ctrlKey || Math.abs(e.deltaY) < 2) return;
       var r = sec.getBoundingClientRect();
@@ -2209,9 +2209,48 @@
       }
       e.preventDefault();
       if (!fresh || now < stepUntil) return;
-      stepUntil = now + 450; stepAt = now;
+      stepUntil = now + 450; stepAt = now; target = next;
       window.scrollTo({ top: sec.offsetTop + STEP * (next + 0.5), behavior: 'smooth' });
     }, { passive: false });
+
+    // Touch works the same way: inside the pinned hero any vertical swipe,
+    // short or long, moves exactly one chapter (the page itself doesn't
+    // scroll, so a hard flick can't fling through every chapter). A swipe on
+    // past the last chapter, or back before the first, scrolls as normal.
+    var touch = null;
+    window.addEventListener('touchstart', function (e) {
+      touch = null;
+      if (e.touches.length !== 1) return;
+      var r = sec.getBoundingClientRect();
+      if (r.top > 1 || r.bottom < window.innerHeight - 1) return;
+      // Mid-step, count from where the page is heading, not where it is.
+      var cur = performance.now() < stepUntil ? target : stageForScroll();
+      touch = { x: e.touches[0].clientX, y: e.touches[0].clientY, cur: cur, mode: '' };
+    }, { passive: true });
+    window.addEventListener('touchmove', function (e) {
+      if (!touch) return;
+      var dx = e.touches[0].clientX - touch.x, dy = touch.y - e.touches[0].clientY;
+      if (!touch.mode) {
+        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+        var next = touch.cur + (dy > 0 ? 1 : -1);
+        // Sideways swipes (e.g. a carousel) and swipes out of the hero pass through.
+        touch.mode = Math.abs(dx) > Math.abs(dy) || next < 0 || next > STAGES - 1 ? 'pass' : 'step';
+      }
+      if (touch.mode === 'step' && e.cancelable) e.preventDefault();
+    }, { passive: false });
+    function endTouch(e) {
+      if (!touch || touch.mode !== 'step') { touch = null; return; }
+      var t = e.changedTouches && e.changedTouches[0];
+      var dy = t ? touch.y - t.clientY : 0, next = touch.cur + (dy > 0 ? 1 : -1);
+      touch = null;
+      if (Math.abs(dy) < 24 || next < 0 || next > STAGES - 1) return;
+      var now = performance.now();
+      if (now < stepUntil && next === target) return;
+      target = next; stepUntil = now + 450; stepAt = now;
+      window.scrollTo({ top: sec.offsetTop + STEP * (next + 0.5), behavior: 'smooth' });
+    }
+    window.addEventListener('touchend', endTouch, { passive: true });
+    window.addEventListener('touchcancel', function () { touch = null; }, { passive: true });
 
     // Rail buttons jump to the middle of their chapter.
     ticks.forEach(function (b, i) {
