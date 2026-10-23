@@ -11,6 +11,19 @@
 (function () {
   'use strict';
 
+  /* A reload always starts at the top of the page (the hero), rather than
+     the browser restoring the old scroll position or a #section link. */
+  (function () {
+    var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+    var reload = nav ? nav.type === 'reload' : (performance.navigation && performance.navigation.type === 1);
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    if (!reload) return;
+    if (location.hash) { try { history.replaceState(history.state, '', location.pathname + location.search); } catch (e) { /* file:// */ } }
+    var top = function () { window.scrollTo(0, 0); };
+    top();
+    window.addEventListener('load', top);
+  })();
+
   var $  = function (sel, root) { return (root || document).querySelector(sel); };
   var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
   var mq = function (q) { return !!(window.matchMedia && window.matchMedia(q).matches); };
