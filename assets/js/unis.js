@@ -165,7 +165,55 @@
       '</div></article>';
   }
 
-  var dir = null;   // set by initDirectory: { setCity }
+  /* Mouse and pen can drag the city rail sideways (touch already swipes
+     natively), with a little glide on release. A drag never counts as a
+     click on the tile it started on. */
+  function initRailDrag(rail) {
+    var down = false, moved = false, startX = 0, startLeft = 0, lastX = 0, lastT = 0, v = 0, raf = 0;
+    rail.addEventListener('dragstart', function (e) { e.preventDefault(); });
+    rail.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'touch' || e.button !== 0) return;
+      cancelAnimationFrame(raf);
+      down = true; moved = false;
+      startX = lastX = e.clientX; startLeft = rail.scrollLeft; lastT = e.timeStamp; v = 0;
+    });
+    rail.addEventListener('pointermove', function (e) {
+      if (!down) return;
+      var dx = e.clientX - startX;
+      if (!moved && Math.abs(dx) > 6) {
+        moved = true;
+        rail.classList.add('is-dragging');
+        try { rail.setPointerCapture(e.pointerId); } catch (err) { /* already released */ }
+      }
+      if (!moved) return;
+      rail.scrollLeft = startLeft - dx;
+      var dt = e.timeStamp - lastT;
+      if (dt > 0) v = (lastX - e.clientX) / dt;
+      lastX = e.clientX; lastT = e.timeStamp;
+    });
+    function end() {
+      if (!down) return;
+      down = false;
+      if (!moved) return;
+      v = Math.max(-2.5, Math.min(2.5, v));   // px per ms
+      if (reduceMotion || Math.abs(v) < 0.05) { rail.classList.remove('is-dragging'); return; }
+      var t0 = performance.now();
+      (function glide(now) {
+        var dt = Math.min(32, now - t0); t0 = now;
+        var before = rail.scrollLeft;
+        rail.scrollLeft += v * dt;
+        v *= Math.pow(0.92, dt / 16);
+        if (Math.abs(v) > 0.03 && rail.scrollLeft !== before) raf = requestAnimationFrame(glide);
+        else rail.classList.remove('is-dragging');
+      })(t0);
+    }
+    rail.addEventListener('pointerup', end);
+    rail.addEventListener('pointercancel', end);
+    rail.addEventListener('lostpointercapture', end);
+    rail.addEventListener('click', function (e) {
+      if (moved) { e.preventDefault(); e.stopImmediatePropagation(); moved = false; }
+    }, true);
+  }
 
   function initDirectory() {
     var grid = $('[data-uni-grid]');
@@ -293,6 +341,7 @@
         rail.scrollBy({ left: Number(b.getAttribute('data-rail')) * rail.clientWidth * 0.8, behavior: reduceMotion ? 'auto' : 'smooth' });
       });
     });
+    if (rail) initRailDrag(rail);
     resetBtns.forEach(function (b) {
       b.addEventListener('click', function () {
         state.q = state.type = state.field = state.city = '';
