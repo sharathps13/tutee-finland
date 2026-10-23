@@ -1922,7 +1922,7 @@
   /* ------------------------------------------------------------------ *
    * Tutee AI counsellor (scripted answers + lead capture)
    * ------------------------------------------------------------------ */
-  var CHAT_WELCOME = "Hi! 👋 I'm your **Tutee Connect AI Counsellor**.\n\nI can answer questions about Finnish residence permits, top Finnish universities, and our 99% success rate programmes. How can I help you today?";
+  var CHAT_WELCOME = "Hi! 👋 I'm **Tutee AI**.\n\nAsk me anything about studying in Finland — the **36 institutions and 1,295 English-taught courses**, permits, scholarships, work, family, or our services. I answer from this site's own information.";
 
   function cannedReply(text) {
     var q = text.toLowerCase();
@@ -1953,14 +1953,30 @@
     var input = $('[data-chat-input]', panel);
     var sendBtn = $('[data-chat-send]', panel);
     var launcher = $('[data-chat-launcher]');
-    var stage = 'idle', lead = { name: '', phone: '', email: '' }, askedForDetails = false, seeded = false;
+    var stage = 'idle', lead = { name: '', phone: '', email: '' }, answered = 0, seeded = false;
 
     function clock() { return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
     function push(role, content) {
       var div = document.createElement('div');
       div.className = 'msg ' + (role === 'assistant' ? 'msg--ai' : 'msg--me');
-      div.innerHTML = mdToHtml(content) + '<time>' + clock() + '</time>';
+      div.innerHTML = (role === 'assistant' && window.TuteeAI ? window.TuteeAI.render(content) : mdToHtml(content)) + '<time>' + clock() + '</time>';
       list.insertBefore(div, typing);
+      list.scrollTop = list.scrollHeight;
+      return div;
+    }
+    // Follow-up suggestions under an answer; only the latest set stays tappable.
+    function suggest(chips) {
+      $$('.chat__next', list).forEach(function (n) { n.remove(); });
+      if (!chips || !chips.length) return;
+      var row = document.createElement('div');
+      row.className = 'chat__chips chat__next';
+      chips.slice(0, 4).forEach(function (c) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.textContent = c;
+        b.addEventListener('click', function () { send(c); });
+        row.appendChild(b);
+      });
+      list.insertBefore(row, typing);
       list.scrollTop = list.scrollHeight;
     }
     function setTyping(on) { typing.classList.toggle('hidden', !on); list.scrollTop = list.scrollHeight; }
@@ -1977,8 +1993,9 @@
       if (launcher) launcher.classList.remove('is-hidden');
     }
     function reset() {
-      $$('.msg', list).forEach(function (n) { n.remove(); });
-      stage = 'idle'; lead = { name: '', phone: '', email: '' }; askedForDetails = false;
+      $$('.msg, .chat__next', list).forEach(function (n) { n.remove(); });
+      stage = 'idle'; lead = { name: '', phone: '', email: '' }; answered = 0;
+      if (window.TuteeAI) window.TuteeAI.reset();
       chipRow.classList.remove('hidden');
       input.value = ''; syncSend(); setTyping(false);
       push('assistant', CHAT_WELCOME);
@@ -1996,12 +2013,27 @@
     }
     function later(fn, ms) { setTyping(true); setTimeout(function () { setTyping(false); fn(); }, ms); }
 
+    var LEAD_RE = /^(evaluate my profile|talk to a counsell?or|book a (free )?(consultation|call)|call me( back)?|i want to (talk|speak) to (a|someone|someone from your team|a counsell?or))\b/i;
+    function startLead() {
+      later(function () {
+        stage = 'asking_name';
+        push('assistant', "Happy to set that up — an expert counsellor reviews your profile personally and replies within **one working day**.\n\nWhat's your **full name**? (Type *cancel* any time to stop.)");
+      }, 500);
+    }
     function send(text) {
       if (!text || !text.trim()) return;
       text = text.trim();
       push('user', text);
       input.value = ''; syncSend();
       chipRow.classList.add('hidden');
+      $$('.chat__next', list).forEach(function (n) { n.remove(); });
+
+      // Leaving the details flow, or asking a question in the middle of it.
+      if (stage !== 'idle' && /^(cancel|stop|no thanks|never ?mind|skip)\b/i.test(text)) {
+        stage = 'idle';
+        return later(function () { push('assistant', 'No problem — I\'ve stopped. What else would you like to know?'); suggest(['What scholarships are there?', 'Master’s in computer science']); }, 400);
+      }
+      if (stage !== 'idle' && /\?$/.test(text)) { stage = 'idle'; }
 
       if (stage === 'asking_name') {
         lead.name = text; stage = 'asking_phone';
@@ -2009,43 +2041,46 @@
       }
       if (stage === 'asking_phone') {
         if (!PHONE_RE.test(text.replace(/\D/g, '')))
-          return later(function () { push('assistant', "That doesn't look like a valid phone number. Please enter a valid number (e.g., +91 98765 43210)."); }, 500);
+          return later(function () { push('assistant', "That doesn't look like a valid phone number. Please enter a valid number (e.g., +91 98765 43210), or type *cancel*."); }, 500);
         lead.phone = text; stage = 'asking_email';
         return later(function () { push('assistant', 'Got it. Lastly, what is your **email address**?'); }, 600);
       }
       if (stage === 'asking_email') {
         if (!EMAIL_RE.test(text))
-          return later(function () { push('assistant', "That doesn't look like a valid email address. Could you double-check and try again?"); }, 500);
+          return later(function () { push('assistant', "That doesn't look like a valid email address. Could you double-check it, or type *cancel*?"); }, 500);
         lead.email = text; stage = 'idle';
-        push('assistant', 'Perfect! Submitting your profile to our experts now...');
+        push('assistant', 'Perfect! Sending your details to our counsellors now…');
         setTyping(true);
         submitLead().then(function (res) {
           setTyping(false);
           push('assistant', res && res.success
-            ? '✅ **Success!** Your profile has been assigned to an expert counsellor. They will contact you shortly to help with your admission and permit process.\n\nIs there anything else I can help you with in the meantime?'
-            : 'Oops, something went wrong submitting your profile. Please use the evaluation form on this page or WhatsApp us.');
+            ? '✅ **Done!** An expert counsellor will contact you within one working day.\n\nAnything else I can help with in the meantime?'
+            : 'Sorry, that didn\'t go through. Please use the [evaluation form](#contact) or [WhatsApp us](https://wa.me/917358364959).');
         }).catch(function () {
           setTyping(false);
-          push('assistant', 'Network error while submitting. Please try the evaluation form or WhatsApp!');
+          push('assistant', 'Network error while sending. Please try the [evaluation form](#contact) or [WhatsApp us](https://wa.me/917358364959).');
         });
         return;
       }
-      if (/^evaluate my profile$/i.test(text)) {
-        return later(function () {
-          stage = 'asking_name';
-          push('assistant', "I'd be happy to help you evaluate your profile! Our expert human counsellors review these directly to ensure accuracy.\n\nCould I please get your **full name**?");
-        }, 500);
-      }
-      later(function () {
-        push('assistant', cannedReply(text));
-        if (!askedForDetails) {
-          askedForDetails = true;
-          later(function () {
-            stage = 'asking_name';
-            push('assistant', 'To give you the most accurate and personalised guidance for your profile, could I quickly grab your **full name**?');
-          }, 1400);
-        }
-      }, 700);
+      if (LEAD_RE.test(text)) return startLead();
+
+      var t0 = Date.now();
+      setTyping(true);
+      var ask = window.TuteeAI ? window.TuteeAI.answer(text) : Promise.resolve({ text: cannedReply(text), chips: [] });
+      ask.then(function (res) {
+        // A short, natural pause so answers don't snap in instantly.
+        setTimeout(function () {
+          setTyping(false);
+          push('assistant', res.text);
+          answered++;
+          var chips = (res.chips || []).slice();
+          if (answered % 4 === 0 && chips.indexOf('Evaluate my profile') < 0) chips.push('Evaluate my profile');
+          suggest(chips);
+        }, Math.max(0, 450 - (Date.now() - t0)));
+      }).catch(function () {
+        setTyping(false);
+        push('assistant', 'Sorry, something went wrong on my side. You can always [WhatsApp us](https://wa.me/917358364959).');
+      });
     }
     function syncSend() { sendBtn.disabled = !input.value.trim(); }
 
@@ -2056,6 +2091,22 @@
       b.addEventListener('click', function () { close(); scrollToId('contact'); });
     });
     $$('button', chipRow).forEach(function (c) { c.addEventListener('click', function () { send(c.textContent); }); });
+    list.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a');
+      if (!a) return;
+      var uni = a.getAttribute('data-ai-uni');
+      if (uni) {
+        e.preventDefault();
+        if (window.TCOpenUni) { close(); window.TCOpenUni(uni); }
+        else window.open(a.getAttribute('href'), '_blank', 'noopener');
+        return;
+      }
+      var h = a.getAttribute('href') || '';
+      if (h.charAt(0) === '#' && document.getElementById(h.slice(1))) { e.preventDefault(); close(); scrollToId(h.slice(1)); }
+      else if (/^\.\/universities\.html/.test(h) && !window.TCOpenUni) { e.preventDefault(); window.open(h, '_blank', 'noopener'); }
+    });
+    // Load the course data while the visitor reads the welcome message.
+    $$('[data-chat-open]').forEach(function (b) { b.addEventListener('click', function () { if (window.TuteeAI) window.TuteeAI.ensureData(); }); });
     form.addEventListener('submit', function (e) { e.preventDefault(); send(input.value); });
     input.addEventListener('input', syncSend);
     input.addEventListener('keydown', function (e) {

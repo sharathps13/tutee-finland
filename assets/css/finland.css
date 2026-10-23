@@ -2191,3 +2191,12 @@ main { overflow-x: clip; }
    solid (and on pages whose header is always solid) the logo sits straight
    on the bar. */
 .header.is-scrolled .logo__plate, .page-dir .header .logo__plate { background: transparent; border-color: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+
+/* ======================================================== TUTEE AI ANSWERS */
+.msg ul { margin: 6px 0 2px; padding-left: 18px; display: grid; gap: 4px; }
+.msg li { padding-left: 2px; }
+.msg--ai a { color: var(--fi-blue); font-weight: 700; text-decoration: underline; text-decoration-color: rgba(0,53,128,.3); text-underline-offset: 2px; }
+.msg--ai a:hover { text-decoration-color: currentColor; }
+.chat__next { align-self: flex-start; max-width: 100%; animation: fadeUp .3s var(--ease); }
+.chat__next button { font-size: 12.5px; padding: 6px 11px; text-align: left; }
+.msg ul { list-style: disc; } .msg li::marker { color: var(--fi-blue); }

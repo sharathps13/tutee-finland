@@ -572,6 +572,7 @@
 
   function initModal() {
     if (!um) return;
+    window.TCOpenUni = function (id) { openUni(id); };   // Tutee AI links open the popup
     $$('[data-um-close]', um).forEach(function (b) { b.addEventListener('click', function () { closeUni(); }); });
     $$('[data-um-sl]', um).forEach(function (b) { b.addEventListener('click', function () { if (current) toggleShortlist(current, b); }); });
     $('[data-um-apply]', um).addEventListener('click', function () {
