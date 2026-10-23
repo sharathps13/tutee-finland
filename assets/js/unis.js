@@ -225,7 +225,9 @@
     var grid = $('[data-uni-grid]');
     if (!grid) return;
     var search = $('[data-search]'), clearBtn = $('[data-clear]');
-    var typeBtns = $$('[data-type]'), fieldSel = $('[data-field]'), citySel = $('[data-city]'), sortSel = $('[data-sort]');
+    var typeBtns = $$('[data-type]'), fieldBox = $('[data-field-opts]'), sortBtns = $$('[data-sort-opt]');
+    var panel = $('[data-filter-panel]'), openBtn = $('[data-filter-open]'), badge = $('[data-filter-n]'), activeBox = $('[data-active-chips]');
+    var showBtn = $('[data-filter-show]');
     var countEl = $('[data-count-out]'), empty = $('[data-empty]'), resetBtns = $$('[data-reset]');
     var chipBox = $('[data-field-chips]'), rail = $('[data-city-rail]');
     var state = { q: '', type: '', field: '', city: '', sort: 'rank' };
@@ -250,12 +252,8 @@
       var fields = {}, cities = {};
       all.forEach(function (u) { fieldsOf(u).forEach(function (f) { fields[f] = (fields[f] || 0) + 1; }); var c = cityOf(u); cities[c] = (cities[c] || 0) + 1; });
       var fieldNames = Object.keys(fields).sort();
-      if (fieldSel) fieldSel.innerHTML = '<option value="">All study fields</option>' + fieldNames.map(function (f) {
-        return '<option value="' + esc(f) + '">' + esc(f) + '</option>'; }).join('');
-      if (citySel) citySel.innerHTML = '<option value="">All cities</option>' + Object.keys(cities).sort().map(function (c) {
-        return '<option value="' + esc(c) + '">' + esc(c) + '</option>'; }).join('');
-      if (fieldSel) fieldSel.value = state.field;
-      if (citySel) citySel.value = state.city;
+      if (fieldBox) fieldBox.innerHTML = '<button type="button" data-field-opt="" aria-pressed="false">All fields</button>' + fieldNames.map(function (f) {
+        return '<button type="button" data-field-opt="' + esc(f) + '" aria-pressed="false">' + esc(f) + ' <small>' + fields[f] + '</small></button>'; }).join('');
       if (chipBox) chipBox.innerHTML = Object.keys(fields).sort(function (a, b) { return fields[b] - fields[a]; }).slice(0, 7).map(function (f) {
         return '<button type="button" data-field-chip="' + esc(f) + '">' + esc(f) + '</button>';
       }).join('');
@@ -291,9 +289,22 @@
       guardImages(grid);
       if (countEl) countEl.innerHTML = '<b>' + rows.length + '</b> of ' + all.length + ' shown';
       if (empty) empty.hidden = rows.length > 0;
-      var filtered = !!(state.q || state.type || state.field || state.city);
-      resetBtns.forEach(function (b) { b.hidden = !filtered && !!b.closest('.dir-bar'); });
       typeBtns.forEach(function (b) { b.setAttribute('aria-pressed', (b.getAttribute('data-type') || '') === state.type ? 'true' : 'false'); });
+      $$('[data-field-opt]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-field-opt') === state.field ? 'true' : 'false'); });
+      sortBtns.forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-sort-opt') === state.sort ? 'true' : 'false'); });
+      // Active filters: a badge on the funnel and a removable chip for each.
+      var act = [];
+      if (state.q) act.push(['q', '\u201c' + state.q + '\u201d']);
+      if (state.type) act.push(['type', state.type === 'uas' ? 'Applied sciences' : 'Universities']);
+      if (state.field) act.push(['field', state.field]);
+      if (state.city) act.push(['city', state.city]);
+      if (badge) { badge.hidden = !act.length; badge.textContent = act.length; }
+      if (openBtn) openBtn.classList.toggle('has-active', act.length > 0);
+      var sortName = state.sort === 'name' ? 'A\u2013Z' : state.sort === 'programmes' ? 'most courses' : 'ranking';
+      if (activeBox) activeBox.innerHTML = act.length ? act.map(function (a) {
+        return '<button type="button" class="fchip" data-clear-filter="' + a[0] + '" aria-label="Remove filter ' + esc(a[1]) + '">' + esc(a[1]) + ICON.x + '</button>';
+      }).join('') + '<button type="button" class="link-btn" data-clear-all>Clear all</button>' : '<span class="fchips__none">All institutions \u00b7 sorted by ' + sortName + '</span>';
+      if (showBtn) showBtn.textContent = rows.length ? 'Show ' + rows.length + (rows.length === 1 ? ' institution' : ' institutions') : 'No institutions match';
       $$('[data-field-chip]').forEach(function (b) { b.classList.toggle('is-on', b.getAttribute('data-field-chip') === state.field); });
       $$('[data-city-tile]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-city-tile') === state.city ? 'true' : 'false'); });
       if (clearBtn) clearBtn.hidden = !state.q;
@@ -323,15 +334,47 @@
     }
     if (clearBtn) clearBtn.addEventListener('click', function () { search.value = ''; state.q = ''; render(); search.focus(); });
     typeBtns.forEach(function (b) { b.addEventListener('click', function () { state.type = b.getAttribute('data-type') || ''; render(); }); });
-    if (fieldSel) fieldSel.addEventListener('change', function () { state.field = fieldSel.value; render(); });
-    if (citySel) citySel.addEventListener('change', function () { state.city = citySel.value; render(); });
-    if (sortSel) { sortSel.value = state.sort; sortSel.addEventListener('change', function () { state.sort = sortSel.value; render(); }); }
+    if (fieldBox) fieldBox.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-field-opt]');
+      if (b) { state.field = b.getAttribute('data-field-opt'); render(); }
+    });
+    sortBtns.forEach(function (b) { b.addEventListener('click', function () { state.sort = b.getAttribute('data-sort-opt'); render(); }); });
+    if (activeBox) activeBox.addEventListener('click', function (e) {
+      var c = e.target.closest('[data-clear-filter]');
+      if (c) { var k = c.getAttribute('data-clear-filter'); state[k] = ''; if (k === 'q' && search) search.value = ''; render(); return; }
+      if (e.target.closest('[data-clear-all]')) resetAll();
+    });
+
+    // The filter funnel: a panel under the button (a bottom sheet on phones).
+    function openPanel() {
+      if (!panel) return;
+      panel.hidden = false;
+      requestAnimationFrame(function () { panel.classList.add('is-open'); });
+      document.body.classList.add('filters-open');
+      openBtn.setAttribute('aria-expanded', 'true');
+      if (mq('(max-width: 699px)')) document.body.style.overflow = 'hidden';
+      var first = $('[aria-pressed="true"]', panel); if (first) first.focus({ preventScroll: true });
+    }
+    function closePanel(refocus) {
+      if (!panel || panel.hidden) return;
+      panel.classList.remove('is-open');
+      openBtn.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('filters-open');
+      if (!modalOpen()) document.body.style.overflow = '';
+      setTimeout(function () { if (!panel.classList.contains('is-open')) panel.hidden = true; }, reduceMotion ? 0 : 220);
+      if (refocus) openBtn.focus({ preventScroll: true });
+    }
+    if (openBtn) openBtn.addEventListener('click', function () { if (panel.hidden) openPanel(); else closePanel(true); });
+    $$('[data-filter-close]').forEach(function (b) { b.addEventListener('click', function () { closePanel(true); }); });
+    document.addEventListener('click', function (e) {
+      if (panel && !panel.hidden && !panel.contains(e.target) && !openBtn.contains(e.target)) closePanel(false);
+    });
+    window.addEventListener('keydown', function (e) { if (e.key === 'Escape' && panel && !panel.hidden) closePanel(true); });
     if (chipBox) chipBox.addEventListener('click', function (e) {
       var b = e.target.closest('[data-field-chip]');
       if (!b) return;
       var f = b.getAttribute('data-field-chip');
       state.field = state.field === f ? '' : f;
-      if (fieldSel) fieldSel.value = state.field;
       render(); toResults();
     });
     if (rail) rail.addEventListener('click', function (e) {
@@ -339,7 +382,6 @@
       if (!b) return;
       var c = b.getAttribute('data-city-tile');
       state.city = state.city === c ? '' : c;
-      if (citySel) citySel.value = state.city;
       render(); toResults();
     });
     $$('[data-rail]').forEach(function (b) {
@@ -348,15 +390,13 @@
       });
     });
     if (rail) initRailDrag(rail);
-    resetBtns.forEach(function (b) {
-      b.addEventListener('click', function () {
-        state.q = state.type = state.field = state.city = '';
-        if (search) search.value = '';
-        if (fieldSel) fieldSel.value = '';
-        if (citySel) citySel.value = '';
-        render();
-      });
-    });
+    function resetAll() {
+      state.q = state.type = state.field = state.city = '';
+      state.sort = 'rank';
+      if (search) search.value = '';
+      render();
+    }
+    resetBtns.forEach(function (b) { b.addEventListener('click', resetAll); });
 
     // Cards: heart toggles the shortlist, anywhere else opens the popup.
     grid.addEventListener('click', function (e) {

@@ -1889,3 +1889,256 @@ main { overflow-x: clip; }
   .fv__steps { padding-block: 10px; gap: 8px; margin-top: 10px; }
   .fv__steps li { padding: 8px; }
 }
+
+/* =================================================== SERVICES · PHONE DECK
+   Phones swap the dial for a deck of swipeable service cards with an icon
+   strip above it (initServiceDeck). Hidden everywhere else. */
+.sdk { display: none; }
+@media (max-width: 699px) {
+  #services .orb { display: none; }
+  .sdk { display: grid; gap: 10px; }
+  .sdk__chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--gutter) * -1); padding: 2px var(--gutter); }
+  .sdk__chips::-webkit-scrollbar { display: none; }
+  .sdk__chip { flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 6px; border-radius: 999px; font-size: 12.5px; font-weight: 700; color: var(--ink-2);
+    background: #fff; border: 1px solid var(--line); transition: background .25s, color .25s, border-color .25s; }
+  .sdk__chipico { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; color: var(--fi-blue); background: var(--ice-2); }
+  .sdk__chipico svg { width: 14px; height: 14px; }
+  .sdk__chip.is-on { color: #fff; background: var(--night); border-color: var(--night); }
+  .sdk__chip.is-on .sdk__chipico { color: var(--night); background: var(--aurora); }
+  .sdk__deck { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain;
+    margin-inline: calc(var(--gutter) * -1); padding: 4px var(--gutter) 10px; scroll-padding-inline: var(--gutter); }
+  .sdk__deck::-webkit-scrollbar { display: none; }
+  .sdk__card { flex: none; width: 86%; scroll-snap-align: center; display: flex; flex-direction: column; border-radius: 24px; overflow: hidden; background: #fff; border: 1px solid var(--line);
+    box-shadow: 0 18px 36px -26px rgba(6,22,49,.55); transform: scale(.96); opacity: .75; transition: transform .35s var(--ease), opacity .35s; }
+  .sdk__card.is-on { transform: none; opacity: 1; }
+  .sdk__photo { position: relative; height: 128px; background: linear-gradient(135deg, #0a2147, #1d5fc1); }
+  .sdk__photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .sdk__photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(4,16,42,.15), rgba(4,16,42,.7)); }
+  .sdk__num { position: absolute; z-index: 1; left: 14px; bottom: 10px; font-size: 2rem; font-weight: 700; line-height: 1; letter-spacing: -.04em; color: #fff; }
+  .sdk__num small { font-size: .45em; font-weight: 700; color: rgba(255,255,255,.7); letter-spacing: 0; margin-left: 2px; }
+  .sdk__phase { position: absolute; z-index: 1; left: 12px; top: 12px; }
+  .sdk__ico { position: absolute; z-index: 1; right: 12px; bottom: -20px; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; color: #fff;
+    background: linear-gradient(135deg, var(--fi-blue), #1f6fd6); box-shadow: 0 10px 20px -10px rgba(0,53,128,.8); border: 3px solid #fff; }
+  .sdk__ico svg { width: 20px; height: 20px; }
+  .sdk__body { display: grid; gap: 6px; padding: 14px 16px 16px; }
+  .sdk__body h3 { font-size: 1.12rem; line-height: 1.2; padding-right: 44px; }
+  .sdk__tag { font-size: 12px; font-weight: 700; color: var(--brand); }
+  .sdk__desc { font-size: 13px; line-height: 1.5; color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .sdk__points { display: grid; gap: 4px; margin: 2px 0 4px; }
+  .sdk__points li { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; font-weight: 600; line-height: 1.35; color: var(--ink); }
+  .sdk__points .ico { flex: none; width: 15px; height: 15px; margin-top: 1px; color: #0b8f6c; }
+  .sdk__cta { justify-self: start; }
+  .sdk__hint { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--muted); margin-top: -4px; }
+  .sdk__hint b { color: var(--fi-blue); letter-spacing: .06em; }
+  @media (prefers-reduced-motion: reduce) { .sdk__card { transition: none; } }
+}
+
+/* ==================================================== FUNDING · PHONE MIXER
+   Phones: the plan sits on top as a dark card whose four cost slots light
+   up; the sources become round pucks beneath it, and a detail card shows
+   the source last tapped. .fpl__focus only exists for this layout. */
+.fpl__focus { display: none; }
+@media (max-width: 699px) {
+  .fpl { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .fpl__plan { display: contents; }
+  .fpl__plan > .fpl__hero { order: 1; border-radius: 22px 22px 0 0; min-height: 0; padding: 14px 16px 12px; }
+  .fpl__plan > .fpl__costs { order: 2; margin-top: -10px; border-radius: 0 0 22px 22px; background: var(--night); padding: 8px 10px 12px; gap: 6px;
+    grid-template-columns: repeat(4, minmax(0, 1fr)); box-shadow: 0 20px 40px -28px rgba(6,22,49,.8); }
+  .fpl__srcs { order: 3; }
+  .fpl__focus { order: 4; display: grid; }
+  .fpl__plan > .fpl__help { display: none; }
+  .fpl__plan > .fpl__foot { order: 5; padding: 0; }
+  .fpl__partners { order: 6; }
+
+  /* Cost slots on the dark card */
+  .fpl__cost { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; justify-items: center; text-align: center; gap: 3px !important; padding: 9px 4px 8px !important;
+    border-radius: 14px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); }
+  .fpl__cost.is-covered { background: rgba(47,227,180,.12); border-color: rgba(47,227,180,.45); box-shadow: none; }
+  .fpl__cost::before { display: none; }
+  .fpl__cost > * { grid-column: 1 !important; grid-row: auto !important; }
+  .fpl__costico { width: 30px !important; height: 30px !important; border-radius: 50% !important; color: #8ea3c4; background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.14); }
+  .fpl__cost.is-covered .fpl__costico { color: var(--night); background: var(--aurora); border-color: var(--aurora); }
+  .fpl__cost > b { flex: none; font-size: 11.5px !important; line-height: 1.2; color: #fff; }
+  .fpl__state { font-size: 10px !important; color: #8ea3c4; }
+  .fpl__cost.is-covered .fpl__state { color: var(--aurora); }
+  .fpl__tags { justify-content: center; gap: 3px; }
+  .fpl__tags span { font-size: 9px !important; padding: 2px 5px !important; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Source pucks */
+  .fpl__srcs.m-swipe { display: grid !important; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; overflow: visible; margin: 0; padding: 22px 0 0; }
+  .fpl__srcs .fpl__label { left: 0; }
+  .fpl__src { width: auto !important; flex-direction: column !important; align-items: center !important; gap: 6px !important; padding: 0 !important; border: 0; background: none; box-shadow: none; text-align: center; }
+  .fpl__src:hover { transform: none; }
+  .fpl__src.is-on { box-shadow: none; }
+  .fpl__src .fpl__srcico { position: relative; width: 52px; height: 52px; border-radius: 50%; background: #fff; border: 2px solid var(--line); box-shadow: 0 8px 18px -12px rgba(6,22,49,.5); transition: all .25s; }
+  .fpl__src.is-on .fpl__srcico { color: #fff; background: var(--c); border-color: var(--c); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 22%, transparent), 0 10px 20px -10px var(--c); }
+  .fpl__src.is-on .fpl__srcico::after { content: "✓"; position: absolute; right: -4px; top: -4px; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 11px; font-weight: 800; color: #fff; background: #0b8f6c; border: 2px solid #fff; }
+  .fpl__src.is-focus .fpl__srctxt b { color: var(--c); }
+  .fpl__srctxt { display: block; }
+  .fpl__srctxt b { display: block; font-size: 10.5px !important; line-height: 1.25; white-space: normal !important; overflow: visible; }
+  .fpl__srctxt em, .fpl__srctxt small, .fpl__covers, .fpl__toggle { display: none !important; }
+
+  /* Detail card for the tapped source */
+  .fpl__focus { gap: 6px; padding: 12px 14px; border-radius: 18px; background: #fff; border: 1.5px solid color-mix(in srgb, var(--c, #003580) 35%, #dbe4ef); animation: fadeUp .3s var(--ease); }
+  .fpl__focushead { display: flex; align-items: center; gap: 10px; }
+  .fpl__focusico { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; color: #fff; background: var(--c, var(--fi-blue)); }
+  .fpl__focusico svg { width: 18px; height: 18px; }
+  .fpl__focushead > div { display: grid; min-width: 0; flex: 1; }
+  .fpl__focushead b { font-size: 14px; color: var(--ink); }
+  .fpl__focushead em { font-style: normal; font-size: 12.5px; font-weight: 800; color: var(--c, var(--fi-blue)); }
+  .fpl__focusstate { flex: none; font-size: 10.5px; font-weight: 800; padding: 3px 8px; border-radius: 999px; color: var(--muted); background: var(--ice); }
+  .fpl__focus p { font-size: 12.5px; line-height: 1.45; color: var(--ink-2); }
+  .fpl__focushelp { color: var(--muted) !important; }
+  .fpl__focushelp b { color: var(--ink); }
+}
+@media (max-width: 699px) {
+  .fpl__costs .fpl__cost > b, .fpl__costs .fpl__cost > .fpl__costico, .fpl__costs .fpl__cost > .fpl__state, .fpl__costs .fpl__cost > .fpl__tags { grid-column: 1 !important; grid-row: auto !important; }
+  .fpl__costs .fpl__cost > b { flex-basis: auto; }
+  .fpl__plan > .fpl__hero .fpl__herotxt b { font-size: 1.12rem; }
+  .fpl__focus { padding: 10px 12px; gap: 4px; }
+  .fpl__focus p { font-size: 12px; line-height: 1.4; }
+}
+@media (max-width: 699px) {
+  .fpl__tags span { white-space: normal !important; line-height: 1.15; text-align: center; }
+  .fpl__cost.is-covered .fpl__state { display: none; }
+  .fpl__plan > .fpl__hero { padding: 10px 14px 12px; }
+  .fpl__plan > .fpl__hero .fpl__herotxt { gap: 0; }
+  .fpl__plan > .fpl__hero .fpl__herotxt small, .fpl__plan > .fpl__hero .fpl__herotxt span { font-size: 10px; }
+  .fpl__srcs.m-swipe { padding-top: 20px; }
+  .fpl__src .fpl__srcico { width: 46px; height: 46px; }
+  .fpl__focus p { font-size: 11.5px; }
+  .fpl__partners { margin-top: 2px; }
+}
+@media (max-width: 699px) {
+  .fpl__plan > .fpl__hero { padding: 8px 14px 14px; }
+  .fpl__plan > .fpl__hero .fpl__herotxt b { font-size: 1.05rem; }
+  .fpl__plan > .fpl__costs { padding-bottom: 10px; }
+  .fpl__cost { padding: 7px 3px 6px !important; }
+  .fpl__focus { padding: 9px 12px; }
+  .fpl__focushead { gap: 8px; }
+  .fpl__focusico { width: 30px; height: 30px; }
+  .fpl__focus p { line-height: 1.38; }
+  #scholarships .section-head .lead { font-size: 12.5px; }
+}
+
+/* ===================================================== FAMILY · PHONE, UNCROPPED
+   Everything visible at once: the three facts sit side by side and the
+   three steps form a short vertical timeline. */
+@media (max-width: 699px) {
+  .fv__tiles.m-swipe { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; overflow: visible; margin: 2px 0 0 !important; padding: 0; }
+  .fv__tiles.m-swipe li { width: auto !important; padding: 8px 8px 9px; border-radius: 14px; gap: 3px; }
+  .fv__tiles b { font-size: .98rem !important; }
+  .fv__tiles span { font-size: 10.5px !important; line-height: 1.3 !important; }
+  .fv__inner { min-height: 0; }
+  .fv__steps { display: grid !important; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "label btn" "list list"; padding: 12px 14px; gap: 10px; }
+  .fv__stepslabel { padding: 0 !important; }
+  .fv__steps .btn { margin: 0 !important; }
+  .fv__steps ol.m-swipe { display: grid !important; grid-template-columns: minmax(0, 1fr); gap: 0; overflow: visible; margin: 0 !important; padding: 0 !important; }
+  .fv__steps ol.m-swipe li { width: auto !important; position: relative; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; padding: 0 0 10px; border: 0; border-radius: 0; background: none; }
+  .fv__steps ol.m-swipe li:last-child { padding-bottom: 0; }
+  .fv__steps ol.m-swipe li:not(:last-child)::after { content: ""; display: block; position: absolute; left: 13px; top: 30px; bottom: 2px; right: auto; width: 2px; height: auto;
+    background: repeating-linear-gradient(180deg, #c9d6e8 0 4px, transparent 4px 8px); }
+  .fv__steps ol.m-swipe li > b { width: 28px; height: 28px; border-radius: 9px; font-size: 11px; }
+  .fv__steps h4 { font-size: 13.5px; margin: 0 0 1px; }
+  .fv__steps p { font-size: 12px; line-height: 1.4; }
+}
+@media (max-width: 699px) {
+  /* Family steps on phones: three badges and titles side by side, the tapped
+     step's description beneath them. */
+  .fv__steps ol.m-swipe { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; column-gap: 8px; row-gap: 4px; }
+  .fv__steps ol.m-swipe li, .fv__steps ol.m-swipe li > div { display: contents !important; }
+  .fv__steps ol.m-swipe li::after { content: none !important; }
+  .fv__steps ol.m-swipe li > b { grid-row: 1; justify-self: start; cursor: pointer; transition: transform .2s, box-shadow .2s; }
+  .fv__steps ol.m-swipe h4 { grid-row: 2; cursor: pointer; font-size: 12.5px; line-height: 1.25; color: var(--muted); }
+  .fv__steps ol.m-swipe p { grid-row: 3; grid-column: 1 / -1; display: none; margin-top: 4px; padding: 9px 11px; border-radius: 12px; background: var(--ice); font-size: 12.5px; animation: fadeUp .25s var(--ease); }
+  .fv__steps ol.m-swipe li:nth-child(1) > b, .fv__steps ol.m-swipe li:nth-child(1) h4 { grid-column: 1; }
+  .fv__steps ol.m-swipe li:nth-child(2) > b, .fv__steps ol.m-swipe li:nth-child(2) h4 { grid-column: 2; }
+  .fv__steps ol.m-swipe li:nth-child(3) > b, .fv__steps ol.m-swipe li:nth-child(3) h4 { grid-column: 3; }
+  .fv__steps ol.m-swipe li.is-sel p { display: block; }
+  .fv__steps ol.m-swipe li.is-sel h4 { color: var(--ink); }
+  .fv__steps ol.m-swipe li.is-sel > b { box-shadow: 0 0 0 3px rgba(0,53,128,.18); transform: scale(1.06); }
+}
+@media (max-width: 699px) {
+  .fv__tabs { padding: 3px; }
+  .fv__tab { padding: 7px 11px; font-size: 12.5px; }
+  .fv__inner { gap: 6px; padding-top: 10px; }
+  .fv__steps { padding: 10px 12px; gap: 8px; margin-top: 8px; }
+  .fv__steps .btn { min-height: 32px; padding: 5px 10px; }
+  #family .section-head .lead { font-size: 12.5px; }
+}
+
+/* ===================================================== CONTACT · PHONE STACK
+   Nothing runs off-screen: the live profile is a slim ticket above the form
+   (tap to open), the start dates sit three-up, and the promises, contact
+   links and offices follow the form in full. */
+@media (max-width: 699px) {
+  .lf { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .lf__side { display: contents !important; }
+  .lf__side > * { width: auto !important; flex: none; }
+  .lf__side > .lp { order: -1; }
+  .lf__card { order: 0; }
+  .lf__side > .lf__trust { order: 1; }
+  .lf__side > .lf__contact { order: 2; }
+  .lf__side > .lf__offices { order: 3; }
+
+  /* Profile ticket */
+  .lf__side > .lp { padding: 10px 14px 12px; gap: 6px; border-radius: 18px; }
+  .lp:not(.is-open) .lp__brand { display: none; }
+  .lp:not(.is-open) .lp__top { position: absolute; right: 14px; top: 12px; z-index: 1; gap: 8px; }
+  .lp__top::after { content: none !important; }
+  .lp:not(.is-open) .lp__who { padding-right: 70px; }
+  .lp__ring { width: 46px !important; height: 46px !important; }
+  .lp__ring b { font-size: 12px !important; }
+  .lp:not(.is-open) .lp__who small::after { content: " · tap to view your profile"; text-transform: none; letter-spacing: 0; font-weight: 600; }
+  .lp .strength { margin: 2px 0 0; }
+
+  /* Form */
+  .lf__pills { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; overflow: visible; margin: 0; padding: 0; }
+  .lf__pill span { display: flex; justify-content: center; align-items: center; text-align: center; height: 100%; min-height: 38px; padding: 6px 6px; font-size: 11.5px; line-height: 1.2; border-radius: 12px; }
+
+  /* After the form */
+  .lf__side > .lf__trust { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .lf__trust li { padding: 9px 8px; font-size: 11px; gap: 4px; border-radius: 14px; }
+  .lf__trust b { font-size: 13.5px; }
+  .lf__side > .lf__contact { display: flex; flex-wrap: wrap; gap: 6px; overflow: visible; margin: 0; padding: 0; background: none; border: 0; }
+  .lf__contact a { flex: 1 1 auto; justify-content: center; padding: 7px 10px; font-size: 12px; }
+  .lf__side > .lf__offices { padding: 0 2px; background: none; border: 0; font-size: 11.5px; line-height: 1.45; }
+}
+@media (max-width: 699px) {
+  .lp:not(.is-open) .lp__who small::after { content: " · tap to view"; }
+  .lp__name { font-size: 1.05rem !important; }
+  .lp__who { gap: 10px !important; }
+  .lp__ring { width: 40px !important; height: 40px !important; }
+  .lf__side > .lp { padding: 9px 12px 10px; }
+  .lf__card { padding: 12px 14px 14px; }
+}
+@media (max-width: 699px) { .lf__side > .lf__offices { display: flex; align-items: flex-start; text-align: left; } }
+
+/* ======================================================== FOOTER · PHONE */
+@media (max-width: 699px) {
+  .ft { padding-block: 28px 20px; }
+  .ft__grid { gap: 22px; }
+  .ft__brand { gap: 10px; }
+  .ft__brand .logo__plate { padding: 4px 8px; }
+  .ft__brand .brandmark--footer { height: 58px; }
+  .ft__brand p { font-size: 13.5px; max-width: none; }
+  .ft__col h3 { margin-bottom: 10px; }
+  .ft__links { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; }
+  .ft__links a { font-size: 14px; }
+  .ft__chips { gap: 6px; }
+  .ft__chip { padding: 5px 10px; font-size: 12px; }
+  .ft__talk { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .ft__talk a { align-items: flex-start; gap: 9px; min-width: 0; }
+  .ft__ico { width: 34px; height: 34px; border-radius: 10px; }
+  .ft__talk span:last-child { min-width: 0; }
+  .ft__talk b { font-size: 13px; overflow-wrap: anywhere; }
+  .ft__reply { margin-top: 12px; }
+  .ft__base { flex-direction: column; align-items: center; text-align: center; gap: 8px; margin-top: 22px; padding-bottom: 76px; }
+  .ft__base .credits[open] ul { text-align: left; }
+}
+@media (max-width: 699px) {
+  .ft__talk li:nth-child(n+3) { grid-column: 1 / -1; }
+  .ft__talk b { overflow-wrap: normal; white-space: nowrap; }
+  .ft__talk a { align-items: center; }
+}

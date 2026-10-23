@@ -919,6 +919,100 @@
     io.observe(dial);
   }
 
+  /* Funding on phones: a detail card for the source last tapped (amount,
+     who it is for, how we help). It lives beside the switches and is only
+     shown on phones, where the switches become round pucks. */
+  function initFundingFocus() {
+    var root = $('[data-fpl]');
+    if (!root) return;
+    var srcs = $$('[data-fpl-src]', root);
+    var card = document.createElement('div');
+    card.className = 'fpl__focus';
+    card.setAttribute('aria-live', 'polite');
+    var anchor = $('.fpl__srcs', root);
+    anchor.parentNode.insertBefore(card, anchor.nextSibling);
+    function show(s) {
+      var t = function (sel) { var el = s.querySelector(sel); return el ? el.textContent : ''; };
+      card.style.setProperty('--c', getComputedStyle(s).getPropertyValue('--c'));
+      card.innerHTML = '<div class="fpl__focushead"><span class="fpl__focusico">' + $('.fpl__srcico', s).innerHTML + '</span>' +
+        '<div><b>' + escapeHtml(t('b')) + '</b><em>' + escapeHtml(t('em')) + '</em></div>' +
+        '<span class="fpl__focusstate">' + (s.classList.contains('is-on') ? 'In your plan' : 'Not in your plan') + '</span></div>' +
+        '<p>' + escapeHtml(t('small')) + '</p>' +
+        '<p class="fpl__focushelp"><b>How we help:</b> ' + escapeHtml(s.getAttribute('data-help') || '') + '</p>';
+      srcs.forEach(function (o) { o.classList.toggle('is-focus', o === s); });
+    }
+    srcs.forEach(function (s) { s.addEventListener('click', function () { show(s); }); });
+    show(srcs.filter(function (s) { return s.classList.contains('is-on'); })[0] || srcs[0]);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Services on phones — a deck of swipeable service cards (photo, phase,
+   * story, key points, request button) with an icon strip that tracks and
+   * jumps the deck. Built from FI_SERVICES; CSS shows it only on phones,
+   * where it replaces the dial.
+   * ------------------------------------------------------------------ */
+  function initServiceDeck() {
+    var services = window.FI_SERVICES || [], orb = $('[data-orb]');
+    if (!orb || !services.length) return;
+    var PHASES = ['plan', 'plan', 'plan', 'apply', 'apply', 'arrive', 'apply', 'arrive', 'arrive'];
+    var PHASE_NAMES = { plan: 'Plan', apply: 'Apply', arrive: 'Arrive & settle' };
+    var photos = $$('[data-orb-bg]', orb).map(function (img) { return img.getAttribute('src') || img.getAttribute('data-src') || ''; });
+    function pad(n) { return ('0' + n).slice(-2); }
+    function short(t) { return String(t).replace(/^(Assistance for|Assistance with)\s+/i, '').replace(/\s*&amp;.*$/, '').split(/\s+/).slice(0, 2).join(' '); }
+    var deck = document.createElement('div');
+    deck.className = 'sdk';
+    deck.innerHTML =
+      '<div class="sdk__chips" role="tablist" aria-label="Services">' + services.map(function (s, i) {
+        return '<button type="button" class="sdk__chip' + (i ? '' : ' is-on') + '" role="tab" aria-selected="' + (i ? 'false' : 'true') + '" data-sdk-chip="' + i + '">' +
+          '<span class="sdk__chipico">' + s.icon + '</span><span>' + escapeHtml(short(s.title)) + '</span></button>';
+      }).join('') + '</div>' +
+      '<div class="sdk__deck" data-sdk-deck>' + services.map(function (s, i) {
+        var ph = PHASES[i] || 'plan', first = String(s.desc || '').split(/\n\s*\n/)[0];
+        return '<article class="sdk__card" data-sdk-card="' + i + '" aria-label="' + escapeHtml(s.title) + '">' +
+          '<div class="sdk__photo"><img src="' + photos[i] + '" alt="" loading="lazy" decoding="async">' +
+            '<span class="sdk__num">' + pad(i + 1) + '<small>/' + pad(services.length) + '</small></span>' +
+            '<span class="orb__phase sdk__phase" data-phase="' + ph + '">' + PHASE_NAMES[ph] + '</span>' +
+            '<span class="sdk__ico">' + s.icon + '</span></div>' +
+          '<div class="sdk__body"><h3>' + escapeHtml(s.title) + '</h3><p class="sdk__tag">' + escapeHtml(s.tagline || '') + '</p>' +
+            '<p class="sdk__desc">' + escapeHtml(first) + '</p>' +
+            '<ul class="sdk__points">' + (s.points || []).map(function (p) { return '<li><svg class="ico ico-sm"><use href="#i-check"/></svg>' + escapeHtml(p) + '</li>'; }).join('') + '</ul>' +
+            '<a class="btn btn-primary btn-sm sdk__cta" href="#contact" data-sdk-cta="' + i + '">Request this service<svg class="ico ico-sm ico-arrow"><use href="#i-arrow"/></svg></a>' +
+          '</div></article>';
+      }).join('') + '</div>' +
+      '<p class="sdk__hint"><span>Swipe the cards or tap a service</span><b data-sdk-count>01 / ' + pad(services.length) + '</b></p>';
+    orb.parentNode.insertBefore(deck, orb.nextSibling);
+
+    var track = $('[data-sdk-deck]', deck), cards = $$('[data-sdk-card]', deck), chips = $$('[data-sdk-chip]', deck), count = $('[data-sdk-count]', deck), cur = 0;
+    var strip = $('.sdk__chips', deck);
+    function mark(i) {
+      if (i === cur) return;
+      cur = i;
+      chips.forEach(function (c, k) { c.classList.toggle('is-on', k === i); c.setAttribute('aria-selected', k === i ? 'true' : 'false'); });
+      cards.forEach(function (c, k) { c.classList.toggle('is-on', k === i); });
+      count.textContent = pad(i + 1) + ' / ' + pad(services.length);
+      var c = chips[i];
+      strip.scrollTo({ left: c.offsetLeft - (strip.clientWidth - c.offsetWidth) / 2, behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+    cards[0].classList.add('is-on');
+    var st = 0;
+    track.addEventListener('scroll', function () {
+      cancelAnimationFrame(st);
+      st = requestAnimationFrame(function () {
+        var best = 0, bd = 1e9, mid = track.scrollLeft + track.clientWidth / 2;
+        cards.forEach(function (c, k) { var d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid); if (d < bd) { bd = d; best = k; } });
+        mark(best);
+      });
+    }, { passive: true });
+    chips.forEach(function (c, i) {
+      c.addEventListener('click', function () {
+        track.scrollTo({ left: cards[i].offsetLeft - (track.clientWidth - cards[i].offsetWidth) / 2, behavior: reduceMotion ? 'auto' : 'smooth' });
+      });
+    });
+    $$('[data-sdk-cta]', deck).forEach(function (a) {
+      a.addEventListener('click', function () { setDestination('Service: ' + services[+a.getAttribute('data-sdk-cta')].title.replace('&amp;', '&')); });
+    });
+  }
+
   /* ------------------------------------------------------------------ *
    * Funding plan builder — each source switch lights up the degree costs
    * it covers (tags, meter, headline); the help note follows the last
@@ -1265,6 +1359,16 @@
    * on their own while the card is in view (the active tab shows the
    * countdown) and pause on hover or focus. Reduced motion never autoplays.
    * ------------------------------------------------------------------ */
+  /* Family steps: on phones the steps form a three-up stepper and the
+     selected one shows its description (CSS only acts on .is-sel there). */
+  function initFamilySteps() {
+    var items = $$('.fv__steps li');
+    if (!items.length) return;
+    function sel(k) { items.forEach(function (li, i) { li.classList.toggle('is-sel', i === k); }); }
+    items.forEach(function (li, i) { li.addEventListener('click', function () { sel(i); }); });
+    sel(0);
+  }
+
   function initFamilyViews() {
     var root = $('[data-fv]');
     if (!root) return;
@@ -2353,10 +2457,13 @@
   initVelocityRails();
   initSeasonStage();
   initServices();
+  initServiceDeck();
   initPostcards();
   initFundingPlan();
+  initFundingFocus();
   initJourneyRoute();
   initFamilyViews();
+  initFamilySteps();
   initPointerFx();
   initAccordion();
   initForms();

@@ -275,3 +275,79 @@ body.has-dock .toast { z-index: 95; }
 }
 .page-dir.has-dock { padding-bottom: 76px; }
 @media (max-width: 379px) { .slbar__text { display: none; } }
+
+/* ===================================================== FILTER FUNNEL TOOLBAR
+   One "Filters" button (type, study field, sort) with its active filters
+   as removable chips beside it; campus cities stay on the photo rail. */
+.dir-bar { z-index: 45; }
+.dir-bar__row { display: flex; align-items: center; gap: 12px; padding-block: 12px; overflow: visible; }
+.fbtn { flex: none; position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 8px 16px; border-radius: 999px; font-size: 14px; font-weight: 700;
+  color: var(--ink); background: #fff; border: 1.5px solid var(--line); transition: border-color .2s, box-shadow .2s, background .2s; }
+.fbtn:hover { border-color: #b9cbe3; }
+.fbtn[aria-expanded="true"], .fbtn.has-active { border-color: var(--fi-blue); color: var(--fi-blue); box-shadow: 0 0 0 4px rgba(0,53,128,.08); }
+.fbtn__n { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; display: grid; place-items: center; font-size: 11.5px; color: #fff; background: var(--fi-blue); }
+.fbtn__n[hidden] { display: none; }
+.fchips { flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.fchips::-webkit-scrollbar { display: none; }
+.fchip { flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 6px 8px 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--fi-blue);
+  background: var(--ice-2); border: 1px solid #cddcf0; transition: background .2s; }
+.fchip:hover { background: #d9e6f6; }
+.fchip .ico { width: 14px; height: 14px; }
+.fchips__none { font-size: 13.5px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.fchips .link-btn { flex: none; margin-left: 2px; }
+.dir-bar__count { margin-left: auto; }
+
+.fpanel { position: absolute; z-index: 50; top: calc(100% - 4px); left: max(var(--gutter), calc((100% - var(--container)) / 2 + var(--gutter))); width: min(460px, calc(100% - var(--gutter) * 2)); }
+.fpanel[hidden] { display: none; }
+.fpanel__bg { display: none; }
+.fpanel__box { display: flex; flex-direction: column; max-height: min(70vh, 560px); border-radius: 20px; background: #fff; border: 1px solid var(--line); box-shadow: 0 30px 60px -24px rgba(6,22,49,.4);
+  opacity: 0; transform: translateY(-8px); transition: opacity .2s, transform .25s var(--ease); }
+.fpanel.is-open .fpanel__box { opacity: 1; transform: none; }
+.fpanel__head { display: flex; align-items: center; gap: 12px; padding: 16px 18px 12px; border-bottom: 1px solid var(--line); }
+.fpanel__head h2 { flex: 1; font-size: 1.05rem; }
+.fpanel__head .link-btn[hidden] { display: inline; }
+.fpanel__x { width: 36px; height: 36px; }
+.fpanel__body { overflow-y: auto; overscroll-behavior: contain; padding: 14px 18px; display: grid; gap: 16px; }
+.fgroup { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; min-width: 0; }
+.fgroup legend { padding: 0; margin-bottom: 8px; font-size: 11.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.fopts { display: flex; gap: 6px; flex-wrap: wrap; }
+.fopts button { padding: 8px 13px; border-radius: 999px; font-size: 13.5px; font-weight: 700; color: var(--ink-2); background: var(--ice); border: 1.5px solid transparent; transition: all .2s; }
+.fopts button small { font-size: 11.5px; font-weight: 800; color: var(--muted); }
+.fopts button:hover { border-color: #c3d2e6; }
+.fopts button[aria-pressed="true"] { color: #fff; background: var(--fi-blue); border-color: var(--fi-blue); }
+.fopts button[aria-pressed="true"] small { color: #c6d4e8; }
+.fpanel__foot { padding: 12px 18px 16px; border-top: 1px solid var(--line); }
+
+@media (max-width: 699px) {
+  .dir-bar__row { gap: 8px; padding-block: 10px; }
+  .fbtn { padding: 8px 13px; min-height: 40px; }
+  .dir-bar__count { display: none; }
+  .fpanel { position: fixed; inset: 0; z-index: 90; width: auto; display: flex; align-items: flex-end; }
+  .fpanel__bg { display: block; position: absolute; inset: 0; background: rgba(6,22,49,.5); backdrop-filter: blur(3px); opacity: 0; transition: opacity .2s; }
+  .fpanel.is-open .fpanel__bg { opacity: 1; }
+  .fpanel__box { position: relative; width: 100%; max-height: 82vh; border-radius: 22px 22px 0 0; transform: translateY(100%); opacity: 1; }
+  .fpanel__foot { padding-bottom: calc(14px + env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion: reduce) { .fpanel__box, .fpanel__bg { transition: none; } }
+
+/* ======================================================== HERO · CLEANER
+   One column: headline, intro and search, then a slim four-figure strip. */
+.ux-hero { padding-bottom: clamp(22px, 3vw, 36px); }
+.ux-hero__grid { grid-template-columns: minmax(0, 1fr) !important; gap: clamp(18px, 2.4vw, 26px); align-items: start; }
+.ux-hero__copy { gap: 16px; max-width: 760px; }
+.ux-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-radius: 18px; background: #fff; border: 1px solid var(--line); box-shadow: var(--shadow-sm); overflow: hidden; }
+.ux-stat, .ux-stat--big, .ux-stat--wide { grid-column: auto; display: grid; grid-template-columns: none; align-content: center; gap: 2px; padding: 14px 18px; border: 0; border-radius: 0; box-shadow: none; background: none; color: inherit; }
+.ux-stat + .ux-stat { border-left: 1px solid var(--line); }
+.ux-stat b, .ux-stat--big b { font-size: clamp(1.4rem, 1.15rem + .9vw, 1.9rem); color: var(--fi-blue); }
+.ux-stat span, .ux-stat--big span { font-size: 13px; color: var(--muted); }
+@media (max-width: 699px) {
+  .ux-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ux-stat { padding: 12px 14px; }
+  .ux-stat:nth-child(3) { border-left: 0; }
+  .ux-stat:nth-child(n+3) { border-top: 1px solid var(--line); }
+}
+.ux-stat, .ux-stat--big, .ux-stat--wide { align-content: start; }
+/* A backdrop filter would make the toolbar the containing block for the
+   fixed filter sheet, so phones use a plain white bar. */
+@media (max-width: 699px) { .dir-bar { -webkit-backdrop-filter: none; backdrop-filter: none; background: #fff; } }
+.filters-open .dir-bar { z-index: 96; }
