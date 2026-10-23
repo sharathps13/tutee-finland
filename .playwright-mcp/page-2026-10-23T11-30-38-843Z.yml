@@ -1,0 +1,1047 @@
+- generic [active] [ref=e1]:
+  - link "Skip to the free profile evaluation" [ref=e2] [cursor=pointer]:
+    - /url: "#contact"
+  - navigation "Page sections" [ref=e3]:
+    - link "Start" [ref=e4] [cursor=pointer]:
+      - /url: "#home"
+    - link "Why Finland" [ref=e5] [cursor=pointer]:
+      - /url: "#why"
+    - link "Services" [ref=e6] [cursor=pointer]:
+      - /url: "#services"
+    - link "Universities" [ref=e7] [cursor=pointer]:
+      - /url: "#universities"
+    - link "Funding" [ref=e8] [cursor=pointer]:
+      - /url: "#scholarships"
+    - link "Your journey" [ref=e9] [cursor=pointer]:
+      - /url: "#relocate"
+    - link "Family" [ref=e10] [cursor=pointer]:
+      - /url: "#family"
+    - link "Stories" [ref=e11] [cursor=pointer]:
+      - /url: "#testimonials"
+    - link "FAQ" [ref=e12] [cursor=pointer]:
+      - /url: "#faq"
+    - link "Evaluate" [ref=e13] [cursor=pointer]:
+      - /url: "#contact"
+  - banner [ref=e14]:
+    - generic [ref=e15]:
+      - link "Tutee Connect, back to top" [ref=e16] [cursor=pointer]:
+        - /url: ./index.html
+        - img "Tutee Connect, Study | Immigration" [ref=e18]
+      - navigation "Primary" [ref=e19]:
+        - link "Why Finland" [ref=e20] [cursor=pointer]:
+          - /url: "#why"
+        - link "Services" [ref=e21] [cursor=pointer]:
+          - /url: "#services"
+        - link "Universities" [ref=e22] [cursor=pointer]:
+          - /url: ./universities.html
+        - link "Funding" [ref=e23] [cursor=pointer]:
+          - /url: "#scholarships"
+        - link "Journey" [ref=e24] [cursor=pointer]:
+          - /url: "#relocate"
+        - link "FAQ" [ref=e25] [cursor=pointer]:
+          - /url: "#faq"
+      - link "Free Evaluation" [ref=e27] [cursor=pointer]:
+        - /url: "#contact"
+  - main [ref=e30]:
+    - generic [ref=e32]:
+      - generic [ref=e37]:
+        - generic [ref=e38]: Study in Finland
+        - generic [ref=e42]:
+          - text: Now in Helsinki
+          - generic [ref=e44]: 14:30
+      - generic [ref=e46]:
+        - heading "Your future has a shape." [level=1] [ref=e47]: Your future hasa shape.
+        - paragraph [ref=e48]: Admissions, residence permit, scholarships and settlement in Finland — one expert team from first application to your first job.
+        - generic [ref=e49]:
+          - link "Start my free evaluation" [ref=e50] [cursor=pointer]:
+            - /url: "#contact"
+          - link "Explore universities" [ref=e53] [cursor=pointer]:
+            - /url: ./universities.html
+      - generic [ref=e54]:
+        - list "Hero chapters" [ref=e55]:
+          - listitem [ref=e56]:
+            - button "Finland" [ref=e57] [cursor=pointer]
+          - listitem [ref=e58]:
+            - button "Choose" [ref=e59] [cursor=pointer]
+          - listitem [ref=e60]:
+            - button "Stay" [ref=e61] [cursor=pointer]
+          - listitem [ref=e62]:
+            - button "Work" [ref=e63] [cursor=pointer]
+          - listitem [ref=e64]:
+            - button "Begin" [ref=e65] [cursor=pointer]
+        - link "Scroll to explore" [ref=e66] [cursor=pointer]:
+          - /url: "#why"
+          - generic [ref=e67]: Scroll
+    - generic "Finland at a glance" [ref=e69]:
+      - generic [ref=e71]:
+        - generic [ref=e72]: Continuous A permit for your whole degree
+        - generic [ref=e75]: Work an average of 30 h/week in any field
+        - generic [ref=e78]: 2-year permit to look for work after graduating
+        - generic [ref=e81]: No credibility interview
+        - generic [ref=e84]: Doctoral study carries no tuition fee
+        - generic [ref=e87]: Your partner can work without restriction
+        - generic [ref=e90]: 600+ English-taught degree programmes
+        - generic [aria-hidden] [ref=e93]: Continuous A permit for your whole degree
+        - generic [aria-hidden] [ref=e96]: Work an average of 30 h/week in any field
+        - generic [aria-hidden] [ref=e99]: 2-year permit to look for work after graduating
+        - generic [aria-hidden] [ref=e102]: No credibility interview
+        - generic [aria-hidden] [ref=e105]: Doctoral study carries no tuition fee
+        - generic [aria-hidden] [ref=e108]: Your partner can work without restriction
+        - generic [aria-hidden] [ref=e111]: 600+ English-taught degree programmes
+      - generic [ref=e115]:
+        - generic [ref=e116]: Helsinki
+        - generic [ref=e117]: Espoo
+        - generic [ref=e118]: Tampere
+        - generic [ref=e119]: Turku
+        - generic [ref=e120]: Oulu
+        - generic [ref=e121]: Jyväskylä
+        - generic [ref=e122]: Vaasa
+        - generic [ref=e123]: Joensuu
+        - generic [ref=e124]: Lappeenranta
+        - generic [ref=e125]: Kuopio
+        - generic [ref=e126]: Rovaniemi
+        - generic [aria-hidden] [ref=e127]: Helsinki
+        - generic [aria-hidden] [ref=e128]: Espoo
+        - generic [aria-hidden] [ref=e129]: Tampere
+        - generic [aria-hidden] [ref=e130]: Turku
+        - generic [aria-hidden] [ref=e131]: Oulu
+        - generic [aria-hidden] [ref=e132]: Jyväskylä
+        - generic [aria-hidden] [ref=e133]: Vaasa
+        - generic [aria-hidden] [ref=e134]: Joensuu
+        - generic [aria-hidden] [ref=e135]: Lappeenranta
+        - generic [aria-hidden] [ref=e136]: Kuopio
+        - generic [aria-hidden] [ref=e137]: Rovaniemi
+    - generic [ref=e140]:
+      - generic [ref=e141]:
+        - generic [ref=e142]: Why Finland
+        - heading "Four seasons. Four reasons to choose Finland." [level=2] [ref=e143]:
+          - generic [ref=e144]: Four
+          - generic [ref=e145]: seasons.
+          - generic [ref=e146]: Four
+          - generic [ref=e147]: reasons
+          - generic [ref=e148]:
+            - generic [ref=e149]: to
+            - generic [ref=e150]: choose
+            - generic [ref=e151]: Finland.
+        - tablist "Seasons" [ref=e152]:
+          - tab "Autumn Sep – Nov" [selected] [ref=e153] [cursor=pointer]:
+            - generic [ref=e156]:
+              - text: Autumn
+              - generic [ref=e157]: Sep – Nov
+          - tab "Winter Dec – Feb" [ref=e158] [cursor=pointer]:
+            - generic [ref=e161]:
+              - text: Winter
+              - generic [ref=e162]: Dec – Feb
+          - tab "Spring Mar – May" [ref=e163] [cursor=pointer]:
+            - generic [ref=e166]:
+              - text: Spring
+              - generic [ref=e167]: Mar – May
+          - tab "Summer Jun – Aug" [ref=e168] [cursor=pointer]:
+            - generic [ref=e171]:
+              - text: Summer
+              - generic [ref=e172]: Jun – Aug
+        - tabpanel "Autumn Sep – Nov" [ref=e176]:
+          - generic [ref=e177]:
+            - generic [ref=e178]: "12"
+            - generic [ref=e179]: institutions ranked in QS Europe 2026
+          - heading "World-class teaching from week one." [level=3] [ref=e180]
+          - paragraph [ref=e181]: "Term starts as the forests turn red and gold. Twelve Finnish institutions appear in the QS World University Rankings: Europe 2026, and teaching is hands-on and project-based from the first week."
+          - list [ref=e182]:
+            - listitem [ref=e183]: Tutor groups help every newcomer settle in
+            - listitem [ref=e186]: "One national application service: Studyinfo"
+      - generic [ref=e190]:
+        - figure [ref=e191]:
+          - generic [ref=e193]:
+            - generic [ref=e194]: Ruska
+            - generic [ref=e195]: Saana fell, Lapland
+        - figure [ref=e198]:
+          - generic [ref=e200]:
+            - generic [ref=e201]: Revontulet
+            - generic [ref=e202]: Lapland lake, aurora timelapse
+        - figure [ref=e205]:
+          - generic [ref=e207]:
+            - generic [ref=e208]: Vappu
+            - generic [ref=e209]: Cherry blossom, Helsinki
+        - figure [ref=e212]:
+          - generic [ref=e214]:
+            - generic [ref=e215]: Yötön yö
+            - generic [ref=e216]: Summer night on a Finnish lake
+        - generic: Move to stir the air · click for a gust
+    - generic [ref=e220]:
+      - generic [ref=e221]:
+        - generic [ref=e222]:
+          - generic "What we do" [ref=e224]
+          - heading "Nine services. One team. Zero guesswork." [level=2] [ref=e225]:
+            - generic [ref=e226]: Nine
+            - generic [ref=e227]: services.
+            - generic [ref=e228]: One
+            - generic [ref=e229]: team.
+            - generic [ref=e230]:
+              - generic [ref=e231]: Zero
+              - generic [ref=e232]: guesswork.
+        - paragraph [ref=e233]: We scrutinise every profile from the view of Migri case officers, then choose the right pathway — that is how we keep a 99% success rate on Finnish residence permits.
+      - generic [ref=e234]:
+        - generic [ref=e235]:
+          - generic [ref=e237]:
+            - tablist "Our services" [ref=e240]:
+              - tab "Career Consultation" [selected] [ref=e314] [cursor=pointer]
+              - tab "Language Test" [ref=e318] [cursor=pointer]
+              - tab "College Selection" [ref=e322] [cursor=pointer]
+              - tab "Documentation" [ref=e326] [cursor=pointer]
+              - tab "Residence Permit & Documents" [ref=e330] [cursor=pointer]
+              - tab "E2E Settlement" [ref=e334] [cursor=pointer]
+              - tab "Financial Aid" [ref=e338] [cursor=pointer]
+              - tab "Post-Landing" [ref=e342] [cursor=pointer]
+              - tab "Family Migration" [ref=e346] [cursor=pointer]
+            - generic [aria-hidden]:
+              - generic: "01"
+              - generic: of 09
+              - generic: Career consultation
+          - generic [aria-hidden]:
+            - generic: Planning your pathway together
+          - generic [aria-hidden]:
+            - generic: Scroll, drag or click an icon
+        - tabpanel "Career Consultation" [ref=e350]:
+          - generic [aria-hidden]: "01"
+          - generic [ref=e351]:
+            - generic [ref=e356]:
+              - generic [ref=e357]:
+                - generic [ref=e358]: Plan
+                - generic [ref=e359]: Expert Guidance for Your Finland Journey
+              - heading "Career Consultation" [level=3] [ref=e360]
+            - generic [ref=e362]:
+              - paragraph [ref=e363]: Tutee Connect provides an invaluable career consultation at free of cost. The results of this consultation will enhance your self-awareness regarding your profile and illuminate potential pathways for career advancement in Finland. Our skilled consultants will accompany you through each phase of the application process, underscoring our vital role in providing tailored assistance.
+              - button "Read full details" [ref=e364] [cursor=pointer]
+            - list [ref=e367]:
+              - listitem [ref=e368]:
+                - generic [ref=e371]: Free one-to-one consultation
+              - listitem [ref=e372]:
+                - generic [ref=e375]: Your profile and pathway assessed
+              - listitem [ref=e376]:
+                - generic [ref=e379]: Briefing on the A permit, work rights and job search
+              - listitem [ref=e380]:
+                - generic [ref=e383]: A consultant with you at every phase
+          - generic [ref=e384]:
+            - generic [ref=e385]:
+              - generic [ref=e386]: Where it fits in your journey
+              - generic [ref=e387]: 01 / 09
+            - generic [ref=e388]:
+              - button "Service 1" [ref=e389] [cursor=pointer]
+              - button "Service 2" [ref=e390] [cursor=pointer]
+              - button "Service 3" [ref=e391] [cursor=pointer]
+              - button "Service 4" [ref=e392] [cursor=pointer]
+              - button "Service 5" [ref=e393] [cursor=pointer]
+              - button "Service 6" [ref=e394] [cursor=pointer]
+              - button "Service 7" [ref=e395] [cursor=pointer]
+              - button "Service 8" [ref=e396] [cursor=pointer]
+              - button "Service 9" [ref=e397] [cursor=pointer]
+            - generic [ref=e398]:
+              - generic [ref=e399]: Before you apply
+              - generic [ref=e400]: Life in Finland
+          - generic [ref=e401]:
+            - link "Request this service" [ref=e402] [cursor=pointer]:
+              - /url: "#contact"
+            - generic [ref=e405]:
+              - button "Previous service" [ref=e406] [cursor=pointer]
+              - button "Next service" [ref=e409] [cursor=pointer]
+    - generic [ref=e413]:
+      - generic [ref=e414]:
+        - generic [ref=e415]:
+          - generic "Top ranked universities" [ref=e417]
+          - heading "Postcards from Finland's best institutions." [level=2] [ref=e418]:
+            - generic [ref=e419]: Postcards
+            - generic [ref=e420]: from
+            - generic [ref=e421]: Finland's
+            - generic [ref=e422]:
+              - generic [ref=e423]: best
+              - generic [ref=e424]: institutions.
+        - paragraph [ref=e425]: "Twelve Finnish institutions rank in the QS World University Rankings: Europe 2026. Pick a stamp to receive its postcard, then flip it over for the details."
+      - generic [ref=e426]:
+        - generic [ref=e427]:
+          - group "Institution type" [ref=e428]:
+            - button "All 12" [pressed] [ref=e429] [cursor=pointer]
+            - button "Universities" [ref=e430] [cursor=pointer]
+            - button "Applied sciences" [ref=e431] [cursor=pointer]
+          - group "Field of study" [ref=e432]:
+            - button "Technology" [ref=e433] [cursor=pointer]
+            - button "Business" [ref=e434] [cursor=pointer]
+            - button "Health" [ref=e435] [cursor=pointer]
+            - button "Science" [ref=e436] [cursor=pointer]
+            - button "Society & education" [ref=e437] [cursor=pointer]
+            - button "Arts & design" [ref=e438] [cursor=pointer]
+        - generic [ref=e441] [cursor=pointer]:
+          - generic [ref=e442]:
+            - generic [ref=e443]: Greetings from
+            - generic [ref=e444]: Espoo
+            - generic [ref=e445]: Aalto University
+            - generic [ref=e446]:
+              - generic [ref=e447]: QS Europe 2026
+              - generic [ref=e448]: "1"
+              - generic [ref=e449]: in Finland
+            - generic:
+              - generic: ESPOO
+              - generic: FINLAND
+            - button "Shortlist" [ref=e450]
+            - button "Flip the postcard for details" [ref=e454]: Flip for details
+          - generic [aria-hidden] [ref=e457]:
+            - generic [ref=e458]:
+              - generic [ref=e459]: Dear future student,
+              - paragraph [ref=e460]: "Aalto University is ranked #1 in Finland. Its broad strengths:"
+              - generic [ref=e461]:
+                - generic [ref=e462]: Technology
+                - generic [ref=e463]: Business
+                - generic [ref=e464]: Arts & design
+              - figure [ref=e465]:
+                - generic [ref=e466]: Espoo
+              - generic [ref=e467]: Greetings, Tutee Connect
+            - generic [ref=e468]:
+              - generic [ref=e469]:
+                - generic [ref=e470]: Par avionAirmail
+                - generic [ref=e472]: "#1"
+              - generic [ref=e474]:
+                - generic [ref=e475]: Institution
+                - generic [ref=e476]: Aalto University
+              - generic [ref=e477]:
+                - generic [ref=e478]: Campus city
+                - generic [ref=e479]: Espoo, Uusimaa
+              - generic [ref=e480]:
+                - generic [ref=e481]: Type
+                - generic [ref=e482]: University
+              - generic [ref=e483]:
+                - link [ref=e484]:
+                  - /url: ./universities.html?open=aalto-university
+                  - text: View university
+                - button [ref=e487]:
+                  - generic [ref=e490]: Shortlist
+              - button [ref=e491]
+        - generic [ref=e494]:
+          - generic [ref=e495]:
+            - generic [ref=e496]: Stamp album · ranked in Finland
+            - generic [ref=e497]: 12 shown
+          - list [ref=e498]:
+            - listitem [ref=e499]:
+              - button "#1 Aalto University, Espoo" [pressed] [ref=e500] [cursor=pointer]:
+                - generic [ref=e501]:
+                  - generic [ref=e502]: "1"
+                  - generic [ref=e503]: Aalto
+            - listitem [ref=e506]:
+              - button "#2 University of Helsinki, Helsinki" [ref=e507] [cursor=pointer]:
+                - generic [ref=e508]:
+                  - generic [ref=e509]: "2"
+                  - generic [ref=e510]: Helsinki
+            - listitem [ref=e513]:
+              - button "#3 University of Turku, Turku" [ref=e514] [cursor=pointer]:
+                - generic [ref=e515]:
+                  - generic [ref=e516]: "3"
+                  - generic [ref=e517]: Turku
+            - listitem [ref=e520]:
+              - button "#4 University of Oulu, Oulu" [ref=e521] [cursor=pointer]:
+                - generic [ref=e522]:
+                  - generic [ref=e523]: "4"
+                  - generic [ref=e524]: Oulu
+            - listitem [ref=e527]:
+              - button "#5 Tampere University, Tampere" [ref=e528] [cursor=pointer]:
+                - generic [ref=e529]:
+                  - generic [ref=e530]: "5"
+                  - generic [ref=e531]: Tampere
+            - listitem [ref=e534]:
+              - button "#6 University of Jyväskylä, Jyväskylä" [ref=e535] [cursor=pointer]:
+                - generic [ref=e536]:
+                  - generic [ref=e537]: "6"
+                  - generic [ref=e538]: Jyväskylä
+            - listitem [ref=e541]:
+              - button "#7 University of Eastern Finland, Joensuu & Kuopio" [ref=e542] [cursor=pointer]:
+                - generic [ref=e543]:
+                  - generic [ref=e544]: "7"
+                  - generic [ref=e545]: UEF
+            - listitem [ref=e548]:
+              - button "#8 LUT University, Lappeenranta" [ref=e549] [cursor=pointer]:
+                - generic [ref=e550]:
+                  - generic [ref=e551]: "8"
+                  - generic [ref=e552]: LUT
+            - listitem [ref=e555]:
+              - button "#9 Åbo Akademi University, Turku" [ref=e556] [cursor=pointer]:
+                - generic [ref=e557]:
+                  - generic [ref=e558]: "9"
+                  - generic [ref=e559]: Åbo Akademi
+            - listitem [ref=e562]:
+              - button "#10 University of Vaasa, Vaasa" [ref=e563] [cursor=pointer]:
+                - generic [ref=e564]:
+                  - generic [ref=e565]: "10"
+                  - generic [ref=e566]: Vaasa
+            - listitem [ref=e569]:
+              - button "#11 Turku University of Applied Sciences, Turku" [ref=e570] [cursor=pointer]:
+                - generic [ref=e571]:
+                  - generic [ref=e572]: "11"
+                  - generic [ref=e573]: Turku UAS
+            - listitem [ref=e576]:
+              - button "#12 Jamk University of Applied Sciences, Jyväskylä" [ref=e577] [cursor=pointer]:
+                - generic [ref=e578]:
+                  - generic [ref=e579]: "12"
+                  - generic [ref=e580]: Jamk
+          - link "Explore all 36 institutions Search 1,295 English-taught programme listings by field, city and type." [ref=e583] [cursor=pointer]:
+            - /url: ./universities.html
+            - generic [ref=e584]:
+              - generic [ref=e585]: Explore all 36 institutions
+              - generic [ref=e586]: Search 1,295 English-taught programme listings by field, city and type.
+      - paragraph [ref=e589]: "Ranks are Finland's positions in the QS World University Rankings: Europe 2026. Strengths are broad starting points; a counsellor confirms programmes with you. Photos show each institution's campus city."
+    - region "Latest Finland news" [ref=e590]:
+      - generic [ref=e591]: Finland updates
+      - generic [ref=e595]:
+        - generic [ref=e596]:
+          - generic [ref=e597]:
+            - generic [ref=e598]: Finland Scholarship covers 100% of first-year tuition plus a relocation grant for eligible master’s entrants
+            - generic [ref=e599]: Tutee Connect
+          - generic [ref=e600]:
+            - generic [ref=e601]: Study permit holders can work an average of 30 hours a week in any field
+            - generic [ref=e602]: Tutee Connect
+          - generic [ref=e603]:
+            - generic [ref=e604]: Graduates can stay up to two years to look for work or start a business — no sponsor needed
+            - generic [ref=e605]: Tutee Connect
+          - generic [ref=e606]:
+            - generic [ref=e607]: "12 Finnish institutions ranked in the QS World University Rankings: Europe 2026"
+            - generic [ref=e608]: Tutee Connect
+          - generic [ref=e609]:
+            - generic [ref=e610]: Partners and children under 18 can join students on a family permit
+            - generic [ref=e611]: Tutee Connect
+          - generic [ref=e612]:
+            - generic [ref=e613]: More than 600 English-taught degree programmes across 36 institutions
+            - generic [ref=e614]: Tutee Connect
+          - generic [ref=e615]:
+            - generic [ref=e616]: A continuous A permit covers the whole degree — no credibility interview
+            - generic [ref=e617]: Tutee Connect
+          - generic [ref=e618]:
+            - generic [ref=e619]: Finland topped the World Happiness Report every year from 2018 to 2025
+            - generic [ref=e620]: Tutee Connect
+        - generic [aria-hidden] [ref=e621]:
+          - generic [ref=e622]:
+            - generic [ref=e623]: Finland Scholarship covers 100% of first-year tuition plus a relocation grant for eligible master’s entrants
+            - generic [ref=e624]: Tutee Connect
+          - generic [ref=e625]:
+            - generic [ref=e626]: Study permit holders can work an average of 30 hours a week in any field
+            - generic [ref=e627]: Tutee Connect
+          - generic [ref=e628]:
+            - generic [ref=e629]: Graduates can stay up to two years to look for work or start a business — no sponsor needed
+            - generic [ref=e630]: Tutee Connect
+          - generic [ref=e631]:
+            - generic [ref=e632]: "12 Finnish institutions ranked in the QS World University Rankings: Europe 2026"
+            - generic [ref=e633]: Tutee Connect
+          - generic [ref=e634]:
+            - generic [ref=e635]: Partners and children under 18 can join students on a family permit
+            - generic [ref=e636]: Tutee Connect
+          - generic [ref=e637]:
+            - generic [ref=e638]: More than 600 English-taught degree programmes across 36 institutions
+            - generic [ref=e639]: Tutee Connect
+          - generic [ref=e640]:
+            - generic [ref=e641]: A continuous A permit covers the whole degree — no credibility interview
+            - generic [ref=e642]: Tutee Connect
+          - generic [ref=e643]:
+            - generic [ref=e644]: Finland topped the World Happiness Report every year from 2018 to 2025
+            - generic [ref=e645]: Tutee Connect
+    - generic [ref=e647]:
+      - generic [ref=e648]:
+        - generic [ref=e649]:
+          - generic "Scholarships, grants & loans" [ref=e651]
+          - heading "Your Finnish dream shouldn't break the bank." [level=2] [ref=e652]:
+            - generic [ref=e653]: Your
+            - generic [ref=e654]: Finnish
+            - generic [ref=e655]: dream
+            - generic [ref=e656]:
+              - generic [ref=e657]: shouldn't
+              - generic [ref=e658]: break
+              - generic [ref=e659]: the
+              - generic [ref=e660]: bank.
+        - paragraph [ref=e661]: Most students combine two or three ways to fund their degree. Switch them on below and watch your plan come together — then we'll help you secure each one.
+      - generic [ref=e662]:
+        - generic [ref=e663]:
+          - text: Your degree in Finland
+          - generic [ref=e675]:
+            - text: "3"
+            - generic [ref=e676]: of 4 costscovered
+          - generic [ref=e677]:
+            - generic [ref=e678]: Tuition feesFinland Scholarship
+            - generic [ref=e683]: RelocationFinland Scholarship
+            - generic [ref=e688]: HousingNot planned yet
+            - generic [ref=e693]: Everyday livingPart-time work
+        - generic [ref=e698]:
+          - text: Switch on your funding
+          - generic "Funding sources" [ref=e699]:
+            - switch [checked] [ref=e700] [cursor=pointer]:
+              - generic [ref=e704]:
+                - text: Finland Scholarship
+                - emphasis [ref=e705]: 100% of first-year tuition
+            - switch [ref=e706] [cursor=pointer]:
+              - generic [ref=e710]:
+                - text: Tuition-fee scholarships
+                - emphasis [ref=e711]: 50–100% of tuition
+            - switch [ref=e712] [cursor=pointer]:
+              - generic [ref=e716]:
+                - text: Doctoral study
+                - emphasis [ref=e717]: No tuition fee
+            - switch [checked] [ref=e718] [cursor=pointer]:
+              - generic [ref=e722]:
+                - text: Work while you study
+                - emphasis [ref=e723]: Average 30 h a week
+            - switch [ref=e724] [cursor=pointer]:
+              - generic [ref=e728]:
+                - text: Education loans
+                - emphasis [ref=e729]: 10 partner lenders
+          - generic [ref=e730]:
+            - generic [ref=e731]: Work while you studyAverage 30 h a week
+            - paragraph [ref=e732]: Your A permit lets you work part time, averaged across the year, to cover everyday costs.
+            - paragraph [ref=e733]: "How we help: We set up your CV and job search for the Finnish market and sort your tax card and bank account on arrival; most of our students start within their first 30 days."
+          - generic [ref=e734]:
+            - generic [ref=e735]: 2 sources in your plan
+            - link "Get my funding plan" [ref=e736] [cursor=pointer]:
+              - /url: "#contact"
+      - generic [ref=e739]:
+        - generic [ref=e740]: Education loan partners
+        - generic "Loan partners" [ref=e743]:
+          - generic [ref=e744]:
+            - img "ICICI Bank" [ref=e746]
+            - img "HDFC Credila" [ref=e748]
+            - img "IDFC First Bank" [ref=e750]
+            - img "InCred" [ref=e752]
+            - img "Auxilo" [ref=e754]
+            - img "Avanse" [ref=e756]
+            - img "Union Bank" [ref=e758]
+            - img "Prodigy Finance" [ref=e760]
+            - img "Axis Bank" [ref=e762]
+            - img "MPOWER Financing" [ref=e764]
+    - generic [ref=e776]:
+      - generic [ref=e777]:
+        - generic [ref=e778]:
+          - generic "Your journey" [ref=e780]
+          - heading "From first application to permanent resident." [level=2] [ref=e781]:
+            - generic [ref=e782]: From
+            - generic [ref=e783]: first
+            - generic [ref=e784]: application
+            - generic [ref=e785]: to
+            - generic [ref=e786]: permanent resident.
+        - paragraph [ref=e787]: Your route to Finland in six milestones — and one team beside you at every stop.
+      - list [ref=e789]:
+        - listitem [ref=e790]:
+          - generic [ref=e791]: "01"
+          - generic [ref=e795]:
+            - generic [ref=e796]: Step 01 · Plan
+            - heading "Shortlist & apply" [level=3] [ref=e798]
+            - paragraph [ref=e799]: We shortlist programmes that fit your profile and prepare your Studyinfo application, motivation letter and documents.
+            - list [ref=e800]:
+              - listitem [ref=e801]: Studyinfo
+              - listitem [ref=e802]: Motivation letter
+        - listitem [ref=e803]:
+          - generic [ref=e804]: "02"
+          - generic [ref=e808]:
+            - generic [ref=e809]: Step 02 · Admission
+            - heading "Admission & scholarship" [level=3] [ref=e811]
+            - paragraph [ref=e812]: Offers usually arrive with the institution's scholarship decision. We help you compare them and accept the right one.
+            - list [ref=e813]:
+              - listitem [ref=e814]: Scholarship decision
+              - listitem [ref=e815]: Offers compared
+        - listitem [ref=e816]:
+          - generic [ref=e817]: "03"
+          - generic [ref=e821]:
+            - generic [ref=e822]: Step 03 · Permit
+            - heading "Residence permit" [level=3] [ref=e824]
+            - paragraph [ref=e825]: Apply on Enter Finland for a continuous A permit covering your whole degree, with a D visa to fly early. No credibility interview.
+            - list [ref=e826]:
+              - listitem [ref=e827]: A permit · whole degree
+              - listitem [ref=e828]: D visa
+        - listitem [ref=e829]:
+          - generic [ref=e830]: "04"
+          - generic [ref=e834]:
+            - generic [ref=e835]: Step 04 · Arrival
+            - heading "Land, study & work" [level=3] [ref=e837]
+            - paragraph [ref=e838]: Housing, registration and your identity code sorted. Work an average of 30 hours a week in any field, no separate work permit.
+            - list [ref=e839]:
+              - listitem [ref=e840]: Identity code
+              - listitem [ref=e841]: 30 h a week
+        - listitem [ref=e842]:
+          - generic [ref=e843]: "05"
+          - generic [ref=e847]:
+            - generic [ref=e848]: Step 05 · Career
+            - heading "Job-search permit" [level=3] [ref=e850]
+            - paragraph [ref=e851]: Up to two years after graduating to look for work or start a business — no sponsor required — then a work-based permit.
+            - list [ref=e852]:
+              - listitem [ref=e853]: Up to 2 years
+              - listitem [ref=e854]: No sponsor
+        - listitem [ref=e855]:
+          - generic [ref=e856]: "06"
+          - generic [ref=e860]:
+            - generic [ref=e861]: Step 06 · Settle
+            - heading "Permanent residence" [level=3] [ref=e863]
+            - paragraph [ref=e864]: After six years — or with no residence-period requirement at all once you hold a Finnish degree and the required Finnish or Swedish.
+            - list [ref=e865]:
+              - listitem [ref=e866]: After 6 years
+              - listitem [ref=e867]: Degree + language
+            - link "Plan my route" [ref=e868] [cursor=pointer]:
+              - /url: "#contact"
+    - generic [ref=e872]:
+      - generic [ref=e873]:
+        - generic [ref=e874]:
+          - generic "Relocating with your family?" [ref=e876]
+          - heading "Bring your family. Finland is built for them." [level=2] [ref=e877]:
+            - generic [ref=e878]: Bring
+            - generic [ref=e879]: your
+            - generic [ref=e880]: family.
+            - generic [ref=e881]:
+              - generic [ref=e882]: Finland
+              - generic [ref=e883]: is
+              - generic [ref=e884]: built
+              - generic [ref=e885]: for
+              - generic [ref=e886]: them.
+        - paragraph [ref=e887]: Finland is one of the most family-friendly places to study. See what it offers each of you.
+      - generic [ref=e888]:
+        - generic [ref=e889]:
+          - img "Colleagues working together at a laptop" [ref=e890]
+          - img "A family walking together through a meadow" [ref=e891]
+          - img "Töölönlahti park in Helsinki" [ref=e892]
+        - generic [ref=e894]:
+          - tablist "See Finland through each family member's eyes" [ref=e895]:
+            - tab [selected] [ref=e896] [cursor=pointer]
+            - tab [ref=e900] [cursor=pointer]
+            - tab [ref=e904] [cursor=pointer]
+          - tabpanel [ref=e909]:
+            - generic [ref=e910]:
+              - generic [ref=e911]: For your partner
+              - heading "A career of their own, from day one." [level=3] [ref=e912]
+              - paragraph [ref=e913]: A spouse or registered partner can join you on a residence permit based on family ties — with an unrestricted right to work, so their career keeps moving while you study.
+              - list [ref=e914]:
+                - listitem [ref=e915]:
+                  - generic [ref=e916]: Day 1
+                  - generic [ref=e917]: Free to work in any job
+                - listitem [ref=e918]:
+                  - generic [ref=e919]: Any field
+                  - generic [ref=e920]: No separate work permit
+                - listitem [ref=e921]:
+                  - generic [ref=e922]: Together
+                  - generic [ref=e923]: Apply alongside your own application
+      - generic [ref=e924]:
+        - generic [ref=e925]: How your family joins you
+        - list [ref=e926]:
+          - listitem [ref=e927]:
+            - generic [ref=e928]: "01"
+            - generic [ref=e929]:
+              - heading "Your study place" [level=4] [ref=e930]
+              - paragraph [ref=e931]: You are admitted and apply for your own A permit on Enter Finland.
+          - listitem [ref=e932]:
+            - generic [ref=e933]: "02"
+            - generic [ref=e934]:
+              - heading "Family applications" [level=4] [ref=e935]
+              - paragraph [ref=e936]: Your partner and children apply on the basis of family ties, with certificates and evidence of funds.
+          - listitem [ref=e937]:
+            - generic [ref=e938]: "03"
+            - generic [ref=e939]:
+              - heading "Arrive together" [level=4] [ref=e940]
+              - paragraph [ref=e941]: Identity codes, registration, school places and work — sorted with you on arrival.
+        - link "Get family permit help" [ref=e942] [cursor=pointer]:
+          - /url: "#contact"
+    - generic [ref=e945]:
+      - generic [ref=e947]:
+        - generic "Student stories" [ref=e949]
+        - heading "What our Finland students say" [level=2] [ref=e950]:
+          - generic [ref=e951]: What
+          - generic [ref=e952]: our
+          - generic [ref=e953]: Finland
+          - generic [ref=e954]: students
+          - generic [ref=e955]: say
+        - generic [ref=e956]: Rated 5/5 by our students & parents
+      - generic "Student testimonials" [ref=e968]:
+        - generic [ref=e970]:
+          - figure "RS Ramana S. Parent of student, Finland" [ref=e971]:
+            - generic [aria-hidden] [ref=e972]: “
+            - blockquote [ref=e973]: My son has gotten the permit for his higher studies in one of the reputed Finnish universities. Despite his complicated profile, the team made this happen.
+            - generic [ref=e974]:
+              - generic [ref=e975]: RS
+              - generic [ref=e976]:
+                - generic [ref=e977]: Ramana S.
+                - text: Parent of student, Finland
+          - figure "PK Priya K. Master's student, Helsinki" [ref=e978]:
+            - generic [aria-hidden] [ref=e979]: “
+            - blockquote [ref=e980]: Tutee Connect helped me perfectly prepare my Enter Finland application and funds evidence, and thanks to them my residence permit was approved in the very first attempt!
+            - generic [ref=e981]:
+              - generic [ref=e982]: PK
+              - generic [ref=e983]:
+                - generic [ref=e984]: Priya K.
+                - text: Master's student, Helsinki
+          - figure "VM Vishal M. Undergrad, Tampere" [ref=e985]:
+            - generic [aria-hidden] [ref=e986]: “
+            - blockquote [ref=e987]: They didn't just help with the admission. The post-landing support for getting my accommodation in Tampere was a lifesaver.
+            - generic [ref=e988]:
+              - generic [ref=e989]: VM
+              - generic [ref=e990]:
+                - generic [ref=e991]: Vishal M.
+                - text: Undergrad, Tampere
+          - figure "SR Sneha R. Graduate student, Turku" [ref=e992]:
+            - generic [aria-hidden] [ref=e993]: “
+            - blockquote [ref=e994]: I had a previous visa refusal and was losing hope. My Tutee Connect coordinator completely turned it around and guided me through the entire documentation process successfully.
+            - generic [ref=e995]:
+              - generic [ref=e996]: SR
+              - generic [ref=e997]:
+                - generic [ref=e998]: Sneha R.
+                - text: Graduate student, Turku
+          - figure "RV Rahul V. Engineering major, Oulu" [ref=e999]:
+            - generic [aria-hidden] [ref=e1000]: “
+            - blockquote [ref=e1001]: The non-collateral education loan assistance is 100% genuine. They connected me directly with their banking partners and got my financials sorted in record time.
+            - generic [ref=e1002]:
+              - generic [ref=e1003]: RV
+              - generic [ref=e1004]:
+                - generic [ref=e1005]: Rahul V.
+                - text: Engineering major, Oulu
+          - figure [aria-hidden] [ref=e1006]:
+            - generic [aria-hidden] [ref=e1007]: “
+            - blockquote [ref=e1008]: My son has gotten the permit for his higher studies in one of the reputed Finnish universities. Despite his complicated profile, the team made this happen.
+            - generic [ref=e1009]:
+              - generic [ref=e1010]: RS
+              - generic [ref=e1011]:
+                - generic [ref=e1012]: Ramana S.
+                - text: Parent of student, Finland
+          - figure [aria-hidden] [ref=e1013]:
+            - generic [aria-hidden] [ref=e1014]: “
+            - blockquote [ref=e1015]: Tutee Connect helped me perfectly prepare my Enter Finland application and funds evidence, and thanks to them my residence permit was approved in the very first attempt!
+            - generic [ref=e1016]:
+              - generic [ref=e1017]: PK
+              - generic [ref=e1018]:
+                - generic [ref=e1019]: Priya K.
+                - text: Master's student, Helsinki
+          - figure [aria-hidden] [ref=e1020]:
+            - generic [aria-hidden] [ref=e1021]: “
+            - blockquote [ref=e1022]: They didn't just help with the admission. The post-landing support for getting my accommodation in Tampere was a lifesaver.
+            - generic [ref=e1023]:
+              - generic [ref=e1024]: VM
+              - generic [ref=e1025]:
+                - generic [ref=e1026]: Vishal M.
+                - text: Undergrad, Tampere
+          - figure [aria-hidden] [ref=e1027]:
+            - generic [aria-hidden] [ref=e1028]: “
+            - blockquote [ref=e1029]: I had a previous visa refusal and was losing hope. My Tutee Connect coordinator completely turned it around and guided me through the entire documentation process successfully.
+            - generic [ref=e1030]:
+              - generic [ref=e1031]: SR
+              - generic [ref=e1032]:
+                - generic [ref=e1033]: Sneha R.
+                - text: Graduate student, Turku
+          - figure [aria-hidden] [ref=e1034]:
+            - generic [aria-hidden] [ref=e1035]: “
+            - blockquote [ref=e1036]: The non-collateral education loan assistance is 100% genuine. They connected me directly with their banking partners and got my financials sorted in record time.
+            - generic [ref=e1037]:
+              - generic [ref=e1038]: RV
+              - generic [ref=e1039]:
+                - generic [ref=e1040]: Rahul V.
+                - text: Engineering major, Oulu
+        - generic [ref=e1042]:
+          - figure "AD Anita D. MBA candidate, Espoo" [ref=e1043]:
+            - generic [aria-hidden] [ref=e1044]: “
+            - blockquote [ref=e1045]: Beyond just the residence permit, their career consultation for the job-search permit and the onward work permit pathways gave me the exact clarity I needed before flying out.
+            - generic [ref=e1046]:
+              - generic [ref=e1047]: AD
+              - generic [ref=e1048]:
+                - generic [ref=e1049]: Anita D.
+                - text: MBA candidate, Espoo
+          - figure "KN Karthik N. CS major, Jyväskylä" [ref=e1050]:
+            - generic [aria-hidden] [ref=e1051]: “
+            - blockquote [ref=e1052]: The comprehensive counselling at Tutee Connect opened my eyes to universities I hadn't even considered. Now I'm loving my semester in Jyväskylä!
+            - generic [ref=e1053]:
+              - generic [ref=e1054]: KN
+              - generic [ref=e1055]:
+                - generic [ref=e1056]: Karthik N.
+                - text: CS major, Jyväskylä
+          - figure "DP Divya P. Data Science, Vaasa" [ref=e1057]:
+            - generic [aria-hidden] [ref=e1058]: “
+            - blockquote [ref=e1059]: From application essays to final permit prep, the entire journey felt so personalised. Highly recommended for anyone aiming for Finland.
+            - generic [ref=e1060]:
+              - generic [ref=e1061]: DP
+              - generic [ref=e1062]:
+                - generic [ref=e1063]: Divya P.
+                - text: Data Science, Vaasa
+          - figure "SJ Siddharth J. PhD student, Kuopio" [ref=e1064]:
+            - generic [aria-hidden] [ref=e1065]: “
+            - blockquote [ref=e1066]: Securing a graduate assistantship felt impossible, but with their profile building strategies, I actually got a full tuition waiver!
+            - generic [ref=e1067]:
+              - generic [ref=e1068]: SJ
+              - generic [ref=e1069]:
+                - generic [ref=e1070]: Siddharth J.
+                - text: PhD student, Kuopio
+          - figure [aria-hidden] [ref=e1071]:
+            - generic [aria-hidden] [ref=e1072]: “
+            - blockquote [ref=e1073]: Beyond just the residence permit, their career consultation for the job-search permit and the onward work permit pathways gave me the exact clarity I needed before flying out.
+            - generic [ref=e1074]:
+              - generic [ref=e1075]: AD
+              - generic [ref=e1076]:
+                - generic [ref=e1077]: Anita D.
+                - text: MBA candidate, Espoo
+          - figure [aria-hidden] [ref=e1078]:
+            - generic [aria-hidden] [ref=e1079]: “
+            - blockquote [ref=e1080]: The comprehensive counselling at Tutee Connect opened my eyes to universities I hadn't even considered. Now I'm loving my semester in Jyväskylä!
+            - generic [ref=e1081]:
+              - generic [ref=e1082]: KN
+              - generic [ref=e1083]:
+                - generic [ref=e1084]: Karthik N.
+                - text: CS major, Jyväskylä
+          - figure [aria-hidden] [ref=e1085]:
+            - generic [aria-hidden] [ref=e1086]: “
+            - blockquote [ref=e1087]: From application essays to final permit prep, the entire journey felt so personalised. Highly recommended for anyone aiming for Finland.
+            - generic [ref=e1088]:
+              - generic [ref=e1089]: DP
+              - generic [ref=e1090]:
+                - generic [ref=e1091]: Divya P.
+                - text: Data Science, Vaasa
+          - figure [aria-hidden] [ref=e1092]:
+            - generic [aria-hidden] [ref=e1093]: “
+            - blockquote [ref=e1094]: Securing a graduate assistantship felt impossible, but with their profile building strategies, I actually got a full tuition waiver!
+            - generic [ref=e1095]:
+              - generic [ref=e1096]: SJ
+              - generic [ref=e1097]:
+                - generic [ref=e1098]: Siddharth J.
+                - text: PhD student, Kuopio
+    - generic [ref=e1100]:
+      - generic [ref=e1101]:
+        - generic "Quick answers" [ref=e1103]
+        - heading "Frequently asked questions" [level=2] [ref=e1104]:
+          - generic [ref=e1105]: Frequently
+          - generic [ref=e1106]: asked
+          - generic [ref=e1107]: questions
+        - searchbox "Search questions" [ref=e1109]
+        - generic [ref=e1110]:
+          - strong [ref=e1111]: Still have a question?
+          - paragraph [ref=e1112]: Ask our AI counsellor instantly, or talk to a human expert on WhatsApp.
+          - generic [ref=e1113]:
+            - button "Ask Tutee AI" [ref=e1114] [cursor=pointer]
+            - link "WhatsApp" [ref=e1117] [cursor=pointer]:
+              - /url: https://wa.me/917358364959
+      - generic [ref=e1120]:
+        - generic [ref=e1121]:
+          - button "01 What are the basic requirements to study in Finland?" [expanded] [ref=e1122] [cursor=pointer]:
+            - generic [ref=e1123]: "01"
+            - text: What are the basic requirements to study in Finland?
+          - paragraph [ref=e1128]: You need a valid passport, strong academic transcripts, proof of English language proficiency, academic references and a compelling motivation letter. Migri sets no language requirement for the residence permit at all — the test is purely an admission matter, and each institution publishes its own list. IELTS Academic, TOEFL iBT, PTE Academic and Cambridge C1 Advanced or C2 Proficiency are accepted across Finnish higher education; the Duolingo English Test is accepted by some institutions and not by others, so check the programme before you book it. Many bachelor programmes also set an entrance examination, and some MBAs ask for a GMAT score or work experience.
+        - generic [ref=e1129]:
+          - button "02 How does the Finnish residence permit process work?" [ref=e1130] [cursor=pointer]:
+            - generic [ref=e1131]: "02"
+            - text: How does the Finnish residence permit process work?
+          - paragraph [ref=e1134]: "Finland issues a residence permit, not a student visa, and a degree student at a higher education institution gets a continuous A permit for the whole length of the studies. Once you accept your place, you apply on Enter Finland, pay the processing fee, show that you have the funds Migri requires for your living costs, take out private health insurance that meets Migri's coverage rules, and identify yourself in person at a Finnish mission. Ask for the D visa in the same application: it goes into your passport with the decision so you can travel before the permit card arrives. There is no credibility interview and no health surcharge. We guide you through every step."
+        - generic [ref=e1135]:
+          - button "03 Can I get financial aid or an education loan?" [ref=e1136] [cursor=pointer]:
+            - generic [ref=e1137]: "03"
+            - text: Can I get financial aid or an education loan?
+          - paragraph [ref=e1140]: Yes! We have exclusive tie-ups with top financial institutions and banks to provide both collateral and non-collateral education loans. These loans can cover your tuition fees, accommodation and living expenses at competitive interest rates.
+        - generic [ref=e1141]:
+          - button "04 Can my family relocate with me to Finland?" [ref=e1142] [cursor=pointer]:
+            - generic [ref=e1143]: "04"
+            - text: Can my family relocate with me to Finland?
+          - paragraph [ref=e1146]: "Yes — and Finland is unusually generous here. Your spouse or registered partner and your children under 18 can be granted a residence permit on the basis of family ties while you are still studying, and that permit carries an unrestricted right to work from day one. The condition is funds rather than eligibility: on top of your own, Migri asks you to show a set monthly amount for each family member who joins you. We build that budget into your plan from the start."
+        - generic [ref=e1147]:
+          - button "05 How long can I stay and work in Finland after I graduate?" [ref=e1148] [cursor=pointer]:
+            - generic [ref=e1149]: "05"
+            - text: How long can I stay and work in Finland after I graduate?
+          - paragraph [ref=e1152]: "You can apply for a residence permit to look for work or start a business, granted for up to two years, with no sponsorship requirement. You may take it in up to three parts, and you can apply any time within five years of your student permit expiring — so a graduate who goes home first has not lost it. While you study you may already work an average of 30 hours a week. And a degree completed in Finland is its own route to permanent residence: it removes the period-of-residence requirement entirely, once your Finnish or Swedish reaches the required level."
+        - generic [ref=e1153]:
+          - button "06 Do you help with accommodation and pre-departure?" [ref=e1154] [cursor=pointer]:
+            - generic [ref=e1155]: "06"
+            - text: Do you help with accommodation and pre-departure?
+          - paragraph [ref=e1158]: Yes, we partner with top student housing providers — including HOAS and the other student housing foundations, which have waiting lists you should join the day you accept your place. We also run pre-departure briefings covering Finnish culture, academic expectations, dressing for a Nordic winter, and registering for your personal identity code once you land.
+    - generic [ref=e1160]:
+      - generic [ref=e1161]:
+        - generic [ref=e1162]:
+          - generic "Free consultation" [ref=e1164]
+          - heading "Evaluate your Finland profile." [level=2] [ref=e1165]:
+            - generic [ref=e1166]: Evaluate
+            - generic [ref=e1167]: your
+            - generic [ref=e1168]: Finland profile.
+        - paragraph [ref=e1169]: Two quick steps, under a minute. A counsellor sends you a route map to study in Finland — institutions, scholarships and permit timeline.
+      - generic [ref=e1170]:
+        - generic [ref=e1175]:
+          - checkbox [aria-hidden] [ref=e1176]
+          - group "Step 1 of 2 What are you aiming for?" [ref=e1177]:
+            - generic [ref=e1178]:
+              - generic [ref=e1179]: Step 1 of 2
+              - text: What are you aiming for?
+            - generic [ref=e1180]:
+              - generic [ref=e1181] [cursor=pointer]:
+                - radio "Bachelor's First degree"
+                - generic [ref=e1185]: Bachelor's
+                - generic [ref=e1186]: First degree
+              - generic [ref=e1187] [cursor=pointer]:
+                - radio "Master's Advanced degree" [checked]
+                - generic [ref=e1191]: Master's
+                - generic [ref=e1192]: Advanced degree
+              - generic [ref=e1196] [cursor=pointer]:
+                - radio "Doctoral / PhD Research degree"
+                - generic [ref=e1200]: Doctoral / PhD
+                - generic [ref=e1201]: Research degree
+              - generic [ref=e1202] [cursor=pointer]:
+                - radio "Not sure yet Help me choose"
+                - generic [ref=e1206]: Not sure yet
+                - generic [ref=e1207]: Help me choose
+            - generic [ref=e1208]: When would you like to start?
+            - generic [ref=e1209]:
+              - generic [ref=e1210] [cursor=pointer]:
+                - radio "Next available intake" [checked]
+                - generic [ref=e1211]: Next available intake
+              - generic [ref=e1212] [cursor=pointer]:
+                - radio "Within 12 months"
+                - generic [ref=e1213]: Within 12 months
+              - generic [ref=e1214] [cursor=pointer]:
+                - radio "Later / exploring"
+                - generic [ref=e1215]: Later / exploring
+            - generic [ref=e1219]:
+              - text: "Interested in:"
+              - strong [ref=e1220]: General Finland Inquiry
+            - button "Continue" [ref=e1221] [cursor=pointer]
+        - complementary [ref=e1224]:
+          - generic [aria-hidden] [ref=e1225]:
+            - generic [ref=e1226]:
+              - generic [ref=e1227]: Finland profile
+              - generic [ref=e1230]: Draft
+            - generic [ref=e1231]:
+              - generic [ref=e1232]: 10%
+              - generic [ref=e1234]:
+                - generic [ref=e1235]: Applicant
+                - generic [ref=e1236]: Your name
+                - generic [ref=e1237]: Let's start
+            - generic [ref=e1238]:
+              - generic [ref=e1239]:
+                - term [ref=e1240]: Aiming for
+                - definition [ref=e1241]: Master's degree
+              - generic [ref=e1242]:
+                - term [ref=e1243]: Start
+                - definition [ref=e1244]: Next available intake
+              - generic [ref=e1245]:
+                - term [ref=e1246]: Interested in
+                - definition [ref=e1247]: General Finland Inquiry
+              - generic [ref=e1248]:
+                - term [ref=e1249]: Email
+                - definition [ref=e1250]: —
+              - generic [ref=e1251]:
+                - term [ref=e1252]: Phone
+                - definition [ref=e1253]: —
+            - generic: Submitted
+          - list [ref=e1257]:
+            - listitem [ref=e1258]:
+              - generic [ref=e1261]:
+                - generic [ref=e1262]: 1 working day
+                - text: reply time
+            - listitem [ref=e1263]:
+              - generic [ref=e1266]:
+                - generic [ref=e1267]: 99%
+                - text: permit success rate
+            - listitem [ref=e1268]:
+              - generic [ref=e1271]:
+                - generic [ref=e1272]: Free
+                - text: profile evaluation
+          - generic [ref=e1273]:
+            - link "+91 7358364959" [ref=e1274] [cursor=pointer]:
+              - /url: tel:+917358364959
+            - link "info@tuteeconnect.com" [ref=e1277] [cursor=pointer]:
+              - /url: mailto:info@tuteeconnect.com
+            - link "www.tuteeconnect.com" [ref=e1280] [cursor=pointer]:
+              - /url: https://www.tuteeconnect.com
+          - paragraph [ref=e1283]: Chennai · 1st Floor, ALA Corner Complex, Virugambakkam | Dubai · Tutee Connect LLC FZ, Meydan Grandstand
+  - contentinfo [ref=e1286]:
+    - generic [ref=e1287]:
+      - generic [ref=e1288]:
+        - generic [ref=e1289]:
+          - link "Tutee Connect home" [ref=e1290] [cursor=pointer]:
+            - /url: "#home"
+            - img "Tutee Connect, Study | Immigration" [ref=e1291]
+          - paragraph [ref=e1292]: Study-abroad and immigration advice for students who want to study, work and settle overseas.
+        - navigation "Explore" [ref=e1293]:
+          - heading "Explore" [level=3] [ref=e1294]
+          - list [ref=e1295]:
+            - listitem [ref=e1296]:
+              - link "Why Finland" [ref=e1297] [cursor=pointer]:
+                - /url: "#why"
+            - listitem [ref=e1298]:
+              - link "How it works" [ref=e1299] [cursor=pointer]:
+                - /url: "#services"
+            - listitem [ref=e1300]:
+              - link "Universities" [ref=e1301] [cursor=pointer]:
+                - /url: "#universities"
+            - listitem [ref=e1302]:
+              - link "All 36 institutions" [ref=e1303] [cursor=pointer]:
+                - /url: ./universities.html
+            - listitem [ref=e1304]:
+              - link "Funding" [ref=e1305] [cursor=pointer]:
+                - /url: "#scholarships"
+            - listitem [ref=e1306]:
+              - link "Pathway to PR" [ref=e1307] [cursor=pointer]:
+                - /url: "#relocate"
+            - listitem [ref=e1308]:
+              - link "FAQ" [ref=e1309] [cursor=pointer]:
+                - /url: "#faq"
+        - generic [ref=e1310]:
+          - heading "Destinations" [level=3] [ref=e1311]
+          - generic [ref=e1312]:
+            - generic [ref=e1313]: Singapore
+            - generic [ref=e1314]: USA
+            - generic [ref=e1315]: UK
+            - generic [ref=e1316]: Canada
+            - generic [ref=e1317]: Australia
+            - generic [ref=e1318]: New Zealand
+            - generic [ref=e1319]: Ireland
+            - generic [ref=e1320]: Germany
+            - generic [ref=e1321]: France
+            - generic [ref=e1322]: Finland
+            - generic [ref=e1323]: Poland
+            - generic [ref=e1324]: Malaysia
+            - generic [ref=e1325]: UAE
+            - generic [ref=e1326]: Mauritius
+        - generic [ref=e1327]:
+          - heading "Talk to us" [level=3] [ref=e1328]
+          - list [ref=e1329]:
+            - listitem [ref=e1330]:
+              - link "WhatsApp +91 73583 64959" [ref=e1331] [cursor=pointer]:
+                - /url: https://wa.me/917358364959
+                - generic [ref=e1335]:
+                  - generic [ref=e1336]: WhatsApp
+                  - generic [ref=e1337]: +91 73583 64959
+            - listitem [ref=e1338]:
+              - link "Call +91 73583 64959" [ref=e1339] [cursor=pointer]:
+                - /url: tel:+917358364959
+                - generic [ref=e1343]:
+                  - generic [ref=e1344]: Call
+                  - generic [ref=e1345]: +91 73583 64959
+            - listitem [ref=e1346]:
+              - link "Email info@tuteeconnect.com" [ref=e1347] [cursor=pointer]:
+                - /url: mailto:info@tuteeconnect.com
+                - generic [ref=e1351]:
+                  - generic [ref=e1352]: Email
+                  - generic [ref=e1353]: info@tuteeconnect.com
+            - listitem [ref=e1354]:
+              - link "Website www.tuteeconnect.com" [ref=e1355] [cursor=pointer]:
+                - /url: https://www.tuteeconnect.com
+                - generic [ref=e1359]:
+                  - generic [ref=e1360]: Website
+                  - generic [ref=e1361]: www.tuteeconnect.com
+          - paragraph [ref=e1362]: We reply within one working day
+      - generic [ref=e1365]:
+        - generic [ref=e1366]: © 2026 Tutee Connect
+        - group [ref=e1367]:
+          - generic "Photo credits" [ref=e1368] [cursor=pointer]
+  - generic [ref=e1369]:
+    - button "Ask Tutee AI" [ref=e1370] [cursor=pointer]
+    - link "Chat on WhatsApp" [ref=e1371] [cursor=pointer]:
+      - /url: https://wa.me/917358364959
+      - generic: Chat with us
+  - dialog [aria-hidden]:
+    - generic:
+      - generic:
+        - heading [level=3]: Tutee AI
+        - paragraph: Expert counsellor • Online
+      - generic:
+        - button
+        - button
+    - generic:
+      - generic: Free consultation available
+      - button: Book now
+    - generic:
+      - generic:
+        - button: Master’s in computer science
+        - button: How does the residence permit work?
+        - button: What scholarships are there?
+        - button: Can I work while studying?
+        - button: Evaluate my profile
+    - generic:
+      - textbox:
+        - /placeholder: Ask me anything…
+      - button [disabled]
+    - paragraph: AI generated responses. Confirm essential info with our team.
