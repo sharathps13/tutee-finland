@@ -2184,3 +2184,6 @@ main { overflow-x: clip; }
   .fv__steps ol.m-swipe li:nth-child(2) p::before { left: 50%; }
   .fv__steps ol.m-swipe li:nth-child(3) p::before { left: 83.33%; }
 }
+/* Bottom bar: Tutee AI (with its name) · Free evaluation · WhatsApp. */
+.mbar .btn-ai { width: auto; padding: 0 12px 0 8px; gap: 6px; font-size: 13.5px; font-weight: 700; color: var(--ink); }
+.mbar .btn-ai img { width: 24px; height: 24px; }
