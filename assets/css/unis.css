@@ -274,3 +274,4 @@ body.has-dock .toast { z-index: 95; }
   .um__panel, .um__bg { transition: none; }
 }
 .page-dir.has-dock { padding-bottom: 76px; }
+@media (max-width: 379px) { .slbar__text { display: none; } }

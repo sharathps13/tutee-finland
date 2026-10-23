@@ -36,6 +36,12 @@
       .slice(0, 2).map(function (w) { return w[0]; }).join('');
   }
   function cityPhoto(city) { return './assets/img/cities/' + slug(city) + '.jpg'; }
+  /* A university's own campus photo where one is published (photo-credits.js
+     lists it), otherwise a photo of its campus city. */
+  function uniPhoto(u) {
+    var own = './assets/img/campus/' + u.id + '.jpg';
+    return (window.TC_PHOTO_CREDITS || {})[own.replace('./', '')] ? own : cityPhoto(cityOf(u));
+  }
   /* Region tint shown behind a photo until (or instead of) it loads. */
   var TINTS = ['#0a2147,#1d5fc1', '#073b3a,#13a884', '#3b0a2e,#7a0f14', '#1a1446,#6c4bd1', '#0b2a4a,#0e7490'];
   function tint(city) {
@@ -146,7 +152,7 @@
       '<button class="uc__open" type="button" data-open-uni="' + esc(u.id) + '" aria-label="' + esc(u.name) + ': view details and courses"></button>' +
       '<div class="ph" style="--ph-bg:' + tint(city) + '">' +
         '<span class="ph__mono" aria-hidden="true">' + esc(initials(u.name)) + '</span>' +
-        '<img data-ph src="' + cityPhoto(city) + '" alt="" loading="lazy" decoding="async">' +
+        '<img data-ph src="' + uniPhoto(u) + '" alt="" loading="lazy" decoding="async">' +
         '<span class="uc__type' + (isUas(u) ? ' uc__type--uas' : '') + '">' + (isUas(u) ? 'Applied Sciences' : 'University') + '</span>' +
         '<button class="slbtn" type="button" data-sl-id="' + esc(u.id) + '" aria-pressed="' + (on ? 'true' : 'false') + '" aria-label="Shortlist ' + esc(u.name) + '">' + ICON.heart + '</button>' +
         '<span class="ph__city">' + ICON.pin + esc(city) + '</span>' +
@@ -429,14 +435,14 @@
     st = { q: '', lvl: '', fld: '', shown: 12 };
     $('[data-um-q]', um).value = '';
 
-    var img = $('[data-um-photo]', um), path = cityPhoto(city);
+    var img = $('[data-um-photo]', um), path = uniPhoto(u), own = path.indexOf('/campus/') > -1;
     $('.um__hero', um).style.setProperty('--ph-bg', tint(city));
     img.classList.remove('is-missing');
     img.onerror = function () { img.classList.add('is-missing'); };
-    img.src = path; img.alt = 'Campus city: ' + city;
+    img.src = path; img.alt = own ? u.name + ' campus' : 'Campus city: ' + city;
     text('[data-um-mono]', initials(u.name));
     var credit = photoCredit(path);
-    text('[data-um-credit]', credit ? 'Header: ' + city + '. ' + credit : '');
+    text('[data-um-credit]', credit ? 'Header: ' + (own ? u.name : city) + '. ' + credit : '');
     text('[data-um-name]', u.name);
     html('[data-um-where]', ICON.pin + esc(u.location || city) + ', Finland');
     html('[data-um-badges]', '<span class="um__badge">' + (isUas(u) ? 'University of Applied Sciences' : 'University') + '</span>' +
