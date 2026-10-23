@@ -1652,3 +1652,240 @@ main { overflow-x: clip; }
   .lf__tick { top: 8px; right: 8px; width: 20px; height: 20px; }
   .lf__q { font-size: 1.25rem; }
 }
+
+/* ===================================================== PHONE: ONE SCREEN
+   Each section's content fits between the header and the bottom action
+   bar on a phone. Everything here is phone-only (max-width: 699px). */
+@media (max-width: 699px) {
+  .section { padding-block: 22px 26px; }
+  .section-head { gap: 6px; margin-bottom: 14px; }
+  .section-head .eyebrow { font-size: 11px; }
+  .h2 { font-size: 1.42rem; line-height: 1.15; }
+  .section-head .h2 { margin-top: 6px !important; }
+  .section-head .lead { font-size: 13.5px; line-height: 1.45; }
+
+  /* ---- Why Finland: the season text sits on the season photo as one card. */
+  .ws__pin { padding: 22px 0 26px; }
+  .ws__grid { gap: 10px; grid-template-areas: "eye" "title" "tabs" "card"; }
+  .ws__eyebrow { grid-area: eye; }
+  .ws__title { grid-area: title; margin-top: 0; font-size: 1.42rem !important; }
+  .ws__tabs { grid-area: tabs; padding-bottom: 8px; gap: 4px; }
+  .ws__tab { padding: 6px 4px; font-size: 12.5px; gap: 3px; }
+  .ws__window { grid-area: card; height: auto; min-height: 0; align-self: stretch; }
+  .ws__tilt { border-radius: 22px; }
+  .ws__fig::after { background: linear-gradient(180deg, rgba(4,16,42,.55) 0%, rgba(4,16,42,.2) 22%, rgba(4,16,42,.55) 48%, rgba(4,16,42,.94) 100%); }
+  .ws__fig figcaption { top: 14px; bottom: auto; left: 16px; gap: 2px; }
+  .ws__word { font-size: 2rem; }
+  .ws__place { font-size: 12px; }
+  .ws__hint { display: none; }
+  .ws__panels { grid-area: card; position: relative; z-index: 2; padding: 84px 16px 16px; pointer-events: none; }
+  .ws__panel { gap: 8px; align-content: end; }
+  .ws__stat { gap: 10px; }
+  .ws__stat b { font-size: 2.3rem; }
+  .ws__stat > span { font-size: 13px; }
+  .ws__h { font-size: 1.15rem; }
+  .ws__p { font-size: 13.5px; line-height: 1.5; color: #dfe8f5; }
+  .ws__facts { gap: 4px; }
+  .ws__facts li { font-size: 12.5px; gap: 8px; }
+  .ws__facts .ico { margin-top: 1px; }
+}
+@media (max-width: 699px) {
+  /* ---- Services: only the lower arc of the dial shows, the active service
+     at its centre and its neighbours either side; the card below names it. */
+  .orb__stage { height: calc(var(--d) * .42 + 18px); padding-bottom: 14px; }
+  .orb__hint { display: none; }
+  .orb__content { padding: 14px 16px 4px; gap: 10px; }
+  .orb__desc > p:first-child { -webkit-line-clamp: 2; font-size: 14px; line-height: 1.55; }
+  .orb__points li { padding: 9px 11px 9px 13px; font-size: 13.5px; }
+  .orb__foot { padding: 10px 16px; }
+
+  /* ---- Universities: one filter row, a shorter postcard and the album with
+     its "all institutions" link in the header row. */
+  .pc { gap: 10px; }
+  .pc__filters { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--gutter) * -1); padding: 2px var(--gutter); }
+  .pc__filters::-webkit-scrollbar { display: none; }
+  .pc__chips { flex: none; overflow: visible; margin: 0; padding: 0; }
+  .pc__chip { padding-block: 7px; font-size: 13px; }
+  .pc__card { height: 330px; }
+  .pc__back { padding: 16px 14px; }
+  .pc__side { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "head all" "stamps stamps"; align-items: center; gap: 6px 10px; }
+  .pc__albumhead { grid-area: head; }
+  .pc__albumhead span:last-child { display: none; }
+  .pc__stamps { grid-area: stamps; padding-block: 8px 10px !important; }
+  .pc__stamps > li { width: 74px; }
+  .pc__all { grid-area: all; padding: 6px 12px; border-radius: 999px; gap: 6px; }
+  .pc__all b { font-size: 12.5px; }
+  #universities .note { margin-top: 8px; font-size: 11px; line-height: 1.45; }
+
+  /* ---- Funding: option cards in a row, a slimmer plan, partners inline. */
+  .fpl { gap: 10px; }
+  .fpl__srcs.m-swipe { padding-top: 22px; }
+  .fpl__src { width: 70%; flex-direction: row; align-items: center; gap: 10px; padding: 10px 44px 10px 10px; }
+  .fpl__srcico { width: 34px; height: 34px; }
+  .fpl__toggle { top: 50%; margin-top: -11px; }
+  .fpl__hero { min-height: 58px; padding: 10px 14px 12px; }
+  .fpl__herotxt b { font-size: 1.15rem; }
+  .fpl__costs { padding: 10px 10px 2px; gap: 6px; }
+  .fpl__cost { padding: 8px; row-gap: 3px; }
+  .fpl__help { margin: 8px 10px 0; padding: 9px 10px; gap: 10px; }
+  .fpl__helpico { width: 30px; height: 30px; }
+  .fpl__help b { font-size: 13.5px; }
+  .fpl__help p { -webkit-line-clamp: 2; font-size: 12.5px; line-height: 1.45; }
+  .fpl__foot { padding: 10px; }
+  .fpl__foot .btn { min-height: 42px; }
+  .fpl__partners { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 10px; margin-top: 10px; }
+  .fpl__partners-label { font-size: 10.5px; letter-spacing: .08em; max-width: 9ch; line-height: 1.3; }
+
+  /* ---- Family: a slightly shorter photo card and shorter step cards with
+     the button beside the label. */
+  .fv__inner { min-height: 400px; padding: 14px 14px 16px; gap: 10px; }
+  .fv__title { font-size: 1.35rem; }
+  .fv__text { font-size: 13.5px; line-height: 1.5; }
+  .fv__steps { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "label btn" "list list"; align-items: center; padding: 12px 0; gap: 10px 8px; }
+  .fv__stepslabel { grid-area: label; }
+  .fv__steps ol { grid-area: list; }
+  .fv__steps .btn { grid-area: btn; margin: 0 16px 0 0; min-height: 36px; padding: 6px 12px; font-size: 12.5px; }
+  .fv__steps .btn .ico-arrow { display: none; }
+  .fv__steps li { padding: 10px; gap: 10px; }
+  .fv__steps li > b { width: 30px; height: 30px; border-radius: 10px; font-size: 12px; }
+  .fv__steps h4 { font-size: 14px; }
+  .fv__steps p { font-size: 12.5px; line-height: 1.45; }
+
+  /* ---- Stories: shorter quote cards. */
+  .wall { gap: 8px; }
+  .wall .quote { width: 82vw; }
+
+  /* ---- FAQ: the help strip shrinks to its buttons. */
+  .help { grid-template-columns: auto minmax(0, 1fr); align-items: center; padding: 10px 12px; }
+  .help strong { font-size: 13.5px; }
+  .help__btns { justify-content: flex-end; gap: 6px; }
+  .help__btns .btn { min-height: 36px; padding: 6px 12px; font-size: 13px; }
+}
+@media (max-width: 699px) { .orb__hub { display: none; } }
+@media (max-width: 699px) {
+  .section { padding-block: 16px 18px; }
+  .section-head { margin-bottom: 10px; }
+  .h2 { font-size: 1.32rem; }
+  .section-head .lead { font-size: 13px; line-height: 1.42; }
+  .pc__card { height: 296px; }
+  .pc__back { padding: 14px; }
+  .pc__hand { display: none; }
+  .pc__msg { gap: 6px; }
+  .pc__addr { gap: 6px; }
+  .pc__line { padding-bottom: 2px; }
+  .pc__stamps > li { width: 60px; }
+  .pc__stamp { padding: 4px; }
+  .pc__stamp-in b { font-size: 15px; }
+  .pc__stamp-in small { font-size: 9.5px; }
+  #universities .note { font-size: 10.5px; line-height: 1.4; margin-top: 6px; }
+}
+@media (max-width: 699px) {
+  .pc { gap: 8px; }
+  .pc__card { height: 284px; }
+  .pc__albumhead { font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: .06em; }
+  .pc__stamps > li { width: 54px; }
+  .pc__stamps { padding-block: 6px 8px !important; }
+}
+@media (max-width: 699px) {
+  .fpl__src { width: 82%; padding: 9px 50px 9px 10px; }
+  .fpl__srctxt { gap: 0; }
+  .fpl__srctxt b, .fpl__srctxt em { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fpl__srctxt b { font-size: 14px; }
+  .fpl__hero { min-height: 0; padding: 9px 14px 11px; }
+  .fpl__herotxt { gap: 0; }
+  /* Cost tiles: icon + name on the first line, status and sources on the second. */
+  .fpl__cost { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+  .fpl__cost > b { flex: 1 1 calc(100% - 40px); min-width: 0; }
+  .fpl__tags { min-height: 0; }
+  .fpl__partners { margin-top: 8px; }
+  .fpl__partners .logos__item img { max-height: 30px; }
+}
+@media (max-width: 699px) {
+  .fpl__cost { padding: 7px 8px; gap: 3px 6px; }
+  .fpl__costico { width: 24px; height: 24px; border-radius: 7px; }
+  .fpl__costico .ico { width: 14px; height: 14px; }
+  .fpl__cost > b { flex-basis: calc(100% - 32px); font-size: 13.5px; }
+  .fpl__state { font-size: 11px; line-height: 1.2; }
+  .fpl__costs { gap: 6px; padding-bottom: 0; }
+  .fpl__help { margin-top: 6px; padding: 8px 10px; }
+  .fpl__foot { padding: 8px 10px 10px; }
+  .fpl__chosen { font-size: 12px; line-height: 1.3; }
+  .fpl__partners .logos__item { width: 104px; height: 44px; padding: 6px; border-radius: 10px; }
+}
+@media (max-width: 699px) {
+  .fv__stepslabel { max-width: none; font-size: 10.5px; letter-spacing: .1em; }
+  .fv__steps .btn { white-space: nowrap; font-size: 12px; padding: 6px 11px; }
+  .fv__tiles li { width: 40%; padding: 8px 10px; }
+  .fv__tiles b { font-size: 1.05rem; }
+  .fv__tiles span { font-size: 11.5px; line-height: 1.3; }
+  .fv__steps li { width: 72%; padding: 9px; }
+  .fv__steps p { font-size: 12px; line-height: 1.4; }
+}
+@media (max-width: 699px) {
+  .fv__inner { min-height: 0; }
+  .fv__panes { min-height: 300px; }
+  .quote { padding: 16px 16px 14px; gap: 10px; }
+  .quote__mark { position: absolute; top: 8px; right: 12px; margin: 0; font-size: 44px; height: auto; line-height: 1; opacity: .5; }
+  .quote blockquote { font-size: 14px; line-height: 1.55; padding-right: 22px; }
+  .rating { padding: 8px 12px; gap: 8px; font-size: 12.5px; }
+}
+@media (max-width: 699px) {
+  .fv__panes { min-height: 0; }
+  .fv__title { font-size: 1.22rem; line-height: 1.15; }
+  .fv__tiles li { width: 47%; }
+  .acc { gap: 6px; }
+  .acc__q { padding: 9px 12px; gap: 10px; font-size: 14px; line-height: 1.3; }
+  .acc__n { width: 26px; height: 26px; font-size: 11.5px; border-radius: 8px; }
+  .faq__aside { gap: 8px; }
+  .faq__search .input, .faq__search input { min-height: 42px; }
+  .help { padding: 8px 10px; gap: 8px; }
+  .help strong { font-size: 12.5px; line-height: 1.25; }
+  .help__btns { flex-wrap: nowrap; }
+  .help__btns .btn { min-height: 34px; padding: 5px 10px; font-size: 12.5px; white-space: nowrap; }
+}
+@media (max-width: 699px) {
+  /* FAQ helper: the prompt on its own line, the buttons beneath. */
+  .help { grid-template-columns: minmax(0, 1fr); }
+  .help__btns { justify-content: flex-start; }
+
+  /* ---- Contact: a tighter two-step form, start dates in one swipe row, and
+     the profile, promises, contact links and office as one swipe strip. */
+  .lf { gap: 10px; }
+  .lf__card { padding: 14px; }
+  .lf__progress { margin-bottom: 10px; }
+  .lf__step { gap: 8px; }
+  .lf__q { font-size: 1.12rem; margin-bottom: 0; }
+  .lf__choice { padding: 8px 10px; }
+  .lf__choice b, .lf__choice small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lf__choice b { font-size: 13px; }
+  .lf__choice small { font-size: 11px; }
+  .lf__sub { font-size: 12px; }
+  .lf__pills { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: -14px; padding-inline: 14px; }
+  .lf__pills::-webkit-scrollbar { display: none; }
+  .lf__pill { flex: none; }
+  .lf__pill span { padding: 7px 12px; font-size: 12.5px; }
+  .lf .dest { padding: 7px 10px; font-size: 12.5px; }
+  .lf .input, .lf .dd__btn { min-height: 44px; }
+  .lf__step .btn { min-height: 44px; margin-top: 0; }
+  .lf__row { gap: 4px 10px; }
+  .lf__consent { font-size: 11px; }
+  .lf__side { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-inline: calc(var(--gutter) * -1); padding: 2px var(--gutter) 4px; scroll-padding-inline: var(--gutter); align-items: stretch; }
+  .lf__side::-webkit-scrollbar { display: none; }
+  .lf__side > * { flex: none; scroll-snap-align: start; }
+  .lf__side > .lp { width: 84%; padding: 14px; gap: 10px; }
+  .lf__side > .lf__trust { width: 92%; }
+  .lf__side > .lf__contact { width: 70%; flex-wrap: wrap; align-content: center; overflow: visible; margin: 0; padding: 12px; border-radius: 16px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); }
+  .lf__side > .lf__offices { width: 72%; align-items: center; padding: 12px; border-radius: 16px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); }
+  .lp__who { gap: 12px; }
+}
+@media (max-width: 699px) {
+  .lp__top::after { white-space: nowrap; }
+  .fpl { gap: 8px; }
+  .fpl__srcs.m-swipe { padding-top: 20px; padding-bottom: 4px; }
+  .fpl__partners .logos__item { height: 40px; }
+  .fv__inner { padding: 12px 12px 14px; gap: 8px; }
+  .fv__pane { gap: 8px; }
+  .fv__text { font-size: 13px; }
+  .fv__steps { padding-block: 10px; gap: 8px; margin-top: 10px; }
+  .fv__steps li { padding: 8px; }
+}
