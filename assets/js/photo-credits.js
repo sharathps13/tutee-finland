@@ -255,17 +255,17 @@ window.TC_PHOTO_CREDITS = {
  },
  "assets/img/campus/university-of-helsinki.jpg": {
   "subject": "University of Helsinki campus",
-  "author": "JIP",
-  "licence": "CC BY-SA 4.0",
-  "url": "https://commons.wikimedia.org/wiki/File:Helsinki_Senate_Square_facing_University_of_Helsinki_main_building_on_a_sunny_afternoon_in_July_2025.jpg",
-  "short": "Photo: JIP, CC BY-SA 4.0, Wikimedia Commons"
+  "author": "Ypsilon from Finland",
+  "licence": "CC0",
+  "url": "https://commons.wikimedia.org/wiki/File:Helsinki_University_main_building.jpg",
+  "short": "Photo: Ypsilon from Finland, CC0, Wikimedia Commons"
  },
  "assets/img/campus/university-of-turku.jpg": {
   "subject": "University of Turku campus",
-  "author": "Perkos96",
-  "licence": "CC BY-SA 4.0",
-  "url": "https://commons.wikimedia.org/wiki/File:The_main_building_of_the_University_of_Turku,_Finland.jpg",
-  "short": "Photo: Perkos96, CC BY-SA 4.0, Wikimedia Commons"
+  "author": "Samuli Lintula",
+  "licence": "CC BY 2.5",
+  "url": "https://commons.wikimedia.org/wiki/File:Educarium_ja_Publicum.jpg",
+  "short": "Photo: Samuli Lintula, CC BY 2.5, Wikimedia Commons"
  },
  "assets/img/campus/university-of-oulu.jpg": {
   "subject": "University of Oulu campus",
@@ -283,10 +283,10 @@ window.TC_PHOTO_CREDITS = {
  },
  "assets/img/campus/university-of-jyvaskyla.jpg": {
   "subject": "University of Jyväskylä campus",
-  "author": "Ilkka69",
+  "author": "Tiia Monto",
   "licence": "CC BY-SA 4.0",
-  "url": "https://commons.wikimedia.org/wiki/File:Jyv%C3%A4skyl%C3%A4n_yliopiston_p%C3%A4%C3%A4rakennus_ja_Fennicum.jpg",
-  "short": "Photo: Ilkka69, CC BY-SA 4.0, Wikimedia Commons"
+  "url": "https://commons.wikimedia.org/wiki/File:Seminaarinm%C3%A4ki_campus_2.jpg",
+  "short": "Photo: Tiia Monto, CC BY-SA 4.0, Wikimedia Commons"
  },
  "assets/img/campus/university-of-eastern-finland.jpg": {
   "subject": "University of Eastern Finland campus",
@@ -325,17 +325,17 @@ window.TC_PHOTO_CREDITS = {
  },
  "assets/img/campus/jamk-university-of-applied-sciences.jpg": {
   "subject": "Jamk University of Applied Sciences campus",
-  "author": "Tiia Monto",
+  "author": "Zache",
   "licence": "CC BY-SA 3.0",
-  "url": "https://commons.wikimedia.org/wiki/File:Main_campus_of_Jyv%C3%A4skyl%C3%A4_University_of_Applied_Sciences.jpg",
-  "short": "Photo: Tiia Monto, CC BY-SA 3.0, Wikimedia Commons"
+  "url": "https://commons.wikimedia.org/wiki/File:Jamk-main_campus_-_east.jpg",
+  "short": "Photo: Zache, CC BY-SA 3.0, Wikimedia Commons"
  },
  "assets/img/campus/hanken-school-of-economics.jpg": {
   "subject": "Hanken School of Economics campus",
-  "author": "Mikkoau",
-  "licence": "CC BY-SA 4.0",
-  "url": "https://commons.wikimedia.org/wiki/File:Hanken_Helsinki.jpg",
-  "short": "Photo: Mikkoau, CC BY-SA 4.0, Wikimedia Commons"
+  "author": "Asematunneli2",
+  "licence": "CC0",
+  "url": "https://commons.wikimedia.org/wiki/File:Hanken_2023.jpg",
+  "short": "Photo: Asematunneli2, CC0, Wikimedia Commons"
  },
  "assets/img/campus/university-of-lapland.jpg": {
   "subject": "University of Lapland campus",
@@ -372,20 +372,6 @@ window.TC_PHOTO_CREDITS = {
   "url": "https://commons.wikimedia.org/wiki/File:Haaga-Helia_Pasila.jpg",
   "short": "Photo: Oona Räisänen (Mysid), CC BY-SA 3.0, Wikimedia Commons"
  },
- "assets/img/campus/hame-university-of-applied-sciences.jpg": {
-  "subject": "Häme University of Applied Sciences campus",
-  "author": "Dankos10",
-  "licence": "CC BY-SA 4.0",
-  "url": "https://commons.wikimedia.org/wiki/File:Visam%C3%A4ki.JPG",
-  "short": "Photo: Dankos10, CC BY-SA 4.0, Wikimedia Commons"
- },
- "assets/img/campus/kajaani-university-of-applied-sciences.jpg": {
-  "subject": "Kajaani University of Applied Sciences campus",
-  "author": "MailariX",
-  "licence": "CC0",
-  "url": "https://commons.wikimedia.org/wiki/File:KAMK_Taito_1.jpg",
-  "short": "Photo: MailariX, CC0, Wikimedia Commons"
- },
  "assets/img/campus/lab-university-of-applied-sciences.jpg": {
   "subject": "LAB University of Applied Sciences campus",
   "author": "Sanna Henttonen",
@@ -395,16 +381,16 @@ window.TC_PHOTO_CREDITS = {
  },
  "assets/img/campus/lapland-university-of-applied-sciences.jpg": {
   "subject": "Lapland University of Applied Sciences campus",
-  "author": "Xepheid",
+  "author": "Lijonama80",
   "licence": "CC BY-SA 4.0",
-  "url": "https://commons.wikimedia.org/wiki/File:Lapland_university_of_applied_sciences_2020.jpg",
-  "short": "Photo: Xepheid, CC BY-SA 4.0, Wikimedia Commons"
+  "url": "https://commons.wikimedia.org/wiki/File:BO8A1171.jpg",
+  "short": "Photo: Lijonama80, CC BY-SA 4.0, Wikimedia Commons"
  },
  "assets/img/campus/laurea-university-of-applied-sciences.jpg": {
   "subject": "Laurea University of Applied Sciences campus",
   "author": "Catlemur",
   "licence": "CC BY-SA 4.0",
-  "url": "https://commons.wikimedia.org/wiki/File:Laurea_Lepp%C3%A4vaara_campus.JPG",
+  "url": "https://commons.wikimedia.org/wiki/File:Laurea_Otaniemi.JPG",
   "short": "Photo: Catlemur, CC BY-SA 4.0, Wikimedia Commons"
  },
  "assets/img/campus/metropolia-university-of-applied-sciences.jpg": {
@@ -425,7 +411,7 @@ window.TC_PHOTO_CREDITS = {
   "subject": "Oulu University of Applied Sciences campus",
   "author": "Estormiz",
   "licence": "CC0",
-  "url": "https://commons.wikimedia.org/wiki/File:Kotkantie_1_Oulu_20170121.jpg",
+  "url": "https://commons.wikimedia.org/wiki/File:Kotkantie_1_Oulu_20090809.JPG",
   "short": "Photo: Estormiz, CC0, Wikimedia Commons"
  },
  "assets/img/campus/satakunta-university-of-applied-sciences-samk.jpg": {
