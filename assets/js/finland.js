@@ -2188,6 +2188,31 @@
     });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { layout(); if (introDone) goTo(stage, performance.now(), true); });
 
+    // While the hero is pinned, one wheel gesture moves exactly one chapter, so
+    // a fast flick or a trackpad swipe can't skip past one. A gesture ends once
+    // the wheel has been quiet for a moment (trackpad momentum keeps firing
+    // events), and past the first or last chapter the page scrolls on as normal.
+    var lastWheel = 0, stepUntil = 0, stepAt = -1e9;
+    window.addEventListener('wheel', function (e) {
+      if (e.ctrlKey || Math.abs(e.deltaY) < 2) return;
+      var r = sec.getBoundingClientRect();
+      if (r.top > 1 || r.bottom < window.innerHeight - 1) return;
+      // A wheel spun without pause still advances, just no faster than a chapter a second.
+      var now = performance.now(), fresh = now - lastWheel > 220 || now - stepAt > 1100;
+      lastWheel = now;
+      var cur = stageForScroll(), next = cur + (e.deltaY > 0 ? 1 : -1);
+      if (next < 0 || next > STAGES - 1) {
+        // Let the page leave the hero, but not on the tail of the gesture
+        // that just landed on the last chapter.
+        if (now < stepUntil || !fresh) e.preventDefault();
+        return;
+      }
+      e.preventDefault();
+      if (!fresh || now < stepUntil) return;
+      stepUntil = now + 450; stepAt = now;
+      window.scrollTo({ top: sec.offsetTop + STEP * (next + 0.5), behavior: 'smooth' });
+    }, { passive: false });
+
     // Rail buttons jump to the middle of their chapter.
     ticks.forEach(function (b, i) {
       b.addEventListener('click', function () {
