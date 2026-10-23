@@ -2187,3 +2187,7 @@ main { overflow-x: clip; }
 /* Bottom bar: Tutee AI (with its name) · Free evaluation · WhatsApp. */
 .mbar .btn-ai { width: auto; padding: 0 12px 0 8px; gap: 6px; font-size: 13.5px; font-weight: 700; color: var(--ink); }
 .mbar .btn-ai img { width: 24px; height: 24px; }
+/* The glass plate only backs the logo over the hero; once the header turns
+   solid (and on pages whose header is always solid) the logo sits straight
+   on the bar. */
+.header.is-scrolled .logo__plate, .page-dir .header .logo__plate { background: transparent; border-color: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
