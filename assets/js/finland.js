@@ -30,6 +30,17 @@
   function enquiryPage() {
     try { return location.host + location.pathname; } catch (e) { return ''; }
   }
+  /* Run fn once when el comes within `margin` of the viewport (and is
+     actually displayed), so photos load just before they're needed. */
+  function whenNear(el, fn, margin) {
+    if (!el) return;
+    if (!('IntersectionObserver' in window)) { fn(); return; }
+    var io = new IntersectionObserver(function (es) {
+      if (!es[0].isIntersecting || !el.offsetParent) return;
+      io.disconnect(); fn();
+    }, { rootMargin: (margin || '120%') + ' 0px' });
+    io.observe(el);
+  }
   function scrollToId(id) {
     var el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
@@ -520,7 +531,11 @@
     function syncLive() { sec.classList.toggle('is-live', pinned()); }
     syncLive();
     if (pinMq) { if (pinMq.addEventListener) pinMq.addEventListener('change', syncLive); else if (pinMq.addListener) pinMq.addListener(syncLive); }
-    window.addEventListener('load', function () { figs.forEach(function (f) { var im = $('img', f); if (im) im.loading = 'eager'; }); });
+    // Every season's photo loads as the section approaches, so the wipe never waits.
+    whenNear(sec, function () {
+      figs.forEach(function (f) { var im = $('img', f); if (im) im.loading = 'eager'; });
+      $$('video[data-poster]', sec).forEach(function (v) { v.poster = v.getAttribute('data-poster'); });
+    });
     // Winter and summer are video loops: only the visible one plays, and only on screen.
     function syncVideos() {
       figs.forEach(function (f, k) {
@@ -901,7 +916,8 @@
     function syncP() { P = wide && wide.matches ? 0 : 90; tween(targetFor(idx), 0); }
     if (wide) { if (wide.addEventListener) wide.addEventListener('change', syncP); else if (wide.addListener) wide.addListener(syncP); }
 
-    window.addEventListener('load', function () { bgs.forEach(function (b) { b.loading = 'eager'; }); });
+    // The dial's photos load as it approaches (never on phones, where it is hidden).
+    whenNear(root, function () { bgs.forEach(function (b) { b.loading = 'eager'; }); });
     select(0, { spin: false, force: true });
     // The dial spins into place the first time it scrolls into view.
     if (reduceMotion || !('IntersectionObserver' in window)) { setRot(targetFor(0)); return; }
@@ -2155,7 +2171,16 @@
 
     // Season photos load after the page so they never compete with first paint.
     function loadBgs() { bgs.forEach(function (img) { var s = img.getAttribute('data-src'); if (s) { img.src = s; img.removeAttribute('data-src'); } }); }
-    if (live) { if (document.readyState === 'complete') setTimeout(loadBgs, 300); else window.addEventListener('load', function () { setTimeout(loadBgs, 300); }); }
+    // The chapter photos wait until the visitor starts moving through the
+    // hero (or the page has been idle a few seconds), keeping first load light.
+    if (live) {
+      var bgsDone = false, kickBgs = function () {
+        if (bgsDone) return; bgsDone = true; loadBgs();
+        ['scroll', 'wheel', 'touchstart', 'keydown'].forEach(function (ev) { window.removeEventListener(ev, kickBgs); });
+      };
+      ['scroll', 'wheel', 'touchstart', 'keydown'].forEach(function (ev) { window.addEventListener(ev, kickBgs, { passive: true }); });
+      window.addEventListener('load', function () { setTimeout(kickBgs, 3500); });
+    }
 
     var STAGES = 5;
     var W = 0, H = 0, dpr = 1, N = 0, parts = [], shapes = [], cities = [];
@@ -2210,7 +2235,8 @@
       var mobile = W < 860;
       var mapBox = mobile ? { x: W * 0.08, y: H * 0.13, w: W * 0.84, h: H * 0.45 } : { x: W * 0.5, y: H * 0.09, w: W * 0.44, h: H * 0.84 };
       var txtBox = mobile ? { x: W * 0.05, y: H * 0.2, w: W * 0.9, h: H * 0.32 } : { x: W * 0.55, y: H * 0.26, w: W * 0.39, h: H * 0.46 };
-      var n = Math.round(clamp(W * H / 430, 900, 2600));
+      // Enough snow to draw the shapes crisply, capped so big screens stay smooth.
+      var n = Math.round(clamp(W * H / 560, mobile ? 520 : 750, 1900));
       if (n !== N) {
         N = n; parts = [];
         for (var i = 0; i < N; i++) {
@@ -2325,7 +2351,9 @@
         ctx.closePath();
         ctx.globalAlpha = 0.1 * mapShown; ctx.fillStyle = '#2fe3b4'; ctx.fill();
         ctx.globalAlpha = 0.75 * mapShown; ctx.strokeStyle = '#9ff5df'; ctx.lineWidth = 1.6; ctx.lineJoin = 'round';
-        ctx.shadowColor = 'rgba(47,227,180,.8)'; ctx.shadowBlur = 12; ctx.stroke(); ctx.shadowBlur = 0;
+        // A wide faint stroke under the line gives the glow without canvas shadows (slow).
+        ctx.stroke();
+        ctx.globalAlpha = 0.18 * mapShown; ctx.lineWidth = 7; ctx.stroke(); ctx.lineWidth = 1.6;
       }
       var hub = cities[0], grow = clamp((performance.now() - mapAt) / 1600, 0, 1);
       ctx.lineWidth = 1.1; ctx.strokeStyle = '#2fe3b4';

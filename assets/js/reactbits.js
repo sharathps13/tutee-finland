@@ -236,7 +236,9 @@
     var host = canvas.parentNode, clock = 0, reveal = reduce ? 1 : 0;
     var px = 0, py = 0, reach = 0, tx = 0, ty = 0, inside = false, snapped = false;
     function resize() {
-      var r = canvas.getBoundingClientRect(), k = Math.min(window.devicePixelRatio || 1, 1.5);
+      // The aurora is all soft gradients, so half resolution (stretched by
+      // CSS) looks the same and costs a quarter of the GPU work.
+      var r = canvas.getBoundingClientRect(), k = Math.min(window.devicePixelRatio || 1, 1.5) * 0.5;
       canvas.width = Math.max(1, Math.round(r.width * k)); canvas.height = Math.max(1, Math.round(r.height * k));
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform2f(U.uResolution, canvas.width, canvas.height);
@@ -261,7 +263,12 @@
       }, { passive: true });
       document.documentElement.addEventListener('pointerleave', function () { inside = false; });
     }
+    var acc = 0;
     visibleLoop(host, function (dt) {
+      // A slow drift: 30 frames a second is indistinguishable from 60.
+      acc += dt;
+      if (acc < 1 / 31) return;
+      dt = acc; acc = 0;
       clock += dt * Number(ds.speed || 0.8);
       reveal = Math.min(1, reveal + dt / 2.4);
       var k = 1 - Math.exp(-dt / 0.6);

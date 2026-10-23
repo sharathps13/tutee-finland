@@ -2200,3 +2200,14 @@ main { overflow-x: clip; }
 .chat__next { align-self: flex-start; max-width: 100%; animation: fadeUp .3s var(--ease); }
 .chat__next button { font-size: 12.5px; padding: 6px 11px; text-align: left; }
 .msg ul { list-style: disc; } .msg li::marker { color: var(--fi-blue); }
+
+/* ===================================================== PERFORMANCE
+   Cheaper paints for the always-on hero layers. */
+/* Grain without a blend mode: overlay blending re-composites everything
+   beneath it on every repaint. */
+.noise-layer { mix-blend-mode: normal; opacity: .04; }
+/* Hidden hero steps fade and slide only; a blur filter on four stacked
+   full-width layers is costly to keep composited. */
+.hp__step { filter: none; }
+/* Scrolling-content layers that never animate don't need their own blur. */
+@media (max-width: 767px) { .header { -webkit-backdrop-filter: none; backdrop-filter: none; } .header.is-scrolled { background: rgba(255,255,255,.97); } }
