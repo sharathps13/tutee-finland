@@ -950,22 +950,38 @@
 
   /* ------------------------------------------------------------------ *
    * Funding guide — five cards to read through, one per funding route.
-   * On phones the cards become a swipe row and the dots follow along.
+   * On phones the cards are a list: tapping a row opens its details and
+   * closes the others. Wider screens show every card in full.
    * ------------------------------------------------------------------ */
   function initFundingGuide() {
     var root = $('[data-fg]');
     if (!root) return;
     $('[data-fg-cta]', root).addEventListener('click', function () { setDestination('Funding plan'); });
-    var track = $('[data-fg-track]', root), cards = $$('.fg__card', root), dots = $$('.fg__dots i', root), raf = 0;
-    function sync() {
-      raf = 0;
-      var x = track.scrollLeft, best = 0;
-      cards.forEach(function (c, i) { if (Math.abs(c.offsetLeft - track.offsetLeft - x) < Math.abs(cards[best].offsetLeft - track.offsetLeft - x)) best = i; });
-      if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 4) best = cards.length - 1;
-      dots.forEach(function (d, i) { d.classList.toggle('is-on', i === best); });
+    var cards = $$('.fg__card', root), phone = window.matchMedia ? window.matchMedia('(max-width: 699px)') : null;
+    function open(card) {
+      cards.forEach(function (c) {
+        var on = c === card && !c.classList.contains('is-open');
+        c.classList.toggle('is-open', on);
+        if (phone && phone.matches) c.setAttribute('aria-expanded', String(on));
+      });
     }
-    track.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(sync); }, { passive: true });
-    sync();
+    function setup() {
+      var on = !!(phone && phone.matches);
+      cards.forEach(function (c) {
+        if (on) { c.setAttribute('role', 'button'); c.setAttribute('tabindex', '0'); c.setAttribute('aria-expanded', String(c.classList.contains('is-open'))); }
+        else { c.removeAttribute('role'); c.removeAttribute('tabindex'); c.removeAttribute('aria-expanded'); }
+      });
+    }
+    cards.forEach(function (c) {
+      c.addEventListener('click', function () { if (phone && phone.matches) open(c); });
+      c.addEventListener('keydown', function (e) {
+        if (!(phone && phone.matches) || (e.key !== 'Enter' && e.key !== ' ')) return;
+        e.preventDefault(); open(c);
+      });
+    });
+    cards[0].classList.add('is-open');
+    setup();
+    if (phone) phone.addEventListener ? phone.addEventListener('change', setup) : phone.addListener(setup);
   }
 
   /* Funding on phones: a detail card for the source last tapped (amount,

@@ -2262,108 +2262,96 @@ main { overflow-x: clip; }
 
 /* ===================================================== FUNDING GUIDE
    Five cards to read through, one per funding route: what it is worth,
-   who it is for, which costs it covers and how we help. The Finland
-   Scholarship leads as a tall night card; phones swipe through them. */
+   who it is for, which costs it covers and how we help. Desktop sets
+   them side by side with the Finland Scholarship as a night card;
+   tablets use two columns; phones get a list that opens one at a time. */
 .fg__card--finland { --c: #4ea1ff; }
 .fg__card--institution { --c: #7a4fd6; }
 .fg__card--doctoral { --c: #0a8a9f; }
 .fg__card--work { --c: #0b8f6c; }
 .fg__card--loans { --c: #b4232c; }
 
-.fg__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.fg__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .fg__card--finland { grid-column: 1 / -1; }
-@media (min-width: 1000px) {
-  .fg__grid { grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(0, 1fr)); }
-  .fg__card--finland { grid-column: auto; grid-row: span 2; }
-}
 
-.fg__card { position: relative; isolation: isolate; display: flex; flex-direction: column; gap: 8px; min-width: 0; padding: clamp(18px, 1.8vw, 24px); border-radius: 22px;
+.fg__card { position: relative; isolation: isolate; display: flex; flex-direction: column; gap: 8px; min-width: 0; padding: 20px; border-radius: 22px;
   background: #fff; border: 1px solid var(--line); overflow: hidden; transition: transform .35s var(--ease), box-shadow .35s, border-color .35s; }
 .fg__card::before { content: ""; position: absolute; z-index: -1; right: -70px; top: -70px; width: 200px; height: 200px; border-radius: 50%;
   background: radial-gradient(circle, color-mix(in srgb, var(--c) 16%, transparent), transparent 70%); pointer-events: none; }
 .fg__card:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--c) 40%, var(--line)); box-shadow: 0 26px 46px -32px color-mix(in srgb, var(--c) 70%, #061631); }
 
 .fg__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.fg__ico { flex: none; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 12%, #fff);
+.fg__ico { flex: none; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 12%, #fff);
   border: 1px solid color-mix(in srgb, var(--c) 22%, #fff); }
-.fg__ico .ico { width: 22px; height: 22px; }
-.fg__num { font-size: 40px; font-weight: 800; line-height: .9; letter-spacing: -.04em; color: transparent; -webkit-text-stroke: 1.2px color-mix(in srgb, var(--c) 40%, transparent); }
-.fg__name { margin: 6px 0 0; font-size: 18px; line-height: 1.25; color: var(--ink); }
-.fg__amt { margin: 0; font-size: 15px; font-weight: 800; color: var(--c); }
-.fg__desc { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--ink-2); }
-.fg__covers { list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.fg__covers li { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px 4px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 700;
+.fg__ico .ico { width: 21px; height: 21px; }
+.fg__num { font-size: 34px; font-weight: 800; line-height: .9; letter-spacing: -.04em; color: transparent; -webkit-text-stroke: 1.2px color-mix(in srgb, var(--c) 40%, transparent); }
+.fg__name { margin: 4px 0 0; font-size: 17px; line-height: 1.25; color: var(--ink); }
+.fg__amt { margin: 0; font-size: 14px; font-weight: 800; line-height: 1.3; color: var(--c); }
+.fg__desc { margin: 0; font-size: 13px; line-height: 1.5; color: var(--ink-2); }
+.fg__covers { list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 5px; }
+.fg__covers li { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 7px; border-radius: 999px; font-size: 11px; font-weight: 700;
   color: color-mix(in srgb, var(--c) 85%, #000); background: color-mix(in srgb, var(--c) 10%, #fff); }
-.fg__covers .ico { width: 13px; height: 13px; }
-.fg__how { margin: auto 0 0; padding-top: 12px; border-top: 1px dashed var(--line); font-size: 13px; line-height: 1.55; color: var(--muted); }
-.fg__how b { display: block; margin-bottom: 3px; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--ink); }
+.fg__covers .ico { width: 12px; height: 12px; }
+.fg__how { margin: auto 0 0; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 12.5px; line-height: 1.5; color: var(--muted); }
+.fg__how b { display: block; margin-bottom: 2px; font-size: 10.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--ink); }
 
-/* Smaller cards: icon beside the name and figure, text below. */
-.fg__card:not(.fg__card--finland) { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-rows: auto auto auto auto 1fr; column-gap: 12px; row-gap: 0; align-content: start; }
-.fg__card:not(.fg__card--finland) .fg__top { display: contents; }
-.fg__card:not(.fg__card--finland) .fg__ico { grid-column: 1; grid-row: 1 / span 2; align-self: center; }
-.fg__card:not(.fg__card--finland) .fg__num { grid-column: 3; grid-row: 1 / span 2; align-self: start; font-size: 32px; }
-.fg__card:not(.fg__card--finland) .fg__name { grid-column: 2; grid-row: 1; margin: 0; align-self: end; font-size: 17px; }
-.fg__card:not(.fg__card--finland) .fg__amt { grid-column: 2; grid-row: 2; align-self: start; font-size: 14px; }
-.fg__card:not(.fg__card--finland) .fg__desc { grid-column: 1 / -1; margin-top: 12px; }
-.fg__card:not(.fg__card--finland) .fg__covers { grid-column: 1 / -1; margin-top: 10px; }
-.fg__card:not(.fg__card--finland) .fg__how { grid-column: 1 / -1; align-self: end; margin-top: 12px; }
-.fg__card:not(.fg__card--finland) .fg__how b { display: inline; margin: 0 6px 0 0; }
-
-/* The lead card: night sky, rings and a large headline figure. */
-.fg__card--finland { color: #fff; border-color: transparent; justify-content: flex-start;
+/* The lead card: night sky, rings and a bright headline figure. */
+.fg__card--finland { color: #fff; border-color: transparent;
   background: radial-gradient(80% 60% at 100% 0%, rgba(47,227,180,.22), transparent 60%), radial-gradient(70% 60% at 0% 100%, rgba(78,161,255,.28), transparent 60%), linear-gradient(160deg, #0b1f45, var(--night) 70%); }
-.fg__card--finland::before { right: -150px; top: auto; bottom: -150px; width: 380px; height: 380px;
-  background: repeating-radial-gradient(circle, rgba(255,255,255,.08) 0 1px, transparent 1px 28px); }
+.fg__card--finland::before { right: -150px; top: auto; bottom: -150px; width: 340px; height: 340px;
+  background: repeating-radial-gradient(circle, rgba(255,255,255,.08) 0 1px, transparent 1px 26px); }
 .fg__card--finland:hover { box-shadow: 0 30px 60px -34px rgba(6,22,49,.85); }
 .fg__card--finland .fg__ico { color: var(--night); background: var(--c); border-color: var(--c); box-shadow: 0 0 26px -4px var(--c); }
 .fg__card--finland .fg__num { -webkit-text-stroke-color: rgba(255,255,255,.3); }
-.fg__card--finland .fg__name { color: #fff; font-size: clamp(20px, 1.2rem + .5vw, 24px); }
-.fg__card--finland .fg__amt { font-size: clamp(1.7rem, 1.2rem + 1.4vw, 2.4rem); line-height: 1.08; letter-spacing: -.02em;
+.fg__card--finland .fg__name { color: #fff; }
+.fg__card--finland .fg__amt { font-size: 19px; line-height: 1.2;
   background: linear-gradient(90deg, #fff, #9fe9d5); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.fg__card--finland .fg__desc { color: #c9d6ea; font-size: 14.5px; }
+.fg__card--finland .fg__desc { color: #c9d6ea; }
 .fg__card--finland .fg__covers li { color: #fff; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.16); }
-.fg__card--finland .fg__how { border-top-color: rgba(255,255,255,.18); color: #b9c8de; font-size: 13.5px; }
+.fg__card--finland .fg__how { border-top-color: rgba(255,255,255,.18); color: #b9c8de; }
 .fg__card--finland .fg__how b { color: #9fe9d5; }
 
-.fg__dots { display: none; }
-.fg__foot { margin-top: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; padding: 14px 14px 14px 22px;
+/* Desktop: all five side by side. */
+@media (min-width: 1100px) {
+  .fg__grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .fg__card--finland { grid-column: auto; }
+  .fg__card { padding: 18px 18px 16px; }
+}
+
+.fg__foot { margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; padding: 10px 10px 10px 22px;
   border-radius: 18px; background: #fff; border: 1px solid var(--line); }
 .fg__foot p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--muted); }
 .fg__foot b { color: var(--ink); }
-.fg + .fpl__partners { margin-top: clamp(22px, 3vw, 36px); }
+.fg + .fpl__partners { margin-top: clamp(20px, 2.6vw, 32px); }
 
-/* Phones: a swipe row of cards with dots; desktop above is untouched. */
+/* Phones: a list of routes. Each row shows the route and its figure;
+   tapping a row opens its details (one open at a time). */
 @media (max-width: 699px) {
-  .fg__grid { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain;
-    margin-inline: calc(var(--gutter) * -1); padding: 4px var(--gutter) 6px; scroll-padding-inline: var(--gutter); }
-  .fg__grid::-webkit-scrollbar { display: none; }
-  .fg__card { flex: none; width: 84%; scroll-snap-align: start; padding: 16px; border-radius: 20px; gap: 6px; }
-  .fg__card:hover { transform: none; }
-  .fg__ico { width: 40px; height: 40px; border-radius: 12px; }
-  .fg__ico .ico { width: 19px; height: 19px; }
-  .fg__num { font-size: 32px; }
-  .fg__name { margin-top: 4px; font-size: 16.5px; }
-  .fg__amt { font-size: 13.5px; }
-  .fg__desc { font-size: 12.5px; line-height: 1.5; }
-  .fg__covers li { font-size: 11px; padding: 3px 9px 3px 7px; }
-  .fg__how { padding-top: 10px; font-size: 12px; line-height: 1.5; }
+  .fg__grid { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .fg__card { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; column-gap: 12px; row-gap: 0; padding: 7px 12px; border-radius: 16px;
+    cursor: pointer; -webkit-tap-highlight-color: transparent; transition: border-color .3s, background .3s; }
+  .fg__card:hover { transform: none; box-shadow: none; }
+  .fg__card:focus-visible { outline: 3px solid var(--aurora); outline-offset: 2px; }
+  .fg__card::before { width: 150px; height: 150px; right: -60px; top: -60px; }
+  .fg__card--finland::before { width: 260px; height: 260px; right: -120px; bottom: -120px; top: auto; }
+  .fg__top { display: contents; }
+  .fg__ico { grid-column: 1; grid-row: 1 / span 2; width: 36px; height: 36px; border-radius: 11px; }
+  .fg__ico .ico { width: 17px; height: 17px; }
+  .fg__num { display: none; }
+  .fg__name { grid-column: 2; grid-row: 1; margin: 0; font-size: 14.5px; align-self: end; }
+  .fg__amt, .fg__card--finland .fg__amt { grid-column: 2; grid-row: 2; font-size: 12px; align-self: start; }
+  .fg__card::after { content: ""; grid-column: 3; grid-row: 1 / span 2; width: 8px; height: 8px; margin: 0 4px 4px 0; border: solid color-mix(in srgb, var(--c) 70%, #8ea3c4);
+    border-width: 0 2px 2px 0; transform: rotate(45deg); transition: transform .3s var(--ease); }
+  .fg__card.is-open::after { transform: translateY(4px) rotate(-135deg); }
+  .fg__desc, .fg__covers, .fg__how { grid-column: 1 / -1; display: none; }
+  .fg__card.is-open { border-color: color-mix(in srgb, var(--c) 45%, var(--line)); background: color-mix(in srgb, var(--c) 5%, #fff); }
+  .fg__card--finland.is-open { background: radial-gradient(80% 60% at 100% 0%, rgba(47,227,180,.22), transparent 60%), radial-gradient(70% 60% at 0% 100%, rgba(78,161,255,.28), transparent 60%), linear-gradient(160deg, #0b1f45, var(--night) 70%); border-color: transparent; }
+  .fg__card.is-open .fg__desc { display: block; margin-top: 8px; font-size: 12px; line-height: 1.45; animation: fadeUp .3s var(--ease); }
+  .fg__card.is-open .fg__covers { display: flex; margin-top: 8px; }
+  .fg__card.is-open .fg__how { display: block; margin-top: 8px; padding-top: 7px; font-size: 11.5px; line-height: 1.45; animation: fadeUp .3s var(--ease); }
   .fg__how b { font-size: 10px; }
-  .fg__card--finland .fg__name { font-size: 18px; }
-  .fg__card--finland .fg__amt { font-size: 1.45rem; }
-  .fg__card--finland .fg__desc { font-size: 12.5px; }
-  .fg__card--finland .fg__how { font-size: 12px; }
-  .fg__dots { display: flex; justify-content: center; gap: 6px; margin-top: 6px; }
-  .fg__dots i { width: 6px; height: 6px; border-radius: 999px; background: #c6d3e3; transition: width .3s var(--ease), background .3s; }
-  .fg__dots i.is-on { width: 20px; background: var(--fi-blue, #0b6bd3); }
-  .fg__foot { margin-top: 10px; padding: 12px; gap: 10px; border-radius: 16px; }
-  .fg__foot p { font-size: 12.5px; line-height: 1.45; }
+  .fg__foot { margin-top: 10px; padding: 0; border: 0; background: none; }
+  .fg__foot p { display: none; }
   .fg__foot .btn { flex: 1 1 100%; justify-content: center; min-height: 44px; }
 }
-@media (prefers-reduced-motion: reduce) { .fg__card, .fg__card:hover { transition: none; transform: none; } }
-@media (max-width: 699px) {
-  .fg__card:not(.fg__card--finland) .fg__num { font-size: 26px; }
-  .fg__card:not(.fg__card--finland) .fg__name { font-size: 15.5px; }
-  .fg__card:not(.fg__card--finland) .fg__amt { font-size: 13px; }
-  .fg__card:not(.fg__card--finland) .fg__desc { margin-top: 10px; }
-}
+@media (prefers-reduced-motion: reduce) { .fg__card, .fg__card:hover { transition: none; transform: none; } .fg__card .fg__desc, .fg__card .fg__how { animation: none !important; } }
