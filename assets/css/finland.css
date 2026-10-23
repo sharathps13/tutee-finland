@@ -1426,3 +1426,91 @@ main { overflow-x: clip; }
 .logo__plate:has(.brandmark--header) { padding: 2px 8px; }
 .logo__plate .brandmark { margin: 0 2px; }
 
+
+/* ======================================================== FIT TO SCREEN
+   Sections size to the screen's height as well as its width, so on a
+   laptop each one fits in (or close to) a single view instead of running
+   a screen and a half. */
+:root { --section-y: clamp(40px, min(6vw, 7svh), 80px); }
+.section-head { gap: 10px; margin-bottom: clamp(18px, min(3vw, 3.6svh), 36px); }
+.h2 { font-size: clamp(1.6rem, min(1.2rem + 1.6vw, 1rem + 2.4svh), 2.5rem); }
+@media (min-width: 960px) {
+  /* Services: the dial (and the panel beside it) follow the screen height. */
+  .orb__dial { width: min(100%, 520px, max(340px, calc(100svh - 420px))); }
+  .orb__points { gap: 6px; }
+  .orb__points li { padding-block: 9px; }
+  .orb__journey { margin-bottom: 12px; padding-block: 11px 10px; }
+  .orb__foot { padding-block: 11px; }
+  .orb__stage { padding-top: clamp(30px, 4.5svh, 52px); }
+  .orb__content { padding: clamp(18px, 3svh, 30px) clamp(20px, 2.4vw, 30px) 10px; }
+  .orb__desc { margin-block: 0; }
+  /* Universities: postcard height follows the screen. */
+  .pc__stage { max-width: calc((100svh - 300px) * 1.5); width: 100%; justify-self: center; }
+  /* Funding: slimmer source cards and plan. */
+  .fpl__srcs { gap: 8px; }
+  /* Each cost block in the plan already tags the sources that cover it. */
+  .fpl__covers { display: none; }
+  .fpl__src { padding: 10px 14px; gap: 12px; }
+  /* Name and headline amount share a line. */
+  .fpl__srctxt { grid-template-columns: auto minmax(0, 1fr); column-gap: 10px; align-items: baseline; }
+  .fpl__srctxt small { grid-column: 1 / -1; }
+  .fpl__hero { min-height: clamp(90px, 11svh, 150px); padding-block: 14px 18px; }
+  .fpl__costs { padding-top: 14px; }
+  .fpl__help { margin-top: 8px; padding: 11px 14px; }
+  /* Cost blocks: icon beside the text instead of above it. */
+  .fpl__cost { grid-template-columns: 34px minmax(0, 1fr); column-gap: 10px; padding: 11px 12px; }
+  .fpl__cost > :not(.fpl__costico) { grid-column: 2; }
+  .fpl__costico { grid-row: 1 / span 3; }
+  .fpl__partners { margin-top: clamp(18px, 3svh, 36px); }
+  /* Family: the photo card follows the screen height. */
+  .fv { min-height: clamp(400px, calc(100svh - 440px), 560px); }
+  .fv__inner { gap: 16px; }
+  .fv__title { font-size: clamp(1.7rem, min(1.2rem + 2vw, 1rem + 3.2svh), 3rem); max-width: 20ch; }
+  .fv__text { font-size: 15.5px; line-height: 1.6; }
+  .fv__tiles li { padding-block: 11px; }
+  .fv__steps { margin-top: 14px; padding-block: 16px; }
+  /* Contact */
+  .lf__card { padding: clamp(18px, 2.6svh, 34px) clamp(20px, 2.8vw, 34px); }
+}
+/* Laptop heights: the three family steps sit badge-beside-text in one row. */
+@media (min-width: 1000px) and (max-height: 1000px) {
+  .fv__steps li { flex-direction: row; gap: 12px; }
+  .fv__steps li:not(:last-child)::after { display: none; }
+}
+@media (min-width: 1000px) {
+  /* Journey: a tighter timeline. */
+  .rm__steps { grid-template-rows: auto clamp(80px, 11svh, 120px) auto; }
+  .rm__card { padding: 13px 15px; gap: 6px; }
+}
+/* Short laptop screens: trim the remaining extras. */
+@media (min-width: 960px) and (max-height: 820px) {
+  .section-head .lead { font-size: 1rem; }
+  .fpl__srctxt small { line-height: 1.4; }
+  .fpl__src { padding-block: 8px; }
+  .lf__choice { padding: 12px 14px; }
+  .section { padding-block: clamp(32px, 5svh, 48px); }
+  .section-head { gap: 6px; }
+  /* The services journey bar repeats the dial's order; the dial says it all here. */
+  .orb__journey { display: none; }
+  .pc__stage { max-width: calc((100svh - 360px) * 1.5); }
+  .fv__inner { padding: 24px clamp(24px, 3vw, 36px); gap: 12px; }
+  .fv__steps { padding-block: 12px; margin-top: 10px; }
+  .lf__card { padding-block: 16px; }
+  .lf__step { gap: 10px; }
+  .lf__side { gap: 10px; }
+}
+/* Phones: stacked layouts, so keep every block compact. */
+@media (max-width: 599px) {
+  .section-head { gap: 8px; }
+  .section-head .lead { font-size: 15px; line-height: 1.55; }
+  .orb__stage { padding-top: 34px; }
+  .orb__journey { display: none; }
+  .fpl__covers { display: none; }
+  .fpl__hero { min-height: 110px; }
+  .fv__media { height: 190px; }
+  .fv__steps { padding: 16px; gap: 12px; }
+  .fv__steps ol { gap: 10px; }
+  .lf__card { padding: 18px; }
+  .lp { padding: 18px; gap: 12px; }
+  .acc { gap: 8px; }
+}
