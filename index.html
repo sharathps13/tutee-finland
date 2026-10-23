@@ -467,6 +467,19 @@
      Finnish degree they cover light up in the plan card, with a meter and
      a "how we help" note for the last source touched. Qualitative only:
      no monetary amounts. initFundingPlan(). -->
+<!-- ============================== LIVE NEWS ==============================
+     A slim ticker straddling the gap between Universities and Funding: a
+     zero-height strip, so it adds no space. Headlines come from /api/news
+     (netlify/functions/news.mjs); site highlights stand in when offline. -->
+<div class="newsbar" data-news>
+  <div class="container">
+    <div class="newsbar__in" role="region" aria-label="Latest Finland news">
+      <span class="newsbar__live"><i aria-hidden="true"></i><span data-news-label>Finland news</span></span>
+      <div class="newsbar__view"><div class="newsbar__track" data-news-track></div></div>
+    </div>
+  </div>
+</div>
+
 <section class="section section--ice fpl-sec" id="scholarships">
   <div class="container">
     <div class="section-head section-head--split reveal">

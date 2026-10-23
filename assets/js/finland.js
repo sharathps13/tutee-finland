@@ -2519,6 +2519,69 @@
     sync();
   }
 
+  /* ------------------------------------------------------------------ *
+   * Live news ticker — headlines from /api/news (Yle News, Helsinki Times;
+   * see netlify/functions/news.mjs) scroll right to left with a matching
+   * site photo. Plain text, no outbound links. If the feed can't be
+   * reached (offline, local preview) the ticker shows site highlights.
+   * ------------------------------------------------------------------ */
+  var NEWS_FALLBACK = [
+    ['Finland Scholarship covers 100% of first-year tuition plus a relocation grant for eligible master’s entrants', 'students'],
+    ['Study permit holders can work an average of 30 hours a week in any field', 'work'],
+    ['Graduates can stay up to two years to look for work or start a business — no sponsor needed', 'career'],
+    ['12 Finnish institutions ranked in the QS World University Rankings: Europe 2026', 'uni-aalto-university'],
+    ['Partners and children under 18 can join students on a family permit', 'family'],
+    ['More than 600 English-taught degree programmes across 36 institutions', 'students'],
+    ['A continuous A permit covers the whole degree — no credibility interview', 'permit'],
+    ['Finland topped the World Happiness Report every year from 2018 to 2025', 'aurora']
+  ];
+  function initNewsTicker() {
+    var root = $('[data-news]');
+    if (!root) return;
+    var track = $('[data-news-track]', root), label = $('[data-news-label]', root);
+    function ago(iso) {
+      var h = (Date.now() - Date.parse(iso)) / 36e5;
+      if (!(h >= 0)) return '';
+      if (h < 1) return 'just now';
+      if (h < 24) return Math.round(h) + 'h ago';
+      var d = Math.round(h / 24);
+      return d === 1 ? 'yesterday' : d + ' days ago';
+    }
+    function item(n) {
+      return '<span class="newsbar__item"><img src="' + escapeHtml(n.img) + '" alt="" width="26" height="26" loading="lazy" decoding="async">' +
+        '<b>' + escapeHtml(n.title) + '</b><small>' + escapeHtml([n.source, n.date ? ago(n.date) : ''].filter(Boolean).join(' · ')) + '</small></span>';
+    }
+    function paint(items, live) {
+      if (!items.length) return;
+      var row = items.map(item).join('');
+      // Two copies side by side; the track slides by one copy and loops seamlessly.
+      track.innerHTML = '<div class="newsbar__set">' + row + '</div><div class="newsbar__set" aria-hidden="true">' + row + '</div>';
+      root.classList.toggle('is-live', !!live);
+      label.textContent = live ? 'Live · Finland news' : 'Finland updates';
+      requestAnimationFrame(function () {
+        var w = track.firstChild.getBoundingClientRect().width;
+        track.style.setProperty('--news-dur', Math.max(30, w / 55).toFixed(1) + 's');   // ~55px a second
+      });
+    }
+    paint(NEWS_FALLBACK.map(function (f) { return { title: f[0], source: 'Tutee Connect', img: './assets/img/news/' + f[1] + '.jpg' }; }), false);
+
+    var ctrl = window.AbortController ? new AbortController() : null;
+    var stop = setTimeout(function () { if (ctrl) ctrl.abort(); }, 6000);
+    fetch('/api/news', { signal: ctrl ? ctrl.signal : undefined, headers: { Accept: 'application/json' } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) {
+        clearTimeout(stop);
+        var items = j && Array.isArray(j.items) ? j.items.filter(function (n) { return n && n.title && /^\.\/assets\/img\/news\/[\w-]+\.jpg$/.test(n.img || ''); }) : [];
+        if (items.length >= 3) paint(items, true);
+      })
+      .catch(function () { clearTimeout(stop); });
+
+    // Only animate while the ticker is on screen.
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { root.classList.toggle('is-paused', !es[0].isIntersecting); }).observe(root.querySelector('.newsbar__in'));
+    }
+  }
+
   /* Footer credit list for the HD photos (CC BY requires visible attribution). */
   function initCredits() {
     var credits = window.TC_PHOTO_CREDITS || {};
@@ -2546,6 +2609,7 @@
   initServices();
   initServiceDeck();
   initPostcards();
+  initNewsTicker();
   initFundingPlan();
   initFundingFocus();
   initJourneyRoute();
