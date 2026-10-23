@@ -524,6 +524,8 @@
     $('[data-um-aland]', um).hidden = u.branch !== 'aland';
     syncModalHeart();
     renderCourses();
+    var tn = $('[data-um-tabn]', um); if (tn) tn.textContent = progs.length;
+    if (um.__tab) um.__tab('courses');
   }
   function syncModalHeart() {
     if (!current) return;
@@ -572,6 +574,20 @@
   function initModal() {
     if (!um) return;
     window.TCOpenUni = function (id) { openUni(id); };   // Tutee AI links open the popup
+    // Phones: Courses / About tabs at the top of the popup (hidden elsewhere).
+    var body = $('[data-um-body]', um), tabs = document.createElement('div');
+    tabs.className = 'um__tabs'; tabs.setAttribute('role', 'tablist');
+    tabs.innerHTML = '<button type="button" role="tab" aria-selected="true" data-um-tab="courses">Courses <b data-um-tabn></b></button>' +
+      '<button type="button" role="tab" aria-selected="false" data-um-tab="about">About</button>';
+    body.insertBefore(tabs, body.firstChild.nextSibling);
+    function tab(name) {
+      um.classList.toggle('show-about', name === 'about');
+      $$('[data-um-tab]', tabs).forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-um-tab') === name ? 'true' : 'false'); });
+      var top = tabs.offsetTop - 4;
+      if (body.scrollTop > top) body.scrollTop = top;
+    }
+    $$('[data-um-tab]', tabs).forEach(function (b) { b.addEventListener('click', function () { tab(b.getAttribute('data-um-tab')); }); });
+    um.__tab = tab;
     $$('[data-um-close]', um).forEach(function (b) { b.addEventListener('click', function () { closeUni(); }); });
     $$('[data-um-sl]', um).forEach(function (b) { b.addEventListener('click', function () { if (current) toggleShortlist(current, b); }); });
     $('[data-um-apply]', um).addEventListener('click', function () {

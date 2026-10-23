@@ -351,3 +351,55 @@ body.has-dock .toast { z-index: 95; }
    fixed filter sheet, so phones use a plain white bar. */
 @media (max-width: 699px) { .dir-bar { -webkit-backdrop-filter: none; backdrop-filter: none; background: #fff; } }
 .filters-open .dir-bar { z-index: 96; }
+
+/* ===================================================== UNI POPUP · PHONE
+   Shorter header, a one-line stat strip, Courses / About tabs and compact
+   course rows, so the popup reads without endless scrolling. */
+.um__tabs { display: none; }
+@media (max-width: 699px) {
+  .um__hero { min-height: 128px; }
+  .um__title { gap: 5px; padding: 0 16px 12px; padding-right: 100px; }
+  .um__title h2 { font-size: 1.35rem; }
+  .um__title p { font-size: 12.5px; }
+  .um__badge { font-size: 11px; padding: 3px 8px; }
+  .um__tools { top: 10px; right: 10px; }
+  .um__iconbtn { width: 38px; height: 38px; }
+  .um__body { padding: 10px 14px 16px; gap: 10px; }
+  .um__stats { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; border-radius: 14px; }
+  .um__stats div { padding: 8px 6px; text-align: center; gap: 0; }
+  .um__stats b { font-size: 1.15rem; }
+  .um__stats span { font-size: 10px; line-height: 1.2; }
+  .um__tabs { position: sticky; top: -10px; z-index: 3; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin: 0 -2px; border-radius: 14px;
+    background: rgba(243,247,252,.96); border: 1px solid var(--line); backdrop-filter: blur(8px); }
+  .um__tabs button { padding: 9px; border-radius: 10px; font-size: 14px; font-weight: 700; color: var(--muted); }
+  .um__tabs button b { font-size: 11.5px; color: inherit; opacity: .7; }
+  .um__tabs button[aria-selected="true"] { background: #fff; color: var(--fi-blue); box-shadow: var(--shadow-sm); }
+  .um:not(.show-about) .um__aside { display: none; }
+  .um.show-about .um__main { display: none; }
+  .um__cols { gap: 10px; }
+  .um__sechead { display: none; }
+  .um__main { gap: 8px; }
+  .um__tools2 { flex-wrap: nowrap; flex-direction: column; gap: 8px; }
+  .um__search { flex: none; }
+  .um__search input { min-height: 40px; }
+  .um__tools2 .segment, .um__fchips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: -14px; padding-inline: 14px; border-radius: 0; border: 0; background: none; }
+  .um__tools2 .segment::-webkit-scrollbar, .um__fchips::-webkit-scrollbar { display: none; }
+  .um__tools2 .segment button { flex: none; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 12.5px; }
+  .um__tools2 .segment button[aria-pressed="true"] { background: var(--fi-blue); color: #fff; border-color: var(--fi-blue); }
+  .um__fchips button { flex: none; font-size: 12px; padding: 5px 10px; }
+  .um__list { gap: 6px; }
+  .umc { grid-template-columns: minmax(0, 1fr); gap: 3px; padding: 10px 12px; border-radius: 12px; }
+  .umc__lvl { font-size: 9.5px; padding: 2px 7px; }
+  .umc b { font-size: 13.5px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .umc__meta { flex-wrap: nowrap; overflow: hidden; white-space: nowrap; font-size: 11.5px; gap: 8px; }
+  .umc__meta span { flex: none; }
+  .umc__meta span:first-child { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .um__card { padding: 14px; }
+  .um__foot { padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); }
+}
+@media (max-width: 699px) {
+  .umc { display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; row-gap: 4px; }
+  .umc > b { order: 0; flex: 1 1 100%; }
+  .umc__lvl { order: 1; flex: none; }
+  .umc__meta { order: 2; flex: 1 1 0; min-width: 0; }
+}
