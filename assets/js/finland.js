@@ -522,7 +522,7 @@
       if (!running) return;
       requestAnimationFrame(frame);
       if (mode === 'follow') {
-        cur = slerp(cur, pathQuat(target), 0.12);
+        cur = slerp(cur, pathQuat(target), 0.15);
       } else if (mode === 'spin') {
         cur = norm(mul(axisAngle(spin.x, spin.y, 0, spin.v), cur));
         spin.v *= 0.93;
@@ -554,22 +554,26 @@
       });
     });
 
-    // Scrolling over the cube rolls it one face per gesture, however hard
-    // the flick: the gesture's trailing events (trackpad momentum, a fast
-    // spin of the wheel) are swallowed until the wheel has been still for a
-    // moment. Past the first or last face the page scrolls on as normal.
-    var wheelLock = 0;
+    // Scrolling over the cube rolls it one face per gesture, from the
+    // smallest nudge to the hardest flick. A gesture is a run of wheel events
+    // with no pause longer than GAP (a trackpad's momentum tail or a fast
+    // spin of the wheel all count as one); its first event turns the cube
+    // straight away and the rest are swallowed. A gesture that starts on the
+    // first or last face, heading outwards, scrolls the page instead.
+    var GAP = 160, lastWheel = 0, gesture = null;
     stage.addEventListener('wheel', function (e) {
       if (reduceMotion || e.ctrlKey) return;
       var d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      if (Math.abs(d) < 1) return;
-      var now = performance.now();
-      if (now < wheelLock) { e.preventDefault(); wheelLock = Math.max(wheelLock, now + 220); return; }
-      var next = Math.round(target) + (d > 0 ? 1 : -1);
-      if (next < 0 || next > N - 1) return;
-      e.preventDefault();
-      wheelLock = now + 650;
-      goTo(next);
+      if (!d) return;
+      var now = performance.now(), dir = d > 0 ? 1 : -1;
+      var fresh = !gesture || now - lastWheel > GAP || dir !== gesture.dir;
+      lastWheel = now;
+      if (fresh) {
+        var next = Math.round(target) + dir;
+        gesture = { dir: dir, turned: next >= 0 && next <= N - 1 };
+        if (gesture.turned) goTo(next);
+      }
+      if (gesture.turned) e.preventDefault();
     }, { passive: false });
 
     // Job-type tags with details: hover or keyboard focus opens one; a tap
