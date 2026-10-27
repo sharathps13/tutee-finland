@@ -85,6 +85,7 @@
 <nav class="dots" aria-label="Page sections" data-dots>
   <a href="#home" data-dot="home"><span>Start</span></a>
   <a href="#why" data-dot="why"><span>Why Finland</span></a>
+  <a href="#life" data-dot="life"><span>Life in Finland</span></a>
   <a href="#services" data-dot="services"><span>Services</span></a>
   <a href="#universities" data-dot="universities"><span>Universities</span></a>
   <a href="#scholarships" data-dot="scholarships"><span>Funding</span></a>
@@ -236,17 +237,88 @@
   </div>
 </div>
 
-<!-- ============================== WHY FINLAND (season stage) ==============================
+<!-- ============================ WHY FINLAND ============================ -->
+<!-- Reason deck: four dark cards that open like an accordion. On desktop the
+     open card widens and the rest fold into slim spines; hover, click or the
+     arrow keys open one, and the deck steps on by itself until touched.
+     Phones stack them as a tap-to-open list. initReasonDeck(). -->
+<section class="section rs" id="why" data-rs>
+  <div class="container">
+    <div class="section-head section-head--split reveal">
+      <div>
+        <span class="eyebrow"><span data-decrypt="view">Why Finland</span></span>
+        <h2 class="h2" style="margin-top:12px">Four reasons. <span class="text-blue">One clear choice.</span></h2>
+      </div>
+      <p class="lead">A respected degree, the right to work while you study, one permit for your whole programme and time to build a career after graduating.</p>
+    </div>
+    <div class="rs__deck" data-rs-deck>
+      <article class="rs__card is-on" style="--c:#2fe3b4" data-rs-card data-spot>
+        <button class="rs__head" type="button" id="rs-tab-study" aria-controls="rs-study" aria-expanded="true" data-rs-head><span class="rs__no">01</span><span class="rs__ico"><svg class="ico"><use href="#i-cap"/></svg></span><span class="rs__name">Education</span><svg class="ico ico-sm rs__plus" aria-hidden="true"><use href="#i-down"/></svg></button>
+        <div class="rs__body" id="rs-study" role="region" aria-labelledby="rs-tab-study"><div class="rs__inner">
+          <div class="rs__text">
+            <div class="rs__stat"><b><span data-rs-num="12">12</span></b><span>institutions in the QS Europe 2026 rankings</span></div>
+            <h3 class="rs__h">A world-class degree, taught in English.</h3>
+            <p class="rs__p">More than 600 bachelor&rsquo;s and master&rsquo;s programmes are taught in English, in small groups where teaching is hands-on and you work on real projects from the first term.</p>
+            <p class="rs__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>We shortlist the programmes that fit your profile and goals</p>
+          </div>
+          <div class="rs__art" aria-hidden="true"><svg class="rs__svg" viewBox="0 0 220 200"><rect class="rs__bar" x="14" y="42" width="11" height="128" rx="3" style="--i:0"/><rect class="rs__bar" x="30" y="50" width="11" height="120" rx="3" style="--i:1"/><rect class="rs__bar" x="46" y="58" width="11" height="112" rx="3" style="--i:2"/><rect class="rs__bar" x="62" y="66" width="11" height="104" rx="3" style="--i:3"/><rect class="rs__bar" x="78" y="72" width="11" height="98" rx="3" style="--i:4"/><rect class="rs__bar" x="94" y="80" width="11" height="90" rx="3" style="--i:5"/><rect class="rs__bar" x="110" y="88" width="11" height="82" rx="3" style="--i:6"/><rect class="rs__bar" x="126" y="94" width="11" height="76" rx="3" style="--i:7"/><rect class="rs__bar" x="142" y="102" width="11" height="68" rx="3" style="--i:8"/><rect class="rs__bar" x="158" y="110" width="11" height="60" rx="3" style="--i:9"/><rect class="rs__bar" x="174" y="116" width="11" height="54" rx="3" style="--i:10"/><rect class="rs__bar" x="190" y="124" width="11" height="46" rx="3" style="--i:11"/><path class="rs__base" d="M8 176h204"/></svg></div>
+        </div></div>
+        <i class="rs__timer" aria-hidden="true"><b></b></i>
+      </article>
+      <article class="rs__card" style="--c:#f2a93b" data-rs-card data-spot>
+        <button class="rs__head" type="button" id="rs-tab-work" aria-controls="rs-work" aria-expanded="false" data-rs-head><span class="rs__no">02</span><span class="rs__ico"><svg class="ico"><use href="#i-brief"/></svg></span><span class="rs__name">Work</span><svg class="ico ico-sm rs__plus" aria-hidden="true"><use href="#i-down"/></svg></button>
+        <div class="rs__body" id="rs-work" role="region" aria-labelledby="rs-tab-work"><div class="rs__inner">
+          <div class="rs__text">
+            <div class="rs__stat"><b><span data-rs-num="30">30</span> h</b><span>a week on average you may work while you study</span></div>
+            <h3 class="rs__h">Earn and gain experience while you study.</h3>
+            <p class="rs__p">Your student permit lets you work in any field, an average of 30 hours a week across the year. Busier weeks are fine, so many students work full time over the summer. Internships in your degree don&rsquo;t count towards the limit.</p>
+            <p class="rs__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>We help with your tax card and your first job search</p>
+          </div>
+          <div class="rs__art" aria-hidden="true"><svg class="rs__svg" viewBox="0 0 220 200"><circle class="rs__track" cx="110" cy="100" r="72"/><circle class="rs__ring" cx="110" cy="100" r="72" pathLength="100"/><path class="rs__tick" d="M110 36v10" transform="rotate(0 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(30 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(60 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(90 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(120 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(150 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(180 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(210 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(240 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(270 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(300 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(330 110 100)"/><path class="rs__hand" d="M110 100V52"/><circle class="rs__hub" cx="110" cy="100" r="6"/></svg></div>
+        </div></div>
+        <i class="rs__timer" aria-hidden="true"><b></b></i>
+      </article>
+      <article class="rs__card" style="--c:#7fb2ff" data-rs-card data-spot>
+        <button class="rs__head" type="button" id="rs-tab-permit" aria-controls="rs-permit" aria-expanded="false" data-rs-head><span class="rs__no">03</span><span class="rs__ico"><svg class="ico"><use href="#i-shield"/></svg></span><span class="rs__name">Permit</span><svg class="ico ico-sm rs__plus" aria-hidden="true"><use href="#i-down"/></svg></button>
+        <div class="rs__body" id="rs-permit" role="region" aria-labelledby="rs-tab-permit"><div class="rs__inner">
+          <div class="rs__text">
+            <div class="rs__stat"><b><span data-rs-num="1">1</span></b><span>residence permit for your entire degree</span></div>
+            <h3 class="rs__h">One permit. Your whole degree.</h3>
+            <p class="rs__p">Degree students get a continuous A permit for the full length of their studies, so there are no yearly renewals. You apply once, online, through Enter Finland.</p>
+            <p class="rs__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>We file your permit and match your funds evidence to Migri&rsquo;s checklist</p>
+          </div>
+          <div class="rs__art" aria-hidden="true"><svg class="rs__svg" viewBox="0 0 220 200"><path class="rs__yr" d="M20 70v66"/><text class="rs__lbl" x="20" y="158">Year 1</text><path class="rs__yr" d="M80 70v66"/><text class="rs__lbl" x="80" y="158">Year 2</text><path class="rs__yr" d="M140 70v66"/><text class="rs__lbl" x="140" y="158">Year 3</text><path class="rs__yr" d="M200 70v66"/><text class="rs__lbl" x="200" y="158">Year 4</text><rect class="rs__lane" x="20" y="92" width="180" height="22" rx="11"/><rect class="rs__fill" x="20" y="92" width="180" height="22" rx="11"/><text class="rs__tag" x="110" y="56">One A permit</text></svg></div>
+        </div></div>
+        <i class="rs__timer" aria-hidden="true"><b></b></i>
+      </article>
+      <article class="rs__card" style="--c:#ff9b8a" data-rs-card data-spot>
+        <button class="rs__head" type="button" id="rs-tab-stay" aria-controls="rs-stay" aria-expanded="false" data-rs-head><span class="rs__no">04</span><span class="rs__ico"><svg class="ico"><use href="#i-up"/></svg></span><span class="rs__name">Career</span><svg class="ico ico-sm rs__plus" aria-hidden="true"><use href="#i-down"/></svg></button>
+        <div class="rs__body" id="rs-stay" role="region" aria-labelledby="rs-tab-stay"><div class="rs__inner">
+          <div class="rs__text">
+            <div class="rs__stat"><b><span data-rs-num="2">2</span> yrs</b><span>to look for work or start a business after graduating</span></div>
+            <h3 class="rs__h">Stay on and build your career.</h3>
+            <p class="rs__p">After graduating you can apply for a permit to look for work or start a business for up to two years. You can apply within five years of graduating, even from outside Finland.</p>
+            <p class="rs__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>We plan your route from graduation to work and permanent residence</p>
+          </div>
+          <div class="rs__art" aria-hidden="true"><svg class="rs__svg" viewBox="0 0 220 200"><path class="rs__route" pathLength="100" d="M26 160C70 160 60 96 110 96S150 40 194 40"/><circle class="rs__stop" cx="26" cy="160" r="9"/><circle class="rs__stop rs__stop--end" cx="194" cy="40" r="11"/><text class="rs__lbl" x="26" y="188">Graduate</text><text class="rs__lbl" x="194" y="74">Career</text><text class="rs__tag" x="110" y="128">2 years</text></svg></div>
+        </div></div>
+        <i class="rs__timer" aria-hidden="true"><b></b></i>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== LIFE IN FINLAND (season stage) ==========================
      Pinned like the hero (desktop): every 200px of scroll is one season.
      Reading column on solid night blue; all motion lives in the photo
      window (season particles, cursor wind, click gusts, circle wipe).
      Phones: not pinned; tap a season or swipe the window. initSeasonStage(). -->
-<section class="ws" id="why" data-ws>
+<section class="ws" id="life" data-ws>
   <div class="ws__pin">
     <div class="container ws__grid">
       <div class="ws__copy">
-        <span class="eyebrow ws__eyebrow">Why Finland &middot; A student&rsquo;s year</span>
-        <h2 class="h2 ws__title">Four seasons. <span class="text-blue">Your first year in Finland.</span></h2>
+        <span class="eyebrow ws__eyebrow">Life in Finland</span>
+        <h2 class="h2 ws__title">Four seasons. <span class="text-blue">A year of student life.</span></h2>
         <div class="ws__tabs" role="tablist" aria-label="Seasons">
             <button class="ws__tab is-on" type="button" role="tab" id="ws-tab-winter" aria-controls="ws-winter" aria-selected="true" data-ws-tab><svg class="ico ico-sm"><use href="#i-moon"/></svg><span>Winter<small>Dec &ndash; Feb</small></span></button>
             <button class="ws__tab" type="button" role="tab" id="ws-tab-spring" aria-controls="ws-spring" aria-selected="false" tabindex="-1" data-ws-tab><svg class="ico ico-sm"><use href="#i-sprout"/></svg><span>Spring<small>Mar &ndash; May</small></span></button>
@@ -256,28 +328,28 @@
         </div>
         <div class="ws__panels">
             <article class="ws__panel is-on" role="tabpanel" id="ws-winter" aria-labelledby="ws-tab-winter" data-ws-panel>
-              <div class="ws__stat"><b><span data-ws-num="6">6</span></b><span>study options in one application on Studyinfo</span></div>
-              <h3 class="ws__h">Apply while the northern lights are out.</h3>
-              <p class="ws__p">The main application round for English-taught degrees starting in autumn runs in January on Studyinfo, Finland&rsquo;s single national service. One application covers up to six programmes across universities and universities of applied sciences.</p>
-              <ul class="ws__facts"><li><svg class="ico ico-sm"><use href="#i-check"/></svg>We shortlist programmes and prepare every document with you</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Saunas, skating and ski trails in every campus town</li></ul>
+              <div class="ws__stat"><b><span data-ws-num="200">200</span></b><span>nights a year the northern lights can appear in Lapland</span></div>
+              <h3 class="ws__h">Saunas, skating and the northern lights.</h3>
+              <p class="ws__p">Snow turns every campus town into a winter playground. Students ski and skate between lectures, warm up in the sauna and head north to see the aurora dance over Lapland.</p>
+              <ul class="ws__facts"><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Ski trails and skating rinks in every campus town</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Around 3 million saunas, for 5.6 million people</li></ul>
             </article>
             <article class="ws__panel" role="tabpanel" id="ws-spring" aria-labelledby="ws-tab-spring" data-ws-panel>
-              <div class="ws__stat"><b><span data-ws-num="1">1</span></b><span>residence permit for your entire degree</span></div>
-              <h3 class="ws__h">Your offer arrives. So does your permit.</h3>
-              <p class="ws__p">As the snow melts, admission results come out and you apply for your residence permit online through Enter Finland. Your continuous A permit covers the whole length of your degree, with no credibility interview. On 1 May, students in white caps celebrate Vappu.</p>
-              <ul class="ws__facts"><li><svg class="ico ico-sm"><use href="#i-check"/></svg>We file your permit and match your funds evidence to Migri&rsquo;s checklist</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Student unions host events all year round</li></ul>
+              <div class="ws__stat"><b><span data-ws-num="1">1</span> May</b><span>Vappu, Finland&rsquo;s biggest student celebration</span></div>
+              <h3 class="ws__h">White caps and picnics in the park.</h3>
+              <p class="ws__p">As the snow melts, the cities come back outdoors. On 1 May students put on their white caps and fill the parks for Vappu, and student unions run events, sports and trips all year round.</p>
+              <ul class="ws__facts"><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Student unions host events, sports and trips</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Cafes and parks fill up as the days get longer</li></ul>
             </article>
             <article class="ws__panel" role="tabpanel" id="ws-summer" aria-labelledby="ws-tab-summer" data-ws-panel>
-              <div class="ws__stat"><b><span data-ws-num="30">30</span> h</b><span>average weekly work allowance</span></div>
-              <h3 class="ws__h">Move in under the midnight sun.</h3>
-              <p class="ws__p">Summer is when you land, find housing and settle in, with daylight late into the night. Your permit lets you work an average of 30 hours a week across the year, so many students work full time over the summer.</p>
-              <ul class="ws__facts"><li><svg class="ico ico-sm"><use href="#i-check"/></svg>We help with housing, your tax card and your first job search</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Everyman&rsquo;s right: forests and lakes are open to all</li></ul>
+              <div class="ws__stat"><b><span data-ws-num="24">24</span> h</b><span>of daylight in Lapland at midsummer</span></div>
+              <h3 class="ws__h">Long days under the midnight sun.</h3>
+              <p class="ws__p">In summer the sun barely sets. Many students take summer jobs, while lakeside cottages, saunas and festivals fill the evenings that never quite turn dark.</p>
+              <ul class="ws__facts"><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Everyman&rsquo;s right: forests and lakes are open to all</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Midsummer, Juhannus, is celebrated by the lake</li></ul>
             </article>
             <article class="ws__panel" role="tabpanel" id="ws-autumn" aria-labelledby="ws-tab-autumn" data-ws-panel>
-              <div class="ws__stat"><b><span data-ws-num="12">12</span></b><span>institutions ranked in QS Europe 2026</span></div>
+              <div class="ws__stat"><b><span data-ws-num="75">75</span>%</b><span>of Finland is covered by forest</span></div>
               <h3 class="ws__h">Term starts as the forests turn gold.</h3>
-              <p class="ws__p">Classes begin with the ruska colours of autumn. Twelve Finnish institutions appear in the QS World University Rankings: Europe 2026, more than 600 degree programmes are taught in English, and teaching is hands-on from the first week.</p>
-              <ul class="ws__facts"><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Tutor groups help every newcomer settle in</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>After graduating, up to two years to find work or start a business</li></ul>
+              <p class="ws__p">The new term begins with ruska, when the forests turn red and gold. Tutor groups welcome every newcomer, and weekends are made for hiking, berry picking and the first sauna of the season.</p>
+              <ul class="ws__facts"><li><svg class="ico ico-sm"><use href="#i-check"/></svg>Tutor groups help every newcomer settle in</li><li><svg class="ico ico-sm"><use href="#i-check"/></svg>National parks are a short trip from most cities</li></ul>
             </article>
         </div>
       </div>

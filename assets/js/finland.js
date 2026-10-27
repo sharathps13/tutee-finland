@@ -415,6 +415,87 @@
   }
 
   /* ------------------------------------------------------------------ *
+   * Why Finland reason deck: one card open at a time. Desktop opens a
+   * card on hover (after a short pause), click or the arrow keys, and
+   * steps through them by itself while on screen until the visitor takes
+   * over. Phones open a card on tap. The open card counts its number up.
+   * ------------------------------------------------------------------ */
+  function initReasonDeck() {
+    var sec = $('[data-rs]');
+    if (!sec) return;
+    var cards = $$('[data-rs-card]', sec), heads = cards.map(function (c) { return $('[data-rs-head]', c); });
+    var N = cards.length, cur = 0, timer = 0, hoverT = 0, auto = !reduceMotion, visible = false, DUR = 6500;
+    var wideMq = window.matchMedia ? window.matchMedia('(min-width: 900px)') : null;
+    function wide() { return !!wideMq && wideMq.matches; }
+    function count(card) {
+      var el = $('[data-rs-num]', card), to = Number(el.getAttribute('data-rs-num'));
+      if (reduceMotion || to < 2) { el.textContent = String(to); return; }
+      var start = null;
+      el.textContent = '0';
+      requestAnimationFrame(function step(t) {
+        if (start === null) start = t;
+        var p = Math.min(1, (t - start) / 900);
+        el.textContent = String(Math.round(to * (1 - Math.pow(1 - p, 3))));
+        if (p < 1) requestAnimationFrame(step);
+      });
+    }
+    function schedule() {
+      clearTimeout(timer);
+      cards.forEach(function (c) { c.classList.remove('is-timing'); });
+      // Phones never step on by themselves: a card opening would move the text being read.
+      if (!auto || !visible || !wide() || document.hidden) return;
+      var c = cards[cur];
+      void c.offsetWidth;
+      c.classList.add('is-timing');
+      timer = setTimeout(function () { open((cur + 1) % N); }, DUR);
+    }
+    function open(i) {
+      if (i !== cur) {
+        cards.forEach(function (c, j) {
+          c.classList.toggle('is-on', j === i);
+          heads[j].setAttribute('aria-expanded', j === i ? 'true' : 'false');
+        });
+        cur = i;
+        count(cards[i]);
+      }
+      schedule();
+    }
+    function takeOver(i) { auto = false; open(i); }
+    heads.forEach(function (h, i) {
+      h.addEventListener('click', function () { takeOver(i); });
+      h.addEventListener('keydown', function (e) {
+        var k = e.key, n = -1;
+        if (k === 'ArrowRight' || k === 'ArrowDown') n = (i + 1) % N;
+        else if (k === 'ArrowLeft' || k === 'ArrowUp') n = (i - 1 + N) % N;
+        else if (k === 'Home') n = 0;
+        else if (k === 'End') n = N - 1;
+        if (n < 0) return;
+        e.preventDefault();
+        heads[n].focus();
+        takeOver(n);
+      });
+    });
+    if (finePointer) cards.forEach(function (c, i) {
+      c.addEventListener('pointerenter', function () {
+        if (!wide()) return;
+        clearTimeout(hoverT);
+        hoverT = setTimeout(function () { takeOver(i); }, 140);
+      });
+      c.addEventListener('pointerleave', function () { clearTimeout(hoverT); });
+    });
+    if ('IntersectionObserver' in window) {
+      var counted = false;
+      new IntersectionObserver(function (es) {
+        visible = es[0].isIntersecting;
+        if (visible && !counted) { counted = true; count(cards[cur]); }
+        schedule();
+      }, { threshold: 0.35 }).observe($('[data-rs-deck]', sec));
+    }
+    document.addEventListener('visibilitychange', schedule);
+    if (wideMq && wideMq.addEventListener) wideMq.addEventListener('change', schedule);
+  }
+
+  /* ------------------------------------------------------------------ *
    * Why Finland — season stage. Pinned like the hero on desktop (200px of
    * scroll per season); tabs and swipes work everywhere. The reading
    * column only fades. All motion is inside the photo window: a circle
@@ -2826,6 +2907,7 @@
   initHeroPointer();
   initSnow();
   initVelocityRails();
+  initReasonDeck();
   initSeasonStage();
   initServices();
   initServiceDeck();
