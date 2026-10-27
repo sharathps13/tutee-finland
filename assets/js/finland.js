@@ -686,7 +686,7 @@
     var ctx = canvas.getContext && canvas.getContext('2d');
     if (!ctx) return null;
     var W = 0, H = 0, dpr = 1, kind = 0, parts = [], t = 0;
-    var DENSITY = [26, 0, 34, 0];                 // by kind: autumn leaves, winter (video), spring petals, summer (video)
+    var DENSITY = [26, 0, 34, 14];                // by kind: autumn leaves, winter (video), spring petals, summer glints
     var LEAF = ['#e2582a', '#f2a93b', '#c8321e', '#f4c04a', '#b5461d'];
     var PETAL = ['#ffd1dc', '#ffb6c8', '#fff0f4', '#f7a8bf'];
     function sprite(rgb) {

@@ -71,12 +71,12 @@ window.TC_PHOTO_CREDITS = {
   "url": "https://commons.wikimedia.org/wiki/File:Aurora_borealis_timelapse.webm",
   "short": "Video: Harriniva Hotels & Safaris, CC BY 3.0"
  },
- "assets/video/summer.webm": {
-  "subject": "Summer sunset over a Finnish lake (video, trimmed)",
-  "author": "postcardtrip",
-  "licence": "Pixabay Content License",
-  "url": "https://pixabay.com/videos/sunset-lake-water-nature-evening-26107/",
-  "short": "Video: postcardtrip, Pixabay"
+ "assets/img/seasons/summer-koli.jpg": {
+  "subject": "Koli National Park, Finland, in summer",
+  "author": "Ninara",
+  "licence": "CC BY 2.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Koli_National_Park,_Finland_(52177485986).jpg",
+  "short": "Photo: Ninara, CC BY 2.0"
  },
  "assets/img/photos/hero-aurora.jpg": {
   "subject": "Aurora borealis over Lapland",
