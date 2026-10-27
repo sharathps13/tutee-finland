@@ -2535,6 +2535,17 @@ main { overflow-x: clip; }
 .fab__label { font-size: 14px; font-weight: 800; color: var(--ink); white-space: nowrap; }
 @media (max-width: 767px) { .fab.fab--ai { height: 48px; padding: 0 14px 0 8px; } .fab--ai img { width: 26px; height: 26px; } .fab__label { font-size: 13px; } }
 
+/* ============================================== PERFORMANCE · PHONES
+   Live blur behind fixed or moving layers is re-rendered on every scroll
+   frame, which phone GPUs feel most. The bottom bar is already near-opaque
+   and the glass buttons sit on photos, so plain tints look the same there. */
+.mbar { -webkit-backdrop-filter: none; backdrop-filter: none; }
+@media (max-width: 767px) {
+  .btn-glass, .stat, .pc__flip, .pc__heart--front, .pc__flip--back { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .btn-glass { background: rgba(255,255,255,.14); }
+  .stat { background: rgba(6,22,49,.72); }
+}
+
 /* ============================================== WHY FINLAND · REASON CUBE
    A six-sided 3D cube on ice blue. Scrolling over the cube, a drag or the
    tabs roll it (JS sets its orientation); every face's drawing

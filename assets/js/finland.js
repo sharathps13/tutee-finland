@@ -48,12 +48,50 @@
   function whenNear(el, fn, margin) {
     if (!el) return;
     if (!('IntersectionObserver' in window)) { fn(); return; }
-    var io = new IntersectionObserver(function (es) {
-      if (!es[0].isIntersecting || !el.offsetParent) return;
-      io.disconnect(); fn();
-    }, { rootMargin: (margin || '120%') + ' 0px' });
-    io.observe(el);
+    // Start watching only once the page has loaded, so photos further down
+    // never compete with the hero for bandwidth.
+    afterLoad(function () {
+      var io = new IntersectionObserver(function (es) {
+        if (!es[0].isIntersecting || !el.offsetParent) return;
+        io.disconnect(); fn();
+      }, { rootMargin: (margin || '120%') + ' 0px' });
+      io.observe(el);
+    });
   }
+  function afterLoad(fn) {
+    if (document.readyState === 'complete') fn();
+    else window.addEventListener('load', fn, { once: true });
+  }
+  /* Decode a photo off the main thread before it is first shown, so a wipe
+     or a cube turn never stalls on decoding. */
+  function preDecode(img) {
+    if (img && img.decode) img.decode().catch(function () {});
+  }
+  /* Photos far below the hero carry their address in data-defer-src (or
+     data-defer-bg for backgrounds) and load, then decode, as their section
+     comes within a screen or so. */
+  function initDeferredMedia() {
+    var els = $$('[data-defer-src], [data-defer-bg]');
+    var groups = [];
+    els.forEach(function (el) {
+      var sec = el.closest('section') || el;
+      var g = groups.filter(function (x) { return x.sec === sec; })[0];
+      if (!g) groups.push(g = { sec: sec, els: [] });
+      g.els.push(el);
+    });
+    groups.forEach(function (g) {
+      whenNear(g.sec, function () {
+        g.els.forEach(function (el) {
+          var src = el.getAttribute('data-defer-src'), url = el.getAttribute('data-defer-bg');
+          // Skip anything a script has already given a real photo (e.g. a new postcard).
+          if (src) { el.removeAttribute('data-defer-src'); if (/^data:/.test(el.getAttribute('src'))) { el.loading = 'eager'; el.src = src; preDecode(el); } }
+          if (url) { el.removeAttribute('data-defer-bg'); if (!el.style.backgroundImage) el.style.backgroundImage = 'url(' + url + ')'; }
+        });
+      }, '100%');
+    });
+  }
+  /* Devices that are likely to struggle with the heavier effects. */
+  var lowPower = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
   function scrollToId(id) {
     var el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
@@ -480,7 +518,7 @@
     }
 
     var wordRun = 0, pos = 0, target = 0, skew = 0, lastPos = 0;
-    var cur = Q[0], tilt = { x: 0, y: 0, tx: 0, ty: 0 }, active = -1, running = false;
+    var cur = Q[0], tilt = { x: 0, y: 0, tx: 0, ty: 0 }, active = -1, running = false, rendered = false;
     // mode: 'follow' eases towards the target face; 'drag' follows the pointer; 'spin' coasts after a flick.
     var mode = 'follow', drag = null, spin = { x: 0, y: 1, v: 0 };
     var smooth = function (t) { return t * t * (3 - 2 * t); };
@@ -533,6 +571,12 @@
       // The word track leans into the roll, like scroll velocity.
       skew += (clamp((lastPos - pos) * 90, -12, 12) - skew) * 0.15;
       lastPos = pos;
+      // At rest, skip the style writes entirely: nothing on screen would change.
+      var g = pathQuat(target), dot = Math.abs(cur[0] * g[0] + cur[1] * g[1] + cur[2] * g[2] + cur[3] * g[3]);
+      var still = mode === 'follow' && dot > 0.999999 && Math.abs(target - pos) < 0.002 && Math.abs(skew) < 0.01 &&
+        Math.abs(tilt.tx - tilt.x) < 0.01 && Math.abs(tilt.ty - tilt.y) < 0.01;
+      if (still && rendered) return;
+      rendered = still;
       render();
     }
     function goTo(i) {
@@ -610,7 +654,7 @@
     });
 
     // Every face's photo loads as the section approaches.
-    whenNear(sec, function () { $$('[data-rx-img]', sec).forEach(function (im) { im.loading = 'eager'; }); });
+    whenNear(sec, function () { $$('[data-rx-img]', sec).forEach(function (im) { im.loading = 'eager'; preDecode(im); }); });
 
     // Trackball drag: the cube turns about the axis at right angles to the
     // pointer's path, as far as the pointer moves; a flick keeps it spinning.
@@ -754,9 +798,15 @@
       }
       ctx.globalAlpha = 1;
     }
+    var blank = false;
     return {
       resize: resize,
-      frame: function (dt) { step(dt); draw(); },
+      // A season without particles (winter and summer) leaves the canvas cleared and idle.
+      frame: function (dt) {
+        step(dt);
+        if (!parts.length) { if (!blank) { ctx.clearRect(0, 0, canvas.width, canvas.height); blank = true; } return; }
+        blank = false; draw();
+      },
       season: function (k, fill) {
         kind = k;
         parts.forEach(function (p) { if (p.k !== k) p.out = true; });
@@ -798,7 +848,7 @@
     if (pinMq) { if (pinMq.addEventListener) pinMq.addEventListener('change', syncLive); else if (pinMq.addListener) pinMq.addListener(syncLive); }
     // Every season's photo loads as the section approaches, so the wipe never waits.
     whenNear(sec, function () {
-      figs.forEach(function (f) { var im = $('img', f); if (im) im.loading = 'eager'; });
+      figs.forEach(function (f) { var im = $('img', f); if (im) { im.loading = 'eager'; preDecode(im); } });
       $$('video[data-poster]', sec).forEach(function (v) { v.poster = v.getAttribute('data-poster'); });
     });
     // Winter and summer are video loops: only the visible one plays, and only on screen.
@@ -2664,7 +2714,7 @@
       window.addEventListener('load', function () { setTimeout(kickBgs, 3500); });
     }
 
-    var STAGES = 5;
+    var STAGES = 5, lite = lowPower;
     var W = 0, H = 0, dpr = 1, N = 0, parts = [], shapes = [], cities = [];
     var outline = [], STEP = 200;   // px of scroll per stage: two wheel notches
     var stage = -1, mapShown = 0, mapAt = 0, mouse = { x: -9999, y: -9999 }, hover = -1, time = 0;
@@ -2710,7 +2760,7 @@
 
     function layout() {
       var r = pin.getBoundingClientRect();
-      W = r.width; H = r.height; dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      W = r.width; H = r.height; dpr = Math.min(window.devicePixelRatio || 1, lite ? 1 : 1.5);
       canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
       canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -2726,7 +2776,7 @@
       var mapBox = mobile ? { x: W * 0.08, y: top, w: W * 0.84, h: room } : { x: W * 0.5, y: H * 0.09, w: W * 0.44, h: H * 0.84 };
       var txtBox = mobile ? { x: W * 0.05, y: top + room * 0.12, w: W * 0.9, h: room * 0.76 } : { x: W * 0.55, y: H * 0.26, w: W * 0.39, h: H * 0.46 };
       // Enough snow to draw the shapes crisply, capped so big screens stay smooth.
-      var n = Math.round(clamp(W * H / 560, mobile ? 520 : 750, 1900));
+      var n = Math.round(clamp(W * H / 560, mobile ? 520 : 750, 1900) * (lite ? 0.6 : 1));
       if (n !== N) {
         N = n; parts = [];
         for (var i = 0; i < N; i++) {
@@ -2986,10 +3036,15 @@
       pin.addEventListener('pointerleave', function () { mouse.x = mouse.y = -9999; hover = -1; tip.classList.remove('is-on'); });
     }
 
-    var running = false, raf = 0, last = 0, inView = true;
+    var running = false, raf = 0, last = 0, inView = true, slow = 0, seen = 0;
     function frame(now) {
       var dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
       last = now;
+      // If frames keep running long once the intro has settled, lighten the snow for good.
+      if (!lite && introDone && dt < 0.05) {
+        seen++; if (dt > 0.022) slow++;
+        if (seen >= 120) { if (slow > 48) { lite = true; layout(); goTo(stage, now, true); } seen = slow = 0; }
+      }
       // Intro: a moment of snowfall, then the snow gathers into Finland.
       if (!introDone && now - startAt > 700) {
         introDone = true;
@@ -3086,6 +3141,7 @@
   /* ------------------------------------------------------------------ *
    * Boot
    * ------------------------------------------------------------------ */
+  initDeferredMedia();
   initMarquees();
   initParticleHero();
   initScrollUi();
