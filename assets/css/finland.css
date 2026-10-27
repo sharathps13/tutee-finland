@@ -2448,7 +2448,8 @@ main { overflow-x: clip; }
 .fab--call { background: var(--fi-blue); color: #fff; }
 .fab--call:hover { background: #00266b; }
 @media (min-width: 561px) { .chat { left: 16px; right: auto; } }
-@media (min-width: 768px) { .slfab { left: 88px; } }
+/* The shortlist pill sits centred at the foot of the screen. */
+.slfab { left: 50%; translate: -50% 0; white-space: nowrap; }
 @media (max-width: 767px) { .fab--call { display: none; } }
 .lf__again { display: inline-flex; align-items: center; gap: 6px; margin-top: 2px; padding: 6px 10px; border-radius: 999px; border: 0; background: none;
   font: inherit; font-size: 13.5px; font-weight: 700; color: var(--fi-blue); cursor: pointer; }
@@ -2708,3 +2709,10 @@ main { overflow-x: clip; }
 @media (prefers-reduced-motion: reduce) {
   .rx, .rx__w, .rx__p, .rx__tc, .rx__tags, .rx__step { transition: none !important; }
 }
+
+/* ============================================== TUTEE AI BUTTON · LABELLED
+   The bottom-left launcher reads "Tutee AI" beside the logo. */
+.fab.fab--ai { width: auto; padding: 0 16px 0 10px; gap: 8px; grid-auto-flow: column; border-radius: 999px; }
+.fab--ai::after { border-radius: inherit; }
+.fab__label { font-size: 14px; font-weight: 800; color: var(--ink); white-space: nowrap; }
+@media (max-width: 767px) { .fab.fab--ai { height: 48px; padding: 0 14px 0 8px; } .fab--ai img { width: 26px; height: 26px; } .fab__label { font-size: 13px; } }
