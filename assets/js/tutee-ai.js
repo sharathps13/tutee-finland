@@ -310,7 +310,7 @@
     { id: 'happiness', t: 'Happiness and quality of life', k: 'happy happiest happiness quality of life safe safety life lifestyle report',
       a: "Finland has topped the **World Happiness Report every year from 2018 to 2026** \u2014 nine years in a row. It's one of the most family-friendly places to study, with free basic education, open nature under the everyman's right, and campuses and transport that run smoothly all winter.",
       c: ['Why study in Finland?', 'Bringing your family'], s: 'why' },
-    { id: 'facts', t: 'Fun facts about Finland', k: 'fact facts fun interesting did you know lakes forest sauna saunas midnight sun women vote roam nature country about finland',
+    { id: 'facts', t: 'Fun facts about Finland', k: 'fact facts fun interesting did you know lakes forest sauna saunas midnight sun women vote roam nature',
       a: "A few things that make Finland special:\n- **Happiest country in the world** in the World Happiness Report every year from 2018 to 2026.\n- About **188,000 lakes**, and forest over roughly **75%** of the land.\n- In 1906 it became the **first country to give women full political rights** \u2014 the vote and the right to stand for parliament.\n- Around **3 million saunas** for 5.6 million people.\n- In Lapland the **sun doesn't set for about two months** each summer.\n- **Everyone's right** lets anyone walk, camp and pick berries in nature.",
       c: ['Why study in Finland?', 'Happiness and quality of life'], s: 'why' },
     { id: 'accommodation', t: 'Accommodation and pre-departure', k: 'accommodation housing hostel dorm apartment hoas rent where to live pre departure briefing arrival identity code',
@@ -325,8 +325,8 @@
     { id: 'journey', t: 'Your journey in six milestones', k: 'journey steps milestones route roadmap process timeline from first application to permanent resident',
       a: "From first application to permanent resident, in six milestones:\n1. **Plan** — Shortlist & apply (Studyinfo application, motivation letter, documents)\n2. **Admission** — Offers and scholarship decisions compared\n3. **Permit** — Continuous A permit on Enter Finland, D visa to fly early, no credibility interview\n4. **Arrival** — Housing, registration and identity code; work 30 h a week\n5. **Career** — Up to 2 years to look for work or start a business, no sponsor\n6. **Settle** — Permanent residence after 6 years, or sooner with a Finnish degree + Finnish/Swedish\n\nSee it on the [journey map](" + sec('relocate') + ").",
       c: ['How does the residence permit work?', 'What happens after I graduate?'], s: 'relocate' },
-    { id: 'whyfinland', t: 'Why study in Finland', k: 'why finland reasons benefits advantages good choose study abroad seasons',
-      a: "Four seasons, four reasons:\n- **Autumn — world-class teaching:** 12 Finnish institutions are in the QS Europe 2026 rankings, and teaching is hands-on from week one\n- **Winter — one permit for your whole degree:** a continuous A permit, no credibility interview\n- **Spring — your degree in English:** 600+ English-taught degree programmes across 36 institutions\n- **Summer — earn while you study, stay after:** work 30 h a week on average, then up to 2 years to find work\n\nPlus: Finland has topped the World Happiness Report every year from 2018 to 2026.",
+    { id: 'whyfinland', t: 'Why study in Finland', k: 'why finland reasons benefits advantages good choose study abroad seasons year timeline when apply january',
+      a: "Your first year in Finland, season by season:\n- **Winter — apply:** the main round for English-taught degrees starting in autumn runs in **January** on Studyinfo, with up to **six programmes** in one application\n- **Spring — offer and permit:** results come out and you apply online for a **continuous A permit** that covers your whole degree, with no credibility interview\n- **Summer — move in:** land, find housing and settle in; you can work **30 h a week on average**, so many students work full time over the summer\n- **Autumn — start your degree:** **12 institutions** in the QS Europe 2026 rankings and **600+** English-taught programmes, and after graduating up to **2 years** to find work\n\nPlus: Finland has topped the World Happiness Report every year from 2018 to 2026.",
       c: ['Show me the top ranked universities', 'Can I work while studying?'], s: 'why' },
     { id: 'studentlife', t: 'Student life', k: 'student life culture vappu sauna saunas skating ski festival tutor groups student unions events everyman right nature lakes forests northern lights aurora midnight sun',
       a: "Student life in Finland follows the seasons:\n- **Autumn:** tutor groups help every newcomer settle in\n- **Winter:** northern lights over Lapland, plus saunas, skating and ski trails in every campus town\n- **Spring:** **Vappu**, Finland's biggest student festival, when students wear white caps; student unions host events all year\n- **Summer:** the **midnight sun**, and the **everyman's right** — forests and lakes are open to all",
@@ -601,7 +601,9 @@
         return rb;
       }
       var aboutWork = /\b(job|jobs|work|working|career|employment|visa|permit|stay|after (my |the )?(studies|graduation|degree))\b/.test(q) && !fieldy;
-      if (!aboutWork && ((COURSE_HINT.test(q) && (fieldy || courseTerms(q, null, city).length > 2 || levelOf(q))) || (fieldy && levelOf(q)))) {
+      // "Why study in Finland?" is a question about Finland, not a course search.
+      var askWhy = /^(why|should i|is it worth|what makes)\b/.test(q) && !fieldy;
+      if (!aboutWork && !askWhy && ((COURSE_HINT.test(q) && (fieldy || courseTerms(q, null, city).length > 2 || levelOf(q))) || (fieldy && levelOf(q)))) {
         var r = courseAnswer(q, { city: city });
         if (!/^I couldn't find/.test(r.text) || COURSE_HINT.test(q)) return r;
       }
