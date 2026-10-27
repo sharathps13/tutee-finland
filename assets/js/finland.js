@@ -415,16 +415,15 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * Why Finland reason cube. Desktop pins the section and maps the scroll
-   * onto a position along the six faces (front, right, top, left, bottom,
-   * back): the cube rests on each face for a stretch, then rolls to the
-   * next, and if the scroll stops mid-roll it settles on the nearest face.
-   * The cube's orientation is a quaternion eased towards that target every
-   * frame, so each roll takes the shortest path and lands upright.
+   * Why Finland reason cube. The page scrolls past it normally; scrolling
+   * with the pointer over the cube (or the space around it) rolls it one
+   * face per gesture through the six faces (front, right, top, left,
+   * bottom, back), and past the first or last face the page scrolls on.
+   * The cube's orientation is a quaternion eased towards the target face
+   * every frame, so each roll takes the shortest path and lands upright.
    * It can also be grabbed and dragged in any direction like a trackball;
    * let go (or flick) and it spins on, then settles upright on whichever
-   * face is most in front, and the page quietly moves to that face's place
-   * in the scroll. The face in front always drives the copy and tabs, so
+   * face is most in front. The face in front always drives the copy and tabs, so
    * whatever side is showing can be read. Each face's --p (0 side-on, 1
    * facing) scrubs its number and drawing.
    * ------------------------------------------------------------------ */
@@ -437,8 +436,6 @@
     var nums = faces.map(function (f) { return $('[data-rx-num]', f); });
     var tos = nums.map(function (n) { return Number(n.getAttribute('data-rx-num')); });
     var cols = navs.map(function (b) { return b.style.getPropertyValue('--c').trim(); });
-    var pinMq = window.matchMedia ? window.matchMedia('(min-width: 900px) and (min-height: 620px)') : null;
-    function pinned() { return !reduceMotion && !!pinMq && pinMq.matches; }
 
     // Each face's outward normal, and the cube turn (rotateX, rotateY) that brings it to the front upright.
     var NORMAL = [[0, 0, 1], [1, 0, 0], [0, -1, 0], [-1, 0, 0], [0, 1, 0], [0, 0, -1]];
@@ -482,24 +479,14 @@
       return best;
     }
 
-    var SPAN = 0, wordRun = 0, pos = 0, target = 0, skew = 0, lastPos = 0;
-    var cur = Q[0], tilt = { x: 0, y: 0, tx: 0, ty: 0 }, active = -1, running = false, idle = 0;
-    // mode: 'follow' eases towards the scroll / tab target; 'drag' follows the pointer; 'spin' coasts after a flick.
+    var wordRun = 0, pos = 0, target = 0, skew = 0, lastPos = 0;
+    var cur = Q[0], tilt = { x: 0, y: 0, tx: 0, ty: 0 }, active = -1, running = false;
+    // mode: 'follow' eases towards the target face; 'drag' follows the pointer; 'spin' coasts after a flick.
     var mode = 'follow', drag = null, spin = { x: 0, y: 1, v: 0 };
     var smooth = function (t) { return t * t * (3 - 2 * t); };
 
     function size() {
-      SPAN = Math.max(380, Math.round(window.innerHeight * 0.7));
-      sec.style.setProperty('--rx-run', pinned() ? (N - 1) * SPAN + 'px' : '0px');
-      sec.classList.toggle('is-live', pinned());
       wordRun = word ? Math.max(0, word.scrollWidth - window.innerWidth * 0.9) : 0;
-    }
-    function inPin() { var r = sec.getBoundingClientRect(); return r.top <= 1 && r.bottom >= window.innerHeight - 1; }
-    // Scroll -> position, resting on each face for the first and last 18% of its stretch.
-    function fromScroll() {
-      var f = clamp(-sec.getBoundingClientRect().top / SPAN, 0, N - 1);
-      var k = Math.min(N - 2, Math.floor(f));
-      return k + smooth(clamp((f - k - 0.18) / 0.64, 0, 1));
     }
     function setActive(i) {
       if (i === active) return;
@@ -530,17 +517,11 @@
       navs.forEach(function (b, i) { b.style.setProperty('--f', i < now ? 1 : i > now ? 0 : clamp(facing(m, i), 0, 1).toFixed(3)); });
       if (word) word.style.transform = 'translate3d(' + (-pos / (N - 1) * wordRun).toFixed(1) + 'px,0,0) skewX(' + skew.toFixed(2) + 'deg)';
     }
-    // Land on face k: ease there, and (when pinned) move the page to k's place without a visible jump.
-    function settle(k) {
-      mode = 'follow';
-      target = k;
-      if (pinned() && inPin()) window.scrollTo({ top: sec.offsetTop + k * SPAN, behavior: 'instant' });
-    }
+    function settle(k) { mode = 'follow'; target = k; }
     function frame() {
       if (!running) return;
       requestAnimationFrame(frame);
       if (mode === 'follow') {
-        if (pinned()) target = fromScroll();
         cur = slerp(cur, pathQuat(target), 0.12);
       } else if (mode === 'spin') {
         cur = norm(mul(axisAngle(spin.x, spin.y, 0, spin.v), cur));
@@ -557,8 +538,7 @@
     function goTo(i) {
       i = clamp(i, 0, N - 1);
       mode = 'follow';
-      if (pinned()) window.scrollTo({ top: sec.offsetTop + i * SPAN, behavior: 'smooth' });
-      else target = i;
+      target = i;
     }
 
     navs.forEach(function (b, i) {
@@ -574,47 +554,22 @@
       });
     });
 
-    // Left mid-roll, the cube settles on the nearest face.
-    window.addEventListener('scroll', function () {
-      if (!pinned()) return;
-      clearTimeout(idle);
-      idle = setTimeout(function () {
-        if (!inPin() || mode !== 'follow') return;
-        var f = -sec.getBoundingClientRect().top / SPAN, fr = f - Math.floor(f);
-        if (fr > 0.16 && fr < 0.84) window.scrollTo({ top: sec.offsetTop + Math.round(f) * SPAN, behavior: 'smooth' });
-      }, 180);
-    }, { passive: true });
-
-    // While pinned, one wheel gesture moves exactly one face, however hard
+    // Scrolling over the cube rolls it one face per gesture, however hard
     // the flick: the gesture's trailing events (trackpad momentum, a fast
     // spin of the wheel) are swallowed until the wheel has been still for a
-    // moment. Coming in from either end, the cube first locks onto the face
-    // it arrived at. Past the first or last face the page scrolls on.
-    var wheelLock = 0, lastStep = 0, goal = 0, wasIn = false;
-    window.addEventListener('scroll', function () { if (!inPin()) wasIn = false; }, { passive: true });
-    window.addEventListener('wheel', function (e) {
-      if (!pinned() || e.ctrlKey || Math.abs(e.deltaY) < 1 || !inPin()) return;
-      var now = performance.now(), dir = e.deltaY > 0 ? 1 : -1;
-      var f = clamp(-sec.getBoundingClientRect().top / SPAN, 0, N - 1);
-      if (!wasIn) {
-        wasIn = true;
-        goal = clamp(dir > 0 ? Math.floor(f + 0.02) : Math.ceil(f - 0.02), 0, N - 1);
-        e.preventDefault();
-        wheelLock = now + 450;
-        mode = 'follow';
-        window.scrollTo({ top: sec.offsetTop + goal * SPAN, behavior: 'smooth' });
-        return;
-      }
+    // moment. Past the first or last face the page scrolls on as normal.
+    var wheelLock = 0;
+    stage.addEventListener('wheel', function (e) {
+      if (reduceMotion || e.ctrlKey) return;
+      var d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (Math.abs(d) < 1) return;
+      var now = performance.now();
       if (now < wheelLock) { e.preventDefault(); wheelLock = Math.max(wheelLock, now + 220); return; }
-      // Long after the last step (or after a drag), start from where the page actually is.
-      if (now - lastStep > 1300) goal = clamp(Math.round(f), 0, N - 1);
-      var next = goal + dir;
+      var next = Math.round(target) + (d > 0 ? 1 : -1);
       if (next < 0 || next > N - 1) return;
       e.preventDefault();
-      goal = next;
-      wheelLock = now + 700; lastStep = now;
-      mode = 'follow';
-      window.scrollTo({ top: sec.offsetTop + next * SPAN, behavior: 'smooth' });
+      wheelLock = now + 650;
+      goTo(next);
     }, { passive: false });
 
     // Job-type tags with details: hover or keyboard focus opens one; a tap
@@ -696,8 +651,6 @@
 
     size();
     window.addEventListener('resize', size);
-    if (pinMq) { if (pinMq.addEventListener) pinMq.addEventListener('change', size); else if (pinMq.addListener) pinMq.addListener(size); }
-    if (pinned()) { pos = target = fromScroll(); cur = pathQuat(target); }
     render();
     if (reduceMotion) return;
     if ('IntersectionObserver' in window) {

@@ -2528,8 +2528,8 @@ main { overflow-x: clip; }
 @media (max-width: 699px) { .hp__clock { height: 30px; padding: 0 10px; font-size: 12px; } }
 
 /* ============================================== WHY FINLAND · REASON CUBE
-   A six-sided 3D cube on ice blue. Desktop pins the section and the
-   scroll rolls the cube (JS sets its orientation); every face's drawing
+   A six-sided 3D cube on ice blue. Scrolling over the cube, a drag or the
+   tabs roll it (JS sets its orientation); every face's drawing
    reads --p (how far it has rolled to the front, 0-1) so it scrubs with
    the roll, and --shade darkens faces as they turn away. The glow behind
    takes the colour of the reason in front (--rc, animatable via @property). */
@@ -2705,10 +2705,6 @@ main { overflow-x: clip; }
   .rx__step { gap: 9px; }
 }
 @media (min-width: 900px) and (hover: hover) and (pointer: fine) { .rx__hint-fine { display: inline; } .rx__hint-touch { display: none; } }
-@media (min-width: 900px) and (min-height: 620px) {
-  .rx.is-live { height: calc(100vh + var(--rx-run, 0px)); height: calc(100svh + var(--rx-run, 0px)); }
-  .rx.is-live .rx__pin { position: sticky; top: 0; height: 100vh; height: 100svh; display: grid; align-items: center; padding: calc(var(--header-h) + 12px) 0 24px; }
-}
 @media (prefers-reduced-motion: reduce) {
   .rx, .rx__w, .rx__p, .rx__tc, .rx__tags, .rx__step { transition: none !important; }
 }
