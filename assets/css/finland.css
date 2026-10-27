@@ -2424,3 +2424,15 @@ main { overflow-x: clip; }
   .pc__stamp-in img { outline-offset: -2px; }
   .pc__stamp::after { font-size: 5px; bottom: calc(var(--m) + 2px); letter-spacing: .08em; }
 }
+
+/* ============================================ FLOATING BUTTONS · SIDES
+   Tutee AI sits bottom left (its chat opens on that side too); WhatsApp
+   and "Reserve a call" stack bottom right. */
+.fab-stack--left { left: 16px; right: auto; justify-items: start; }
+.fab-stack--left .fab__tip { left: 66px; right: auto; }
+.fab--call { background: var(--fi-blue); color: #fff; }
+.fab--call:hover { background: #00266b; }
+@media (min-width: 561px) { .chat { left: 16px; right: auto; } }
+@media (min-width: 768px) { .slfab { left: 88px; } }
+@media (max-width: 767px) { .fab--call { display: none; } }
+
