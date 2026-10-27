@@ -1575,8 +1575,8 @@
    * phones). It draws in on view, a pulse flows along it, and a marker
    * tours the milestones while in view; hover or focus a card to send
    * the marker there (the tour pauses meanwhile). The marker chases its
-   * target every frame, so it sets off the instant a card is hovered and
-   * changes course mid-way if another one is.
+   * target on a spring, so it sets off the instant a card is hovered and
+   * curves smoothly onto a new one if that is picked mid-way.
    * ------------------------------------------------------------------ */
   function initJourneyRoute() {
     var root = $('[data-rm]');
@@ -1630,12 +1630,17 @@
       active = i;
       moveTo(stops[i]);
     }
-    // The marker eases towards its target a fraction of the way each frame:
-    // quick to start, smooth to land, and retargetable at any moment.
-    function chase() {
-      var d = aim - pos;
-      if (Math.abs(d) < 0.5) { place(aim); raf = 0; return; }
-      place(pos + d * 0.2);
+    // The marker rides a critically damped spring towards its target: it
+    // gathers speed smoothly, glides in without overshooting, and keeps its
+    // momentum if the target changes mid-way.
+    var vel = 0, last = 0, K = 90, C = 2 * Math.sqrt(K);
+    function chase(now) {
+      var dt = Math.min(0.032, last ? (now - last) / 1000 : 0.016);
+      last = now;
+      vel += ((aim - pos) * K - vel * C) * dt;
+      var next = pos + vel * dt;
+      if (Math.abs(aim - next) < 0.4 && Math.abs(vel) < 6) { place(aim); vel = 0; raf = 0; last = 0; return; }
+      place(next);
       raf = requestAnimationFrame(chase);
     }
     function moveTo(len) {
