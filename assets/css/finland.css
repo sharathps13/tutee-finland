@@ -2465,33 +2465,41 @@ main { overflow-x: clip; }
    Everything that moves is animatable: the orb's glass is a layer whose
    opacity fades (a gradient cannot cross-fade), the height and corner
    radius never change, and the shadows keep the same number of layers. */
-.header .logo__plate--swap { --e: cubic-bezier(.65, 0, .35, 1); --h: 50px; --mk: 38px; --lh: 44px; --wide: 132px;
+.header .logo__plate--swap { --e: cubic-bezier(.65, 0, .35, 1); --h: 50px; --mk: 38px; --lh: 44px; --wide: 136px;
   position: relative; isolation: isolate; overflow: hidden; box-sizing: border-box; display: flex; align-items: center; justify-content: flex-start;
   width: var(--h); height: var(--h); padding: 0 !important; border-radius: calc(var(--h) / 2) !important;
   background: none !important; -webkit-backdrop-filter: none; backdrop-filter: none;
-  border: 1.5px solid rgba(47,227,180,.8);
+  border: 2px solid rgba(47,227,180,.8);
   box-shadow: 0 0 0 4px rgba(47,227,180,.12), 0 0 22px -4px rgba(47,227,180,.6), 0 10px 22px -12px rgba(0,0,0,.7), inset 0 1px 1px rgba(255,255,255,.9);
-  transition: width .7s var(--e), border-color .6s var(--e), box-shadow .6s var(--e); will-change: width; }
+  transition: width .7s var(--e), border-color .6s var(--e), box-shadow .6s var(--e); }
 .header .logo__plate--swap::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit;
   background: radial-gradient(circle at 34% 28%, #ffffff 0%, #f3f8fd 45%, #dde9f5 100%); transition: opacity .55s var(--e); }
-.header .logo__plate--swap .brandmark--icon { position: absolute; left: calc(var(--h) / 2 - 1.5px); top: 50%; width: var(--mk); height: var(--mk); margin: 0;
-  border-radius: 0; object-fit: contain; transform: translate(-50%, -50%); transform-origin: 50% 50%;
+/* Whole-pixel geometry keeps the mark sharp: 50px orb - 2px border each side
+   = 46px inside, so the 38px mark sits exactly 4px in. At rest nothing is
+   transformed; transforms only run while it animates away. */
+.header .logo__plate--swap .brandmark--icon { position: absolute; left: calc((var(--h) - 4px - var(--mk)) / 2); top: calc((var(--h) - 4px - var(--mk)) / 2);
+  width: var(--mk); height: var(--mk); margin: 0; border-radius: 0; object-fit: contain; transform: none; transform-origin: 50% 50%;
   transition: opacity .4s var(--e) .2s, transform .7s var(--e) .1s; }
-.header .logo__plate--swap .brandmark--header { flex: none; height: var(--lh); width: auto; margin: 0 0 0 12px !important;
+.header .logo__plate--swap .brandmark--header { flex: none; height: var(--lh); width: 108px; margin: 0 0 0 12px !important; transform: none; backface-visibility: visible;
   opacity: 0; clip-path: inset(0 100% 0 0); transition: opacity .35s var(--e), clip-path .55s var(--e); }
 
 /* White bar: a clear pill holding the full logo. */
 .header.is-scrolled .logo__plate--swap { width: var(--wide); border-color: rgba(47,227,180,0);
   box-shadow: 0 0 0 4px rgba(47,227,180,0), 0 0 22px -4px rgba(47,227,180,0), 0 10px 22px -12px rgba(0,0,0,0), inset 0 1px 1px rgba(255,255,255,0); }
 .header.is-scrolled .logo__plate--swap::before { opacity: 0; }
-.header.is-scrolled .logo__plate--swap .brandmark--icon { opacity: 0; transform: translate(-50%, -50%) translateX(-8px) scale(.7);
+.header.is-scrolled .logo__plate--swap .brandmark--icon { opacity: 0; transform: translateX(-8px) scale(.7);
   transition: opacity .3s var(--e), transform .6s var(--e); }
 .header.is-scrolled .logo__plate--swap .brandmark--header { opacity: 1; clip-path: inset(0 0 0 0);
   transition: opacity .45s var(--e) .15s, clip-path .65s var(--e) .1s; }
 
-@media (max-width: 479px) {
-  .header .logo__plate--swap { --h: 48px; --mk: 36px; --lh: 42px; --wide: 128px; }
-}
 @media (prefers-reduced-motion: reduce) {
   .header .logo__plate--swap, .header .logo__plate--swap::before, .header .logo__plate--swap .brandmark--icon, .header .logo__plate--swap .brandmark--header { transition-duration: .01s !important; transition-delay: 0s !important; }
 }
+/* The header has a 1px bottom border, leaving 67px to centre in; the extra 1px
+   below the logo keeps the 50px plate on a whole pixel (8px from the top). */
+.header .logo:has(.logo__plate--swap) { margin-bottom: 1px; }
+/* Full logo in the drawer and footer: whole-pixel widths so it isn't softened
+   by a fractional size (the artwork is 2000 x 814). */
+.brandmark--drawer { width: 138px; height: 56px; }
+.brandmark--footer { width: 206px; height: 84px; }
+@media (max-width: 699px) { .ft__brand .brandmark--footer { width: 142px; height: 58px; } }
