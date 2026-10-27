@@ -238,72 +238,76 @@
 </div>
 
 <!-- ============================ WHY FINLAND ============================ -->
-<!-- Reason deck: four dark cards that open like an accordion. On desktop the
-     open card widens and the rest fold into slim spines; hover, click or the
-     arrow keys open one, and the deck steps on by itself until touched.
-     Phones stack them as a tap-to-open list. initReasonDeck(). -->
-<section class="section rs" id="why" data-rs>
-  <div class="container">
-    <div class="section-head section-head--split reveal">
-      <div>
+<!-- Reason prism: a four-sided 3D prism that turns with the scroll. Desktop
+     pins the section; scrolling turns the prism face by face (it rests on
+     each face, then snaps if left mid-turn), each face's number and drawing
+     scrub in with the turn, and the copy beside it re-sets word by word.
+     The giant word track slides and leans with scroll speed; the pointer
+     tilts the prism, and it can be dragged round. Phones: tap a reason or
+     swipe the prism. initReasonStory(). -->
+<section class="rx" id="why" data-rx>
+  <div class="rx__pin">
+    <div class="rx__track" aria-hidden="true"><span data-rx-word>Education &middot; Work &middot; Permit &middot; Career &middot; Education</span></div>
+    <div class="container rx__grid">
+      <div class="rx__copy">
         <span class="eyebrow"><span data-decrypt="view">Why Finland</span></span>
-        <h2 class="h2" style="margin-top:12px">Four reasons. <span class="text-blue">One clear choice.</span></h2>
+        <h2 class="h2 rx__title">Four reasons. <span class="text-blue">One clear choice.</span></h2>
+        <div class="rx__navs" role="tablist" aria-label="Reasons"><button class="rx__nav is-on" type="button" role="tab" id="rx-tab-study" aria-controls="rx-study" aria-selected="true" style="--c:#1fcf9f" data-rx-nav><svg class="ico ico-sm"><use href="#i-cap"/></svg><span>Education</span><i aria-hidden="true"></i></button><button class="rx__nav" type="button" role="tab" id="rx-tab-work" aria-controls="rx-work" aria-selected="false" tabindex="-1" style="--c:#f2a93b" data-rx-nav><svg class="ico ico-sm"><use href="#i-brief"/></svg><span>Work</span><i aria-hidden="true"></i></button><button class="rx__nav" type="button" role="tab" id="rx-tab-permit" aria-controls="rx-permit" aria-selected="false" tabindex="-1" style="--c:#5b9dff" data-rx-nav><svg class="ico ico-sm"><use href="#i-shield"/></svg><span>Permit</span><i aria-hidden="true"></i></button><button class="rx__nav" type="button" role="tab" id="rx-tab-stay" aria-controls="rx-stay" aria-selected="false" tabindex="-1" style="--c:#ff8a7a" data-rx-nav><svg class="ico ico-sm"><use href="#i-up"/></svg><span>Career</span><i aria-hidden="true"></i></button></div>
+        <div class="rx__steps">
+          <article class="rx__step is-on" id="rx-study" role="tabpanel" aria-labelledby="rx-tab-study" data-rx-step>
+            <p class="rx__count"><b>01</b> / 04 &middot; Education</p>
+            <h3 class="rx__h"><span class="rx__w" style="--wi:0">A</span> <span class="rx__w" style="--wi:1">world-class</span> <span class="rx__w" style="--wi:2">degree,</span> <span class="rx__w" style="--wi:3">taught</span> <span class="rx__w" style="--wi:4">in</span> <span class="rx__w" style="--wi:5">English.</span></h3>
+            <p class="rx__p">More than 600 bachelor&rsquo;s and master&rsquo;s programmes are taught in English, in small groups where teaching is hands-on and you work on real projects from the first term.</p>
+            <p class="rx__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>We shortlist the programmes that fit your profile and goals</p>
+          </article>
+          <article class="rx__step" id="rx-work" role="tabpanel" aria-labelledby="rx-tab-work" data-rx-step>
+            <p class="rx__count"><b>02</b> / 04 &middot; Work</p>
+            <h3 class="rx__h"><span class="rx__w" style="--wi:0">Earn</span> <span class="rx__w" style="--wi:1">and</span> <span class="rx__w" style="--wi:2">gain</span> <span class="rx__w" style="--wi:3">experience</span> <span class="rx__w" style="--wi:4">while</span> <span class="rx__w" style="--wi:5">you</span> <span class="rx__w" style="--wi:6">study.</span></h3>
+            <p class="rx__p">Your student permit lets you work in any field, an average of 30 hours a week across the year. Busier weeks are fine, so many students work full time over the summer.</p>
+            <p class="rx__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>We help with your tax card and your first job search</p>
+          </article>
+          <article class="rx__step" id="rx-permit" role="tabpanel" aria-labelledby="rx-tab-permit" data-rx-step>
+            <p class="rx__count"><b>03</b> / 04 &middot; Permit</p>
+            <h3 class="rx__h"><span class="rx__w" style="--wi:0">One</span> <span class="rx__w" style="--wi:1">permit.</span> <span class="rx__w" style="--wi:2">Your</span> <span class="rx__w" style="--wi:3">whole</span> <span class="rx__w" style="--wi:4">degree.</span></h3>
+            <p class="rx__p">Degree students get a continuous A permit for the full length of their studies, so there are no yearly renewals. You apply once, online, through Enter Finland.</p>
+            <p class="rx__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>We file your permit and match your funds evidence to Migri&rsquo;s checklist</p>
+          </article>
+          <article class="rx__step" id="rx-stay" role="tabpanel" aria-labelledby="rx-tab-stay" data-rx-step>
+            <p class="rx__count"><b>04</b> / 04 &middot; Career</p>
+            <h3 class="rx__h"><span class="rx__w" style="--wi:0">Stay</span> <span class="rx__w" style="--wi:1">on</span> <span class="rx__w" style="--wi:2">and</span> <span class="rx__w" style="--wi:3">build</span> <span class="rx__w" style="--wi:4">your</span> <span class="rx__w" style="--wi:5">career.</span></h3>
+            <p class="rx__p">After graduating you can apply for a permit to look for work or start a business for up to two years. You can apply within five years of graduating, even from outside Finland.</p>
+            <p class="rx__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>We plan your route from graduation to work and permanent residence</p>
+          </article>
+        </div>
       </div>
-      <p class="lead">A respected degree, the right to work while you study, one permit for your whole programme and time to build a career after graduating.</p>
-    </div>
-    <div class="rs__deck" data-rs-deck>
-      <article class="rs__card is-on" style="--c:#2fe3b4" data-rs-card data-spot>
-        <button class="rs__head" type="button" id="rs-tab-study" aria-controls="rs-study" aria-expanded="true" data-rs-head><span class="rs__no">01</span><span class="rs__ico"><svg class="ico"><use href="#i-cap"/></svg></span><span class="rs__name">Education</span><svg class="ico ico-sm rs__plus" aria-hidden="true"><use href="#i-down"/></svg></button>
-        <div class="rs__body" id="rs-study" role="region" aria-labelledby="rs-tab-study"><div class="rs__inner">
-          <div class="rs__text">
-            <div class="rs__stat"><b><span data-rs-num="12">12</span></b><span>institutions in the QS Europe 2026 rankings</span></div>
-            <h3 class="rs__h">A world-class degree, taught in English.</h3>
-            <p class="rs__p">More than 600 bachelor&rsquo;s and master&rsquo;s programmes are taught in English, in small groups where teaching is hands-on and you work on real projects from the first term.</p>
-            <p class="rs__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>We shortlist the programmes that fit your profile and goals</p>
+      <div class="rx__stage" data-rx-stage>
+        <div class="rx__scene">
+          <div class="rx__prism" data-rx-prism>
+          <div class="rx__face" style="--c:#1fcf9f" data-rx-face>
+            <div class="rx__top"><span class="rx__ico"><svg class="ico"><use href="#i-cap"/></svg></span><span class="rx__name">Education</span><span class="rx__no">01</span></div>
+            <div class="rx__stat"><b><span data-rx-num="12">12</span></b><span>institutions in the QS Europe 2026 rankings</span></div>
+            <div class="rx__art" aria-hidden="true"><svg class="rx__svg" viewBox="0 0 220 150"><rect class="rx__bar" x="14" y="16" width="11" height="120" rx="3" style="--i:0"/><rect class="rx__bar" x="30" y="24" width="11" height="112" rx="3" style="--i:1"/><rect class="rx__bar" x="46" y="32" width="11" height="104" rx="3" style="--i:2"/><rect class="rx__bar" x="62" y="40" width="11" height="96" rx="3" style="--i:3"/><rect class="rx__bar" x="78" y="46" width="11" height="90" rx="3" style="--i:4"/><rect class="rx__bar" x="94" y="54" width="11" height="82" rx="3" style="--i:5"/><rect class="rx__bar" x="110" y="62" width="11" height="74" rx="3" style="--i:6"/><rect class="rx__bar" x="126" y="68" width="11" height="68" rx="3" style="--i:7"/><rect class="rx__bar" x="142" y="76" width="11" height="60" rx="3" style="--i:8"/><rect class="rx__bar" x="158" y="84" width="11" height="52" rx="3" style="--i:9"/><rect class="rx__bar" x="174" y="90" width="11" height="46" rx="3" style="--i:10"/><rect class="rx__bar" x="190" y="96" width="11" height="40" rx="3" style="--i:11"/><path class="rx__base" d="M8 142h204"/></svg></div>
           </div>
-          <div class="rs__art" aria-hidden="true"><svg class="rs__svg" viewBox="0 0 220 200"><rect class="rs__bar" x="14" y="42" width="11" height="128" rx="3" style="--i:0"/><rect class="rs__bar" x="30" y="50" width="11" height="120" rx="3" style="--i:1"/><rect class="rs__bar" x="46" y="58" width="11" height="112" rx="3" style="--i:2"/><rect class="rs__bar" x="62" y="66" width="11" height="104" rx="3" style="--i:3"/><rect class="rs__bar" x="78" y="72" width="11" height="98" rx="3" style="--i:4"/><rect class="rs__bar" x="94" y="80" width="11" height="90" rx="3" style="--i:5"/><rect class="rs__bar" x="110" y="88" width="11" height="82" rx="3" style="--i:6"/><rect class="rs__bar" x="126" y="94" width="11" height="76" rx="3" style="--i:7"/><rect class="rs__bar" x="142" y="102" width="11" height="68" rx="3" style="--i:8"/><rect class="rs__bar" x="158" y="110" width="11" height="60" rx="3" style="--i:9"/><rect class="rs__bar" x="174" y="116" width="11" height="54" rx="3" style="--i:10"/><rect class="rs__bar" x="190" y="124" width="11" height="46" rx="3" style="--i:11"/><path class="rs__base" d="M8 176h204"/></svg></div>
-        </div></div>
-        <i class="rs__timer" aria-hidden="true"><b></b></i>
-      </article>
-      <article class="rs__card" style="--c:#f2a93b" data-rs-card data-spot>
-        <button class="rs__head" type="button" id="rs-tab-work" aria-controls="rs-work" aria-expanded="false" data-rs-head><span class="rs__no">02</span><span class="rs__ico"><svg class="ico"><use href="#i-brief"/></svg></span><span class="rs__name">Work</span><svg class="ico ico-sm rs__plus" aria-hidden="true"><use href="#i-down"/></svg></button>
-        <div class="rs__body" id="rs-work" role="region" aria-labelledby="rs-tab-work"><div class="rs__inner">
-          <div class="rs__text">
-            <div class="rs__stat"><b><span data-rs-num="30">30</span> h</b><span>a week on average you may work while you study</span></div>
-            <h3 class="rs__h">Earn and gain experience while you study.</h3>
-            <p class="rs__p">Your student permit lets you work in any field, an average of 30 hours a week across the year. Busier weeks are fine, so many students work full time over the summer. Internships in your degree don&rsquo;t count towards the limit.</p>
-            <p class="rs__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>We help with your tax card and your first job search</p>
+          <div class="rx__face" style="--c:#f2a93b" data-rx-face>
+            <div class="rx__top"><span class="rx__ico"><svg class="ico"><use href="#i-brief"/></svg></span><span class="rx__name">Work</span><span class="rx__no">02</span></div>
+            <div class="rx__stat"><b><span data-rx-num="30">30</span> h</b><span>a week on average you may work while you study</span></div>
+            <div class="rx__art" aria-hidden="true"><svg class="rx__svg" viewBox="0 0 220 150"><circle class="rx__ringbg" cx="110" cy="75" r="60"/><circle class="rx__ring" cx="110" cy="75" r="60" pathLength="100"/><path class="rx__tick" d="M110 23v8" transform="rotate(0 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(30 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(60 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(90 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(120 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(150 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(180 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(210 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(240 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(270 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(300 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(330 110 75)"/><path class="rx__hand" d="M110 75V36"/><circle class="rx__hub" cx="110" cy="75" r="5"/></svg></div>
           </div>
-          <div class="rs__art" aria-hidden="true"><svg class="rs__svg" viewBox="0 0 220 200"><circle class="rs__track" cx="110" cy="100" r="72"/><circle class="rs__ring" cx="110" cy="100" r="72" pathLength="100"/><path class="rs__tick" d="M110 36v10" transform="rotate(0 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(30 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(60 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(90 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(120 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(150 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(180 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(210 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(240 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(270 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(300 110 100)"/><path class="rs__tick" d="M110 36v10" transform="rotate(330 110 100)"/><path class="rs__hand" d="M110 100V52"/><circle class="rs__hub" cx="110" cy="100" r="6"/></svg></div>
-        </div></div>
-        <i class="rs__timer" aria-hidden="true"><b></b></i>
-      </article>
-      <article class="rs__card" style="--c:#7fb2ff" data-rs-card data-spot>
-        <button class="rs__head" type="button" id="rs-tab-permit" aria-controls="rs-permit" aria-expanded="false" data-rs-head><span class="rs__no">03</span><span class="rs__ico"><svg class="ico"><use href="#i-shield"/></svg></span><span class="rs__name">Permit</span><svg class="ico ico-sm rs__plus" aria-hidden="true"><use href="#i-down"/></svg></button>
-        <div class="rs__body" id="rs-permit" role="region" aria-labelledby="rs-tab-permit"><div class="rs__inner">
-          <div class="rs__text">
-            <div class="rs__stat"><b><span data-rs-num="1">1</span></b><span>residence permit for your entire degree</span></div>
-            <h3 class="rs__h">One permit. Your whole degree.</h3>
-            <p class="rs__p">Degree students get a continuous A permit for the full length of their studies, so there are no yearly renewals. You apply once, online, through Enter Finland.</p>
-            <p class="rs__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>We file your permit and match your funds evidence to Migri&rsquo;s checklist</p>
+          <div class="rx__face" style="--c:#5b9dff" data-rx-face>
+            <div class="rx__top"><span class="rx__ico"><svg class="ico"><use href="#i-shield"/></svg></span><span class="rx__name">Permit</span><span class="rx__no">03</span></div>
+            <div class="rx__stat"><b><span data-rx-num="1">1</span></b><span>residence permit for your entire degree</span></div>
+            <div class="rx__art" aria-hidden="true"><svg class="rx__svg" viewBox="0 0 220 150"><path class="rx__yr" d="M20 44v62"/><text class="rx__lbl" x="20" y="126">Year 1</text><path class="rx__yr" d="M80 44v62"/><text class="rx__lbl" x="80" y="126">Year 2</text><path class="rx__yr" d="M140 44v62"/><text class="rx__lbl" x="140" y="126">Year 3</text><path class="rx__yr" d="M200 44v62"/><text class="rx__lbl" x="200" y="126">Year 4</text><rect class="rx__lane" x="20" y="64" width="180" height="22" rx="11"/><rect class="rx__fill" x="20" y="64" width="180" height="22" rx="11"/><text class="rx__tag" x="110" y="30">One A permit</text></svg></div>
           </div>
-          <div class="rs__art" aria-hidden="true"><svg class="rs__svg" viewBox="0 0 220 200"><path class="rs__yr" d="M20 70v66"/><text class="rs__lbl" x="20" y="158">Year 1</text><path class="rs__yr" d="M80 70v66"/><text class="rs__lbl" x="80" y="158">Year 2</text><path class="rs__yr" d="M140 70v66"/><text class="rs__lbl" x="140" y="158">Year 3</text><path class="rs__yr" d="M200 70v66"/><text class="rs__lbl" x="200" y="158">Year 4</text><rect class="rs__lane" x="20" y="92" width="180" height="22" rx="11"/><rect class="rs__fill" x="20" y="92" width="180" height="22" rx="11"/><text class="rs__tag" x="110" y="56">One A permit</text></svg></div>
-        </div></div>
-        <i class="rs__timer" aria-hidden="true"><b></b></i>
-      </article>
-      <article class="rs__card" style="--c:#ff9b8a" data-rs-card data-spot>
-        <button class="rs__head" type="button" id="rs-tab-stay" aria-controls="rs-stay" aria-expanded="false" data-rs-head><span class="rs__no">04</span><span class="rs__ico"><svg class="ico"><use href="#i-up"/></svg></span><span class="rs__name">Career</span><svg class="ico ico-sm rs__plus" aria-hidden="true"><use href="#i-down"/></svg></button>
-        <div class="rs__body" id="rs-stay" role="region" aria-labelledby="rs-tab-stay"><div class="rs__inner">
-          <div class="rs__text">
-            <div class="rs__stat"><b><span data-rs-num="2">2</span> yrs</b><span>to look for work or start a business after graduating</span></div>
-            <h3 class="rs__h">Stay on and build your career.</h3>
-            <p class="rs__p">After graduating you can apply for a permit to look for work or start a business for up to two years. You can apply within five years of graduating, even from outside Finland.</p>
-            <p class="rs__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>We plan your route from graduation to work and permanent residence</p>
+          <div class="rx__face" style="--c:#ff8a7a" data-rx-face>
+            <div class="rx__top"><span class="rx__ico"><svg class="ico"><use href="#i-up"/></svg></span><span class="rx__name">Career</span><span class="rx__no">04</span></div>
+            <div class="rx__stat"><b><span data-rx-num="2">2</span> yrs</b><span>to look for work or start a business after graduating</span></div>
+            <div class="rx__art" aria-hidden="true"><svg class="rx__svg" viewBox="0 0 220 150"><path class="rx__route" pathLength="100" d="M26 120C70 120 60 70 110 70S150 26 194 26"/><circle class="rx__stop" cx="26" cy="120" r="8"/><circle class="rx__stop rx__stop--end" cx="194" cy="26" r="10"/><text class="rx__lbl" x="34" y="144">Graduate</text><text class="rx__lbl" x="194" y="56">Career</text><text class="rx__tag" x="118" y="100">2 years</text></svg></div>
           </div>
-          <div class="rs__art" aria-hidden="true"><svg class="rs__svg" viewBox="0 0 220 200"><path class="rs__route" pathLength="100" d="M26 160C70 160 60 96 110 96S150 40 194 40"/><circle class="rs__stop" cx="26" cy="160" r="9"/><circle class="rs__stop rs__stop--end" cx="194" cy="40" r="11"/><text class="rs__lbl" x="26" y="188">Graduate</text><text class="rs__lbl" x="194" y="74">Career</text><text class="rs__tag" x="110" y="128">2 years</text></svg></div>
-        </div></div>
-        <i class="rs__timer" aria-hidden="true"><b></b></i>
-      </article>
+          </div>
+          <i class="rx__floor" aria-hidden="true"></i>
+        </div>
+        <span class="rx__hint"><svg class="ico ico-sm"><use href="#i-spark"/></svg><span class="rx__hint-fine">Scroll to turn &middot; drag to spin</span><span class="rx__hint-touch">Swipe to turn</span></span>
+      </div>
     </div>
   </div>
 </section>

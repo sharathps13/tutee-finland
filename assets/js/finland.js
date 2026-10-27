@@ -415,84 +415,159 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * Why Finland reason deck: one card open at a time. Desktop opens a
-   * card on hover (after a short pause), click or the arrow keys, and
-   * steps through them by itself while on screen until the visitor takes
-   * over. Phones open a card on tap. The open card counts its number up.
+   * Why Finland reason prism. Desktop pins the section and maps the
+   * scroll onto the prism's angle: it rests on each face for a stretch,
+   * then turns to the next, and if the scroll stops mid-turn it glides to
+   * the nearest face. The angle is eased every frame, so wheel steps turn
+   * smoothly. Each face's --p (0 side-on, 1 facing) scrubs its number and
+   * drawing; the copy and tabs follow the face in front. The pointer tilts
+   * the prism and a drag spins it a face either way. Phones: tabs or a
+   * swipe turn it.
    * ------------------------------------------------------------------ */
-  function initReasonDeck() {
-    var sec = $('[data-rs]');
+  function initReasonStory() {
+    var sec = $('[data-rx]');
     if (!sec) return;
-    var cards = $$('[data-rs-card]', sec), heads = cards.map(function (c) { return $('[data-rs-head]', c); });
-    var N = cards.length, cur = 0, timer = 0, hoverT = 0, auto = !reduceMotion, visible = false, DUR = 6500;
-    var wideMq = window.matchMedia ? window.matchMedia('(min-width: 900px)') : null;
-    function wide() { return !!wideMq && wideMq.matches; }
-    function count(card) {
-      var el = $('[data-rs-num]', card), to = Number(el.getAttribute('data-rs-num'));
-      if (reduceMotion || to < 2) { el.textContent = String(to); return; }
-      var start = null;
-      el.textContent = '0';
-      requestAnimationFrame(function step(t) {
-        if (start === null) start = t;
-        var p = Math.min(1, (t - start) / 900);
-        el.textContent = String(Math.round(to * (1 - Math.pow(1 - p, 3))));
-        if (p < 1) requestAnimationFrame(step);
+    var prism = $('[data-rx-prism]', sec), stage = $('[data-rx-stage]', sec), word = $('[data-rx-word]', sec);
+    var faces = $$('[data-rx-face]', sec), steps = $$('[data-rx-step]', sec), navs = $$('[data-rx-nav]', sec);
+    var N = faces.length, MAX = (N - 1) * 90;
+    var nums = faces.map(function (f) { return $('[data-rx-num]', f); });
+    var tos = nums.map(function (n) { return Number(n.getAttribute('data-rx-num')); });
+    var cols = navs.map(function (b) { return b.style.getPropertyValue('--c').trim(); });
+    var pinMq = window.matchMedia ? window.matchMedia('(min-width: 900px) and (min-height: 620px)') : null;
+    function pinned() { return !reduceMotion && !!pinMq && pinMq.matches; }
+
+    var SPAN = 0, wordRun = 0, angle = 0, target = 0, last = 0, skew = 0;
+    var tilt = { x: 0, y: 0, tx: 0, ty: 0 }, drag = null, dragOff = 0, active = -1, running = false, idle = 0;
+    var smooth = function (t) { return t * t * (3 - 2 * t); };
+
+    function size() {
+      SPAN = Math.max(420, Math.round(window.innerHeight * 0.8));
+      sec.style.setProperty('--rx-run', pinned() ? (N - 1) * SPAN + 'px' : '0px');
+      sec.classList.toggle('is-live', pinned());
+      wordRun = word ? Math.max(0, word.scrollWidth - window.innerWidth * 0.9) : 0;
+    }
+    // Scroll -> angle, resting on each face for the first and last 18% of its stretch.
+    function fromScroll() {
+      var f = clamp(-sec.getBoundingClientRect().top / SPAN, 0, N - 1);
+      var k = Math.min(N - 2, Math.floor(f));
+      return (k + smooth(clamp((f - k - 0.18) / 0.64, 0, 1))) * 90;
+    }
+    function setActive(i) {
+      if (i === active) return;
+      active = i;
+      steps.forEach(function (s, k) { s.classList.toggle('is-on', k === i); });
+      navs.forEach(function (b, k) {
+        var on = k === i;
+        b.classList.toggle('is-on', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); b.tabIndex = on ? 0 : -1;
       });
+      if (cols[i]) sec.style.setProperty('--rc', cols[i]);
     }
-    function schedule() {
-      clearTimeout(timer);
-      cards.forEach(function (c) { c.classList.remove('is-timing'); });
-      // Phones never step on by themselves: a card opening would move the text being read.
-      if (!auto || !visible || !wide() || document.hidden) return;
-      var c = cards[cur];
-      void c.offsetWidth;
-      c.classList.add('is-timing');
-      timer = setTimeout(function () { open((cur + 1) % N); }, DUR);
+    function render() {
+      var a = clamp(angle + dragOff, -40, MAX + 40);
+      prism.style.transform = 'translateZ(calc(var(--fw) / -2)) rotateX(' + tilt.x.toFixed(2) + 'deg) rotateY(' + (tilt.y - a).toFixed(2) + 'deg)';
+      faces.forEach(function (f, i) {
+        var rel = i * 90 - a, p = smooth(clamp(1 - Math.abs(rel) / 90, 0, 1));
+        f.style.setProperty('--p', p.toFixed(3));
+        f.style.setProperty('--shade', (1 - Math.max(0, Math.cos(rel * Math.PI / 180))).toFixed(3));
+        var v = String(tos[i] < 2 || p > 0.985 ? tos[i] : Math.round(tos[i] * p));
+        if (nums[i].textContent !== v) nums[i].textContent = v;
+      });
+      navs.forEach(function (b, i) { b.style.setProperty('--f', clamp(a / 90 - i + 1, 0, 1).toFixed(3)); });
+      setActive(clamp(Math.round(a / 90), 0, N - 1));
+      if (word) word.style.transform = 'translate3d(' + (-clamp(a / MAX, 0, 1) * wordRun).toFixed(1) + 'px,0,0) skewX(' + skew.toFixed(2) + 'deg)';
     }
-    function open(i) {
-      if (i !== cur) {
-        cards.forEach(function (c, j) {
-          c.classList.toggle('is-on', j === i);
-          heads[j].setAttribute('aria-expanded', j === i ? 'true' : 'false');
-        });
-        cur = i;
-        count(cards[i]);
-      }
-      schedule();
+    function frame() {
+      if (!running) return;
+      requestAnimationFrame(frame);
+      if (pinned() && !drag) target = fromScroll();
+      angle += (target - angle) * 0.12;
+      if (Math.abs(target - angle) < 0.02) angle = target;
+      tilt.x += (tilt.tx - tilt.x) * 0.08; tilt.y += (tilt.ty - tilt.y) * 0.08;
+      // The word track leans into the turn, like scroll velocity.
+      skew += (clamp((last - angle) * 0.9, -12, 12) - skew) * 0.15;
+      last = angle;
+      render();
     }
-    function takeOver(i) { auto = false; open(i); }
-    heads.forEach(function (h, i) {
-      h.addEventListener('click', function () { takeOver(i); });
-      h.addEventListener('keydown', function (e) {
-        var k = e.key, n = -1;
-        if (k === 'ArrowRight' || k === 'ArrowDown') n = (i + 1) % N;
-        else if (k === 'ArrowLeft' || k === 'ArrowUp') n = (i - 1 + N) % N;
-        else if (k === 'Home') n = 0;
-        else if (k === 'End') n = N - 1;
-        if (n < 0) return;
+    function goTo(i) {
+      i = clamp(i, 0, N - 1);
+      if (pinned()) window.scrollTo({ top: sec.offsetTop + i * SPAN, behavior: 'smooth' });
+      else target = i * 90;
+    }
+
+    navs.forEach(function (b, i) {
+      b.addEventListener('click', function () { goTo(i); });
+      b.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (!d) return;
         e.preventDefault();
-        heads[n].focus();
-        takeOver(n);
+        var k = (i + d + N) % N;
+        navs[k].focus(); goTo(k);
       });
     });
-    if (finePointer) cards.forEach(function (c, i) {
-      c.addEventListener('pointerenter', function () {
-        if (!wide()) return;
-        clearTimeout(hoverT);
-        hoverT = setTimeout(function () { takeOver(i); }, 140);
-      });
-      c.addEventListener('pointerleave', function () { clearTimeout(hoverT); });
+
+    // Left mid-turn, the prism glides on to the nearest face.
+    window.addEventListener('scroll', function () {
+      if (!pinned()) return;
+      clearTimeout(idle);
+      idle = setTimeout(function () {
+        var r = sec.getBoundingClientRect();
+        if (r.top > 0 || r.bottom < window.innerHeight || drag) return;
+        var f = -r.top / SPAN, fr = f - Math.floor(f);
+        if (fr > 0.16 && fr < 0.84) window.scrollTo({ top: sec.offsetTop + Math.round(f) * SPAN, behavior: 'smooth' });
+      }, 180);
+    }, { passive: true });
+
+    // Drag (or swipe) the prism: it follows the pointer, then settles a face along.
+    stage.addEventListener('pointerdown', function (e) {
+      if (e.button !== 0 || reduceMotion) return;
+      drag = { x: e.clientX, y: e.clientY, id: e.pointerId, on: false };
     });
-    if ('IntersectionObserver' in window) {
-      var counted = false;
-      new IntersectionObserver(function (es) {
-        visible = es[0].isIntersecting;
-        if (visible && !counted) { counted = true; count(cards[cur]); }
-        schedule();
-      }, { threshold: 0.35 }).observe($('[data-rs-deck]', sec));
+    stage.addEventListener('pointermove', function (e) {
+      if (finePointer && !drag) {
+        var r = stage.getBoundingClientRect();
+        tilt.tx = -((e.clientY - r.top) / r.height - 0.5) * 10;
+        tilt.ty = ((e.clientX - r.left) / r.width - 0.5) * 14;
+      }
+      if (!drag || e.pointerId !== drag.id) return;
+      var dx = e.clientX - drag.x;
+      if (!drag.on) {
+        if (Math.abs(dx) < 6 || Math.abs(dx) < Math.abs(e.clientY - drag.y)) return;
+        drag.on = true; stage.classList.add('is-drag');
+        try { stage.setPointerCapture(e.pointerId); } catch (err) { /* not capturable */ }
+      }
+      dragOff = -dx * 0.35;
+    });
+    function endDrag(e) {
+      if (!drag || (e && e.pointerId !== drag.id)) return;
+      var was = drag.on, off = dragOff;
+      drag = null; stage.classList.remove('is-drag');
+      if (!was) return;
+      angle += off; dragOff = 0;
+      var k = clamp(Math.round(target / 90) + (off > 14 ? 1 : off < -14 ? -1 : 0), 0, N - 1);
+      if (!pinned()) target = k * 90; else goTo(k);
     }
-    document.addEventListener('visibilitychange', schedule);
-    if (wideMq && wideMq.addEventListener) wideMq.addEventListener('change', schedule);
+    stage.addEventListener('pointerup', endDrag);
+    stage.addEventListener('pointercancel', endDrag);
+    stage.addEventListener('pointerleave', function () { tilt.tx = 0; tilt.ty = 0; });
+    stage.addEventListener('dragstart', function (e) { e.preventDefault(); });
+
+    size();
+    window.addEventListener('resize', size);
+    if (pinMq) { if (pinMq.addEventListener) pinMq.addEventListener('change', size); else if (pinMq.addListener) pinMq.addListener(size); }
+    if (pinned()) angle = target = fromScroll();
+    render();
+    if (reduceMotion) {
+      // No easing or pinning: tabs swap faces straight away.
+      navs.forEach(function (b, i) { b.addEventListener('click', function () { angle = target = i * 90; render(); }); });
+      return;
+    }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) {
+        var was = running;
+        running = es[0].isIntersecting;
+        if (running && !was) requestAnimationFrame(frame);
+      }, { rootMargin: '20% 0px' }).observe(sec);
+    } else { running = true; requestAnimationFrame(frame); }
   }
 
   /* ------------------------------------------------------------------ *
@@ -2907,7 +2982,7 @@
   initHeroPointer();
   initSnow();
   initVelocityRails();
-  initReasonDeck();
+  initReasonStory();
   initSeasonStage();
   initServices();
   initServiceDeck();
