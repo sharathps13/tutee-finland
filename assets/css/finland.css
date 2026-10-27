@@ -2528,13 +2528,6 @@ main { overflow-x: clip; }
   -webkit-backdrop-filter: blur(10px) saturate(1.3); backdrop-filter: blur(10px) saturate(1.3); box-shadow: 0 8px 20px -14px rgba(0,0,0,.8); }
 @media (max-width: 699px) { .hp__clock { height: 30px; padding: 0 10px; font-size: 12px; } }
 
-/* ============================================== TUTEE AI BUTTON · LABELLED
-   The bottom-left launcher reads "Tutee AI" beside the logo. */
-.fab.fab--ai { width: auto; padding: 0 16px 0 10px; gap: 8px; grid-auto-flow: column; border-radius: 999px; }
-.fab--ai::after { border-radius: inherit; }
-.fab__label { font-size: 14px; font-weight: 800; color: var(--ink); white-space: nowrap; }
-@media (max-width: 767px) { .fab.fab--ai { height: 48px; padding: 0 14px 0 8px; } .fab--ai img { width: 26px; height: 26px; } .fab__label { font-size: 13px; } }
-
 /* ============================================== PERFORMANCE · PHONES
    Live blur behind fixed or moving layers is re-rendered on every scroll
    frame, which phone GPUs feel most. The bottom bar is already near-opaque
