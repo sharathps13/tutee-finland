@@ -2482,3 +2482,17 @@ main { overflow-x: clip; }
   .logo__plate--swap, .logo__plate--swap .brandmark--icon, .logo__plate--swap .brandmark--header { transition: opacity .2s; transform: none !important; }
 }
 
+/* Hero state of the header logo: the C-and-bird mark (cut from the full
+   logo, transparent) on a light glass orb with an aurora rim, so it reads
+   clearly and picks up the night-sky colours instead of a flat white disc. */
+.header:not(.is-scrolled) .logo__plate--swap { width: 50px; height: 50px;
+  background: radial-gradient(circle at 34% 28%, #ffffff 0%, #f3f8fd 45%, #dde9f5 100%);
+  border: 1.5px solid rgba(47,227,180,.8);
+  box-shadow: 0 0 0 4px rgba(47,227,180,.12), 0 0 22px -4px rgba(47,227,180,.6), 0 10px 22px -12px rgba(0,0,0,.7), inset 0 1px 1px rgba(255,255,255,.9); }
+.logo__plate--swap .brandmark--icon { left: 50%; top: 50%; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 0; object-fit: contain; }
+.header.is-scrolled .logo__plate--swap .brandmark--icon { transform: scale(.6) rotate(-20deg); }
+@media (max-width: 479px) {
+  .header:not(.is-scrolled) .logo__plate--swap { width: 48px; height: 48px; }
+  .logo__plate--swap .brandmark--icon { width: 36px; height: 36px; margin: -18px 0 0 -18px; }
+}
+
