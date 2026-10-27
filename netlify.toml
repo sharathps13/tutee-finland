@@ -16,14 +16,10 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# The pages post to /api/enquiry (same origin). The function also declares this
-# path itself via `export const config`, so this redirect is belt-and-braces:
-# it keeps the endpoint working on older Netlify function runtimes too.
-[[redirects]]
-  from = "/api/enquiry"
-  to = "/.netlify/functions/enquiry"
-  status = 200
-  force = true
+# The pages post to /api/enquiry (same origin). The function claims that path
+# itself via `export const config`. No redirect here: a function with its own
+# path is no longer served at /.netlify/functions/enquiry, so a forced redirect
+# to that address turns every enquiry into a 404.
 
 # Deep links such as /universities.html are real files, so no SPA catch-all is
 # wanted here — a bad URL should 404 rather than silently render the home page.
