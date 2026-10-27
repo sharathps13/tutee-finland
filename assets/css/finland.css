@@ -2355,3 +2355,8 @@ main { overflow-x: clip; }
   .fg__foot .btn { flex: 1 1 100%; justify-content: center; min-height: 44px; }
 }
 @media (prefers-reduced-motion: reduce) { .fg__card, .fg__card:hover { transition: none; transform: none; } .fg__card .fg__desc, .fg__card .fg__how { animation: none !important; } }
+
+/* Lead form: state and preferred call time share one row. */
+.lf__duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.lf__duo .select { width: 100%; min-width: 0; }
+.lf__duo .select:invalid { color: var(--muted); }

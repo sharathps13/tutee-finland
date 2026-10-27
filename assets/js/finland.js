@@ -1670,11 +1670,13 @@
           status('error', 'Please enter a valid phone number (7-15 digits).'); return;
         }
         if (!EMAIL_RE.test(data.email || '')) { status('error', 'Please enter a valid email address.'); return; }
+        if (form.elements.state && !data.state) { status('error', 'Please select your state.'); return; }
 
         data.phone = (data.country_code || '') + ' ' + (data.phone_number || '');
         delete data.country_code;
         delete data.phone_number;
         data.page = enquiryPage();
+        if (window.TCShortlist) data.shortlist = window.TCShortlist.all().map(function (x) { return x.name; }).join(', ');
         Object.keys(UTM).forEach(function (k) { data[k] = UTM[k]; });
 
         if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
@@ -2072,7 +2074,7 @@
         body: JSON.stringify({
           subject: 'New Lead from Chatbot!', from_name: 'Tutee AI Counsellor',
           name: lead.name, phone: lead.phone, email: lead.email,
-          destination: 'Chatbot General Inquiry', page: enquiryPage()
+          destination: 'Chatbot General Inquiry', form_location: 'Tutee AI chat', page: enquiryPage()
         })
       }).then(function (r) { return r.json().catch(function () { return { success: false }; }); });
     }
