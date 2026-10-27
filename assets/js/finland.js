@@ -1574,19 +1574,21 @@
    * centres (horizontal zigzag on desktop, a gentle S down the left on
    * phones). It draws in on view, a pulse flows along it, and a marker
    * tours the milestones while in view; hover or focus a card to send
-   * the marker there (the tour pauses meanwhile).
+   * the marker there (the tour pauses meanwhile). The marker chases its
+   * target every frame, so it sets off the instant a card is hovered and
+   * changes course mid-way if another one is.
    * ------------------------------------------------------------------ */
   function initJourneyRoute() {
     var root = $('[data-rm]');
     if (!root) return;
     var svg = $('[data-rm-svg]', root), steps = $$('[data-rm-step]', root), nodes = $$('[data-rm-node]', root);
     var NS = 'http://www.w3.org/2000/svg', line, flow, dot, halo, stops = [], L = 0;
-    var active = -1, pos = 0, raf = 0, timer = 0, inView = false, hover = false, drawn = false;
+    var active = -1, pos = 0, aim = 0, raf = 0, timer = 0, inView = false, hover = false, drawn = false;
     function centre(n) {
       var r = n.getBoundingClientRect(), b = root.getBoundingClientRect();
       return [r.left + r.width / 2 - b.left, r.top + r.height / 2 - b.top];
     }
-    function build() {
+    function build(at) {
       var pts = nodes.map(centre), d = 'M' + pts[0][0] + ' ' + pts[0][1], segs = [];
       for (var i = 1; i < pts.length; i++) {
         var a = pts[i - 1], b = pts[i], dx = b[0] - a[0], dy = b[1] - a[1], seg;
@@ -1608,7 +1610,7 @@
       svg.removeChild(tmp);
       line.style.strokeDasharray = L;
       line.style.strokeDashoffset = drawn || reduceMotion ? 0 : L;
-      place(stops[Math.max(0, active)]);
+      place(stops[at == null ? Math.max(0, active) : at]);
     }
     function place(len) {
       pos = len;
@@ -1619,20 +1621,27 @@
     var wide = window.matchMedia ? window.matchMedia('(min-width: 1000px)') : { matches: true };
     function go(i) {
       if (i === active) return;
-      active = i;
       steps.forEach(function (s, k) { s.classList.toggle('is-on', k === i); s.classList.toggle('is-past', k < i); });
       if (count) count.textContent = pad(i + 1) + ' / ' + pad(steps.length);
-      // On phones the opened card changes the layout, so redraw the route around it.
-      if (!wide.matches) { build(); return; }
-      var from = pos, to = stops[i];
-      cancelAnimationFrame(raf);
-      if (reduceMotion) { place(to); return; }
-      var t0 = performance.now(), dur = 500 + Math.abs(to - from) * 0.6;
-      (function anim(now) {
-        var k = Math.min(1, (now - t0) / dur), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
-        place(from + (to - from) * e);
-        if (k < 1) raf = requestAnimationFrame(anim);
-      })(t0);
+      // On phones the opened card changes the layout, so redraw the route
+      // around it, starting the marker from the milestone it was on.
+      var prev = active;
+      if (!wide.matches) build(prev < 0 ? i : prev);
+      active = i;
+      moveTo(stops[i]);
+    }
+    // The marker eases towards its target a fraction of the way each frame:
+    // quick to start, smooth to land, and retargetable at any moment.
+    function chase() {
+      var d = aim - pos;
+      if (Math.abs(d) < 0.5) { place(aim); raf = 0; return; }
+      place(pos + d * 0.2);
+      raf = requestAnimationFrame(chase);
+    }
+    function moveTo(len) {
+      aim = len;
+      if (reduceMotion) { place(len); return; }
+      if (!raf) raf = requestAnimationFrame(chase);
     }
     function tour() {
       clearTimeout(timer);
@@ -1687,8 +1696,8 @@
       }, { threshold: 0.3 }).observe(root);
     } else { drawn = true; line.style.strokeDashoffset = 0; }
     var rt = 0;
-    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(build, 150); });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(build);
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { build(); aim = pos; }, 150); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { build(); aim = pos; });
   }
 
 
