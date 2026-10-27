@@ -240,7 +240,7 @@ export function buildEmail(f, country) {
   rows.push(['Lead Source', leadSource(f, country)]);
   if (f.call_time) rows.push(['Preferred Call Time', f.call_time]);
   if (country) rows.push(['Landing Page', country]);
-  if (f.page) rows.push(['Submitted From', f.page]);
+  if (f.page) rows.push(['Submitted From', country ? `${country} Landing Page` : f.page]);
   rows.push(...f.extras);
   rows.push(['Source', f.from_name]);
 
@@ -370,7 +370,7 @@ async function sendToAppsScript(f, country) {
     lead_source: leadSource(f, country),
     call_time: f.call_time,
     destination: f.destination,
-    page: f.page,
+    page: country ? `${country} Landing Page` : f.page,
   }, SEND_TIMEOUT_MS);
 
   let parsed = null;
