@@ -400,8 +400,6 @@ ul { margin: 0; padding: 0; list-style: none; }
 .orb__phase[data-phase="arrive"] { color: #0b8f6c; border-color: rgba(11,143,108,.22); }
 .orb__desc { display: grid; gap: 10px; font-size: 15px; color: var(--ink-2); }
 .orb__desc p { line-height: 1.65; }
-.orb__desc > p:first-child { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.orb__desc.is-full > p:first-child { display: block; }
 .orb__desc .svc__extra p { color: var(--muted); }
 .orb__points { display: grid; gap: 8px; }
 @media (min-width: 420px) { .orb__points { grid-template-columns: 1fr 1fr; } }
@@ -805,7 +803,12 @@ main { overflow-x: clip; }
 
 @media (max-width: 859px) {
   .hp__vignette { background: radial-gradient(80% 30% at 50% 36%, rgba(5,15,36,.82), rgba(5,15,36,.5) 50%, rgba(5,15,36,0) 80%), linear-gradient(180deg, rgba(5,15,36,.6) 0%, rgba(5,15,36,.25) 24%, rgba(5,15,36,.45) 50%, rgba(5,15,36,.97) 76%); }
-  .hp__copy { align-items: end; max-width: none; padding-top: 46vh; padding-top: 46svh; }
+  /* The copy sits at the foot of the screen under the map; the rail clears
+     the floating buttons in the bottom corners. */
+  .hp__copy { align-items: end; max-width: none; }
+  .hp__pin { padding-bottom: 84px; }
+  .hp__tag { letter-spacing: .08em; font-size: 11px; }
+  .hp__tag, .hp__clock { white-space: nowrap; }
   .hp__h1 { font-size: clamp(2.1rem, 1.4rem + 4vw, 3rem); }
   .hp__h2 { font-size: clamp(1.9rem, 1.3rem + 3.4vw, 2.6rem); }
   .hp__p { font-size: .98rem; }
@@ -813,8 +816,10 @@ main { overflow-x: clip; }
   .hp__cta .btn-glass { display: none; }
   .hp__rail li { min-width: 0; flex: 1; }
   .hp__rail button { font-size: 10px; letter-spacing: .04em; }
-  .hp__rail { flex: 1; flex-wrap: nowrap; padding-right: 64px; }
+  .hp__rail { flex: 1; flex-wrap: nowrap; }
 }
+/* Tablets show the WhatsApp and call buttons bottom right; the rail stops short of them. */
+@media (min-width: 768px) and (max-width: 859px) { .hp__rail { padding-right: 72px; } }
 @media (max-height: 560px) and (orientation: landscape) {
   .hp__foot { display: none; }
   .hp__h1 { font-size: 2.2rem; }
@@ -878,6 +883,10 @@ main { overflow-x: clip; }
 .ws__fig.is-on { clip-path: circle(150% at var(--ox, 50%) var(--oy, 60%)); z-index: 2; transition: clip-path .6s cubic-bezier(.65, 0, .35, 1); }
 .ws__fig img, .ws__fig video { position: absolute; inset: -14px; width: calc(100% + 28px); height: calc(100% + 28px); max-width: none; object-fit: cover;
   transform: translate(var(--px, 0px), var(--py, 0px)) scale(1.04); transition: transform .6s var(--ease); }
+/* Summer is a moving photo: a slow push in and drift across Koli's lakes
+   (individual scale/translate, so it stacks with the pointer parallax). */
+.ws__fig[data-ws-kind="3"].is-on img { animation: wsDrift 26s ease-in-out infinite alternate; }
+@keyframes wsDrift { from { scale: 1; translate: 0 0; } to { scale: 1.14; translate: -3% -2%; } }
 .ws__fig::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(4,16,42,.25) 0%, rgba(4,16,42,0) 30%, rgba(4,16,42,0) 55%, rgba(4,16,42,.8) 100%); }
 .ws__fig figcaption { position: absolute; left: clamp(18px, 3vw, 30px); right: 18px; bottom: clamp(18px, 3vw, 28px); z-index: 1; display: grid; gap: 8px; }
 .ws__word { font-size: clamp(2.6rem, 1.4rem + 4vw, 5.4rem); font-weight: 700; letter-spacing: -.045em; line-height: .9; color: #fff; text-shadow: 0 4px 30px rgba(0,0,0,.35);
@@ -901,6 +910,7 @@ main { overflow-x: clip; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ws__fig, .ws__fig.is-on, .ws__fig img, .ws__word, .ws__tilt, .js .ws__panel, .ws__track b { transition: none; }
+  .ws__fig[data-ws-kind="3"].is-on img { animation: none; }
 }
 
 /* ========================================== UNIVERSITIES (POSTCARDS)
@@ -924,17 +934,17 @@ main { overflow-x: clip; }
   color: transparent; background-size: cover; background-position: center; -webkit-background-clip: text; background-clip: text; -webkit-text-stroke: 1px rgba(255,255,255,.55);
   filter: drop-shadow(0 8px 18px rgba(0,0,0,.45)); white-space: nowrap; }
 .pc__uni { margin-top: 6px; font-size: clamp(15px, 3.8cqi, 24px); font-weight: 700; color: #fff; letter-spacing: -.01em; max-width: 72%; }
-.pc__rankstamp { position: absolute; top: 7%; right: 6%; width: max(78px, 17cqi); aspect-ratio: 4 / 5; display: grid; place-items: center; align-content: center; gap: 1cqi; padding: 9px; text-align: center;
+.pc__rankstamp { position: absolute; top: 4.5%; right: 6%; width: max(78px, 17cqi); aspect-ratio: 4 / 5; display: grid; place-items: center; align-content: center; gap: 1cqi; padding: 9px; text-align: center;
   background: #fff; color: var(--fi-blue); transform: rotate(4deg);
   -webkit-mask: linear-gradient(#000 0 0) content-box, radial-gradient(circle at 5px 5px, transparent 2.6px, #000 3px) -5px -5px / 10px 10px;
   mask: linear-gradient(#000 0 0) content-box, radial-gradient(circle at 5px 5px, transparent 2.6px, #000 3px) -5px -5px / 10px 10px; }
 .pc__rankstamp b { font-size: 9cqi; line-height: .9; letter-spacing: -.05em; }
 .pc__rankstamp small { font-size: max(8px, 1.6cqi); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--brand); line-height: 1.15; }
-.pc__postmark { position: absolute; top: 30%; right: max(100px, 24cqi); width: max(64px, 15cqi); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; align-content: center; gap: 2px; text-align: center;
+.pc__postmark { position: absolute; top: 6%; right: calc(6% + max(78px, 17cqi) + 8px); width: max(56px, 13cqi); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; align-content: center; gap: 2px; text-align: center;
   border: 2px solid rgba(255,255,255,.55); box-shadow: 0 0 0 4px var(--night), 0 0 0 5.5px rgba(255,255,255,.35); transform: rotate(-14deg); color: rgba(255,255,255,.75);
   font-size: max(8px, 1.8cqi); font-weight: 800; letter-spacing: .12em; pointer-events: none; mix-blend-mode: screen; }
-.pc__postmark::after { content: ""; position: absolute; left: 92%; top: 30%; width: 26cqi; height: 40%;
-  background: repeating-linear-gradient(180deg, rgba(255,255,255,.4) 0 2px, transparent 2px 7px); -webkit-mask: linear-gradient(90deg, #000, transparent); mask: linear-gradient(90deg, #000, transparent); }
+.pc__postmark::after { content: ""; position: absolute; right: 92%; top: 30%; width: 18cqi; height: 40%;
+  background: repeating-linear-gradient(180deg, rgba(255,255,255,.4) 0 2px, transparent 2px 7px); -webkit-mask: linear-gradient(270deg, #000, transparent); mask: linear-gradient(270deg, #000, transparent); }
 .pc__postmark i { font-style: normal; font-size: .85em; opacity: .8; }
 .pc__flip { position: absolute; right: 6%; bottom: 7%; display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 700;
   color: #fff; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.3); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); transition: background .2s; }
@@ -1540,7 +1550,6 @@ main { overflow-x: clip; }
   .orb__tag { display: none; }
   .orb__ghost { font-size: 5rem; top: -6px; }
   .orb__desc { font-size: 14.5px; }
-  .orb__desc > p:first-child { -webkit-line-clamp: 2; }
   .orb__points li { width: 74%; padding: 11px 12px 11px 14px; font-size: 14px; }
   .orb__foot { flex-wrap: nowrap; padding: 12px 18px; gap: 10px; }
   .orb__foot .btn { flex: 1; justify-content: center; }
@@ -1695,7 +1704,7 @@ main { overflow-x: clip; }
   .orb__stage { height: calc(var(--d) * .42 + 18px); padding-bottom: 14px; }
   .orb__hint { display: none; }
   .orb__content { padding: 14px 16px 4px; gap: 10px; }
-  .orb__desc > p:first-child { -webkit-line-clamp: 2; font-size: 14px; line-height: 1.55; }
+  .orb__desc > p:first-child { font-size: 14px; line-height: 1.55; }
   .orb__points li { padding: 9px 11px 9px 13px; font-size: 13.5px; }
   .orb__foot { padding: 10px 16px; }
 
@@ -1782,7 +1791,7 @@ main { overflow-x: clip; }
 @media (max-width: 699px) {
   .pc { gap: 8px; }
   .pc__card { height: 284px; }
-  .pc__albumhead { font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: .06em; }
+  .pc__albumhead { font-size: 10px; line-height: 1.3; letter-spacing: .06em; }
   .pc__stamps > li { width: 54px; }
   .pc__stamps { padding-block: 6px 8px !important; }
 }
@@ -1856,7 +1865,8 @@ main { overflow-x: clip; }
   .lf__step { gap: 8px; }
   .lf__q { font-size: 1.12rem; margin-bottom: 0; }
   .lf__choice { padding: 8px 10px; }
-  .lf__choice b, .lf__choice small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* Labels wrap inside the card rather than running past its edge or the tick. */
+  .lf__choice b, .lf__choice small { min-width: 0; overflow-wrap: break-word; padding-right: 14px; }
   .lf__choice b { font-size: 13px; }
   .lf__choice small { font-size: 11px; }
   .lf__sub { font-size: 12px; }
@@ -1923,7 +1933,7 @@ main { overflow-x: clip; }
   .sdk__body { display: grid; gap: 6px; padding: 14px 16px 16px; }
   .sdk__body h3 { font-size: 1.12rem; line-height: 1.2; padding-right: 44px; }
   .sdk__tag { font-size: 12px; font-weight: 700; color: var(--brand); }
-  .sdk__desc { font-size: 13px; line-height: 1.5; color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .sdk__desc { font-size: 13px; line-height: 1.5; color: var(--ink-2); }
   .sdk__points { display: grid; gap: 4px; margin: 2px 0 4px; }
   .sdk__points li { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; font-weight: 600; line-height: 1.35; color: var(--ink); }
   .sdk__points .ico { flex: none; width: 15px; height: 15px; margin-top: 1px; color: #0b8f6c; }
@@ -2187,6 +2197,11 @@ main { overflow-x: clip; }
 /* Bottom bar: Tutee AI (with its name) · Free evaluation · WhatsApp. */
 .mbar .btn-ai { width: auto; padding: 0 12px 0 8px; gap: 6px; font-size: 13.5px; font-weight: 700; color: var(--ink); }
 .mbar .btn-ai img { width: 24px; height: 24px; }
+/* Narrow phones: the bar's buttons may shrink, and the Tutee AI button keeps
+   just its icon, so the WhatsApp button never runs off the screen. */
+.mbar .btn { min-width: 0; }
+.mbar .btn-primary { white-space: nowrap; padding-inline: 12px; }
+@media (max-width: 379px) { .mbar .btn-ai { width: 46px; padding: 0; } .mbar .btn-ai span { display: none; } }
 /* The glass plate only backs the logo over the hero; once the header turns
    solid (and on pages whose header is always solid) the logo sits straight
    on the bar. */

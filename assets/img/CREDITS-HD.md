@@ -32,7 +32,7 @@ All files are 1920px versions from Wikimedia Commons. CC BY licences require the
 Trimmed and re-encoded with ffmpeg (no audio): WebM VP9 plus MP4 H.264, with a poster frame each.
 
 - `assets/video/winter.{webm,mp4}` + `winter-poster.jpg` — 6 s cut (76–82 s) of "Aurora borealis timelapse": duplicate frames removed, retimed evenly at 9 fps and motion-interpolated to 30 fps (a smooth ~15 s loop, ~2.6x slower than the timelapse), 1920x1080. Harriniva Hotels & Safaris, CC BY 3.0. <https://commons.wikimedia.org/wiki/File:Aurora_borealis_timelapse.webm>
-- `assets/img/seasons/summer-koli.jpg` — Koli National Park, Finland (June 2022). Ninara, CC BY 2.0. <https://commons.wikimedia.org/wiki/File:Koli_National_Park,_Finland_(52177485986).jpg> Downloaded at 3840 px and resized to 1600x1067. Replaces the summer sunset video in the seasons section.
+- `assets/img/seasons/summer-koli.jpg` — Koli National Park, Finland (June 2022). Ninara, CC BY 2.0. <https://commons.wikimedia.org/wiki/File:Koli_National_Park,_Finland_(52177485986).jpg> Downloaded at 3840 px and resized to 2048x1365. Replaces the summer sunset video in the seasons section.
 
 ## Landmark photos re-exported at 1920px
 

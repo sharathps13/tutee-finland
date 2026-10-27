@@ -686,7 +686,7 @@
     var ctx = canvas.getContext && canvas.getContext('2d');
     if (!ctx) return null;
     var W = 0, H = 0, dpr = 1, kind = 0, parts = [], t = 0;
-    var DENSITY = [26, 0, 34, 14];                // by kind: autumn leaves, winter (video), spring petals, summer glints
+    var DENSITY = [26, 0, 34, 0];                 // by kind: autumn leaves, winter (video), spring petals, summer (moving photo)
     var LEAF = ['#e2582a', '#f2a93b', '#c8321e', '#f4c04a', '#b5461d'];
     var PETAL = ['#ffd1dc', '#ffb6c8', '#fff0f4', '#f7a8bf'];
     function sprite(rgb) {
@@ -966,6 +966,20 @@
 
 
 
+  /* One complete sentence per service (FI_SERVICES order), shown in place of a
+     clipped paragraph: on the dial's panel and on the phone cards. */
+  var SERVICE_SUMMARY = [
+    'A free one-to-one consultation that maps your profile, goals and best route to Finland.',
+    'Focused prep for IELTS, TOEFL, PTE and Cambridge exams, plus any entrance test your course needs.',
+    'We work with institutions across Finland to match you to the right course and campus.',
+    'Strong documents carry you through Studyinfo and your permit. We prepare every one with you.',
+    'Complete help with your residence permit, from Enter Finland to your mission appointment.',
+    'End-to-end immigration and settlement support that goes well beyond your first permit.',
+    'Help for students and parents with the funds Migri requires, through loans and scholarships.',
+    'Essential support after you land: housing, registration and your first weeks in Finland.',
+    'We help your spouse and children move with you, legally and safely, while you study.'
+  ];
+
   /* ------------------------------------------------------------------ *
    * What we do — the service dial. Drag or flick the ring (it keeps a
    * little momentum, then snaps), click an icon, or use the arrow keys;
@@ -1033,9 +1047,11 @@
     }
 
     /* ---------- panel ---------- */
-    /* A three-line summary shows; "Read full details" opens the rest. */
+    /* A one-sentence summary shows in full; "Read full details" opens the whole description. */
     function renderDesc(s) {
       var paras = String(s.desc).split(/\n\s*\n/).map(function (p) { return '<p>' + escapeHtml(p.trim()) + '</p>'; });
+      var sum = SERVICE_SUMMARY[services.indexOf(s)];
+      if (sum) paras.unshift('<p>' + escapeHtml(sum) + '</p>');
       desc.innerHTML = paras[0] + (paras.length > 1
         ? '<div class="svc__extra" id="svc-extra" hidden>' + paras.slice(1).join('') + '</div>' +
           '<button class="svc__more" type="button" aria-expanded="false" aria-controls="svc-extra">Read full details' +
@@ -1293,7 +1309,7 @@
           '<span class="sdk__chipico">' + s.icon + '</span><span>' + escapeHtml(short(s.title)) + '</span></button>';
       }).join('') + '</div>' +
       '<div class="sdk__deck" data-sdk-deck>' + services.map(function (s, i) {
-        var ph = PHASES[i] || 'plan', first = String(s.desc || '').split(/\n\s*\n/)[0];
+        var ph = PHASES[i] || 'plan', first = SERVICE_SUMMARY[i] || String(s.desc || '').split(/\n\s*\n/)[0];
         return '<article class="sdk__card" data-sdk-card="' + i + '" aria-label="' + escapeHtml(s.title) + '">' +
           '<div class="sdk__photo"><img src="' + photos[i] + '" alt="" loading="lazy" decoding="async">' +
             '<span class="sdk__num">' + pad(i + 1) + '<small>/' + pad(services.length) + '</small></span>' +
@@ -2694,8 +2710,16 @@
       canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       var mobile = W < 860;
-      var mapBox = mobile ? { x: W * 0.08, y: H * 0.13, w: W * 0.84, h: H * 0.45 } : { x: W * 0.5, y: H * 0.09, w: W * 0.44, h: H * 0.84 };
-      var txtBox = mobile ? { x: W * 0.05, y: H * 0.2, w: W * 0.9, h: H * 0.32 } : { x: W * 0.55, y: H * 0.26, w: W * 0.39, h: H * 0.46 };
+      // Phones: the map and numbers fill the space between the top row and the
+      // tallest chapter's copy, so the snow never runs behind the text.
+      var top = H * 0.13, room = H * 0.45;
+      if (mobile) {
+        var copyTop = H;
+        steps.forEach(function (st) { var t = st.getBoundingClientRect().top - r.top; if (t > 0 && t < copyTop) copyTop = t; });
+        room = clamp(copyTop - top - 14, H * 0.2, H * 0.45);
+      }
+      var mapBox = mobile ? { x: W * 0.08, y: top, w: W * 0.84, h: room } : { x: W * 0.5, y: H * 0.09, w: W * 0.44, h: H * 0.84 };
+      var txtBox = mobile ? { x: W * 0.05, y: top + room * 0.12, w: W * 0.9, h: room * 0.76 } : { x: W * 0.55, y: H * 0.26, w: W * 0.39, h: H * 0.46 };
       // Enough snow to draw the shapes crisply, capped so big screens stay smooth.
       var n = Math.round(clamp(W * H / 560, mobile ? 520 : 750, 1900));
       if (n !== N) {
