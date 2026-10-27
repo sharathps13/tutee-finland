@@ -2567,6 +2567,10 @@ main { overflow-x: clip; }
 .rx__copy > .eyebrow { order: 1; }
 .rx__title { order: 2; margin: 0; }
 .rx__stage { order: 3; }
+/* The copy always sits above the cube, so a turning cube can never cover it. */
+.rx__copy > .eyebrow, .rx__title, .rx__navs, .rx__steps { position: relative; z-index: 2; }
+.rx__stage { z-index: 1; }
+.rx__scene { transform-origin: 50% 50%; will-change: transform; }
 .rx__navs { order: 4; }
 .rx__steps { order: 5; }
 

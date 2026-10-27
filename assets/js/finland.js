@@ -468,7 +468,8 @@
   function initReasonStory() {
     var sec = $('[data-rx]');
     if (!sec) return;
-    var cube = $('[data-rx-cube]', sec), stage = $('[data-rx-stage]', sec), word = $('[data-rx-word]', sec);
+    var cube = $('[data-rx-cube]', sec), stage = $('[data-rx-stage]', sec), word = $('[data-rx-word]', sec), scene = $('.rx__scene', sec);
+    var fit = { s: 0, p: 1200, w: 0, h: 0 };
     var faces = $$('[data-rx-face]', sec), steps = $$('[data-rx-step]', sec), navs = $$('[data-rx-nav]', sec);
     var N = faces.length, D = Math.PI / 180;
     var nums = faces.map(function (f) { return $('[data-rx-num]', f); });
@@ -524,6 +525,9 @@
     var smooth = function (t) { return t * t * (3 - 2 * t); };
 
     function size() {
+      fit.s = scene.offsetWidth; fit.p = parseFloat(getComputedStyle(scene).perspective) || 1200;
+      fit.w = stage.clientWidth; fit.h = stage.clientHeight;
+      rendered = false;
       wordRun = word ? Math.max(0, word.scrollWidth - window.innerWidth * 0.9) : 0;
     }
     function setActive(i) {
@@ -537,8 +541,29 @@
       if (cols[i]) sec.style.setProperty('--rc', cols[i]);
       $$('[data-rx-tag].is-open', sec).forEach(function (b) { b.classList.remove('is-open'); b.setAttribute('aria-expanded', 'false'); });
     }
+    /* Mid-turn a cube's outline is wider and taller than a face. Project its
+       eight corners (with the tilt and perspective) and shrink and re-centre
+       the scene just enough that it never spills out of its own space, so it
+       never covers the copy around it; face-on it is full size. */
+    function fitScene(m) {
+      if (!fit.s) return;
+      var t = matrix(mul(quat(tilt.x, tilt.y), cur)), h = fit.s / 2, P = fit.p;
+      var x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+      for (var c = 0; c < 8; c++) {
+        var v = [c & 1 ? h : -h, c & 2 ? h : -h, c & 4 ? h : -h];
+        var x = t[0][0] * v[0] + t[0][1] * v[1] + t[0][2] * v[2];
+        var y = t[1][0] * v[0] + t[1][1] * v[1] + t[1][2] * v[2];
+        var z = t[2][0] * v[0] + t[2][1] * v[1] + t[2][2] * v[2] - h;
+        var f = P / (P - z);
+        x *= f; y *= f;
+        if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+      }
+      var k = Math.min(1, (fit.w / 2 - 6) / ((x1 - x0) / 2), (fit.h / 2 - 6) / ((y1 - y0) / 2));
+      scene.style.transform = 'translate(' + (-(x0 + x1) / 2 * k).toFixed(1) + 'px,' + (-(y0 + y1) / 2 * k).toFixed(1) + 'px) scale(' + k.toFixed(4) + ')';
+    }
     function render() {
       var m = matrix(cur);
+      fitScene(m);
       cube.style.transform = 'translateZ(calc(var(--s) / -2)) rotateX(' + tilt.x.toFixed(2) + 'deg) rotateY(' + tilt.y.toFixed(2) + 'deg) matrix3d(' +
         [m[0][0], m[1][0], m[2][0], 0, m[0][1], m[1][1], m[2][1], 0, m[0][2], m[1][2], m[2][2], 0, 0, 0, 0, 1].map(function (v) { return Math.abs(v) < 1e-6 ? 0 : +v.toFixed(5); }).join(',') + ')';
       faces.forEach(function (f, i) {
