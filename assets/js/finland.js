@@ -1730,6 +1730,29 @@
     if (lf) lf.dispatchEvent(new CustomEvent('tc:lead-done', { detail: d }));
   }
 
+  /* "Submit another enquiry": forget the sent flag and bring back a fresh form. */
+  function reopenLeadForm(form) {
+    try { localStorage.removeItem(LEAD_DONE_KEY); } catch (e) { /* private mode */ }
+    var card = form.closest('.lf__card'), done = card && $('[data-lf-done]', card);
+    form.reset();
+    $$('select', form).forEach(function (s) { s.dispatchEvent(new Event('change', { bubbles: true })); });
+    $$('.fx-err', form).forEach(function (e) { e.hidden = true; });
+    $$('.is-invalid, .is-valid', form).forEach(function (e) { e.classList.remove('is-invalid', 'is-valid'); });
+    $$('[aria-invalid]', form).forEach(function (e) { e.removeAttribute('aria-invalid'); e.removeAttribute('aria-describedby'); });
+    if (done) { done.hidden = true; done.classList.remove('is-enter'); }
+    if (card) card.classList.remove('is-done');
+    form.hidden = false;
+    syncShortlist();
+    var lf = form.closest('[data-lf]');
+    if (lf) lf.dispatchEvent(new CustomEvent('tc:lead-again'));
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-lf-again]');
+    if (!b) return;
+    var form = $('form[data-lead-form]', b.closest('.lf__card'));
+    if (form) reopenLeadForm(form);
+  });
+
   function initForms() {
     fillCountryCodes();
 
@@ -1891,6 +1914,12 @@
       var bar = $('.lf__progress', root); if (bar) bar.hidden = true;
     }
     form.addEventListener('tc:lead-sent', function () { mirror(); stamp(); });
+    root.addEventListener('tc:lead-again', function () {
+      card.classList.remove('is-sent', 'is-ready');
+      var bar = $('.lf__progress', root); if (bar) bar.hidden = false;
+      go(0, true);
+      mirror();
+    });
     root.addEventListener('tc:lead-done', function (e) {
       if (!card.classList.contains('is-sent')) {
         nameEl.textContent = e.detail.name || 'Your name';

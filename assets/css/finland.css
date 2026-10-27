@@ -2435,4 +2435,7 @@ main { overflow-x: clip; }
 @media (min-width: 561px) { .chat { left: 16px; right: auto; } }
 @media (min-width: 768px) { .slfab { left: 88px; } }
 @media (max-width: 767px) { .fab--call { display: none; } }
-
+.lf__again { display: inline-flex; align-items: center; gap: 6px; margin-top: 2px; padding: 6px 10px; border-radius: 999px; border: 0; background: none;
+  font: inherit; font-size: 13.5px; font-weight: 700; color: var(--fi-blue); cursor: pointer; }
+.lf__again:hover { background: var(--ice); }
+.lf__again:focus-visible { outline: 3px solid var(--aurora); outline-offset: 2px; }
