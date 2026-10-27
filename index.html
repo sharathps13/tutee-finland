@@ -166,10 +166,7 @@
 
     <div class="hp__meta">
       <span class="hp__tag"><svg class="flag" aria-hidden="true"><use href="#flag-fi"/></svg><span data-shiny>Study in Finland</span></span>
-      <span class="hp__right">
-        <span class="hp__facts" aria-label="Finland facts"><span class="hp__factlabel">Did you know</span><ul data-hp-facts><li class="is-on"><b>#1</b>happiest country, 9 years running</li><li><b>188k</b>lakes across the country</li><li><b>75%</b>of Finland is covered by forest</li><li><b>1906</b>first to let women vote and run</li><li><b>3M</b>saunas, for 5.6 million people</li><li><b>24h</b>summer daylight in northern Lapland</li><li><b>Everyone&rsquo;s right</b>to roam nature</li></ul></span>
-        <span class="hp__clock"><span class="hp__dot" aria-hidden="true"></span>Now in Helsinki <b data-hp-clock>--:--</b></span>
-      </span>
+      <span class="hp__clock"><span class="hp__dot" aria-hidden="true"></span>Now in Helsinki <b data-hp-clock>--:--</b></span>
     </div>
 
     <div class="hp__copy">
@@ -238,75 +235,97 @@
 </div>
 
 <!-- ============================ WHY FINLAND ============================ -->
-<!-- Reason prism: a four-sided 3D prism that turns with the scroll. Desktop
-     pins the section; scrolling turns the prism face by face (it rests on
-     each face, then snaps if left mid-turn), each face's number and drawing
-     scrub in with the turn, and the copy beside it re-sets word by word.
-     The giant word track slides and leans with scroll speed; the pointer
-     tilts the prism, and it can be dragged round. Phones: tap a reason or
-     swipe the prism. initReasonStory(). -->
+<!-- Reason cube: a six-sided 3D cube that tumbles with the scroll. Desktop
+     pins the section; scrolling rolls the cube face by face (front, right,
+     top, left, bottom, back; it rests on each face and settles if left
+     mid-roll), each face's number and drawing scrub in as it rolls to the
+     front, and the copy beside it re-sets word by word. The giant word
+     track slides and leans with the roll; the pointer tilts the cube and a
+     drag rolls it. Phones: tap a reason or swipe the cube. initReasonStory(). -->
 <section class="rx" id="why" data-rx>
   <div class="rx__pin">
-    <div class="rx__track" aria-hidden="true"><span data-rx-word>Education &middot; Work &middot; Permit &middot; Career &middot; Education</span></div>
+    <div class="rx__track" aria-hidden="true"><span data-rx-word>Happiness &middot; Education &middot; Work &middot; Career &middot; Nature &middot; Equality</span></div>
     <div class="container rx__grid">
       <div class="rx__copy">
         <span class="eyebrow"><span data-decrypt="view">Why Finland</span></span>
-        <h2 class="h2 rx__title">Four reasons. <span class="text-blue">One clear choice.</span></h2>
-        <div class="rx__navs" role="tablist" aria-label="Reasons"><button class="rx__nav is-on" type="button" role="tab" id="rx-tab-study" aria-controls="rx-study" aria-selected="true" style="--c:#1fcf9f" data-rx-nav><svg class="ico ico-sm"><use href="#i-cap"/></svg><span>Education</span><i aria-hidden="true"></i></button><button class="rx__nav" type="button" role="tab" id="rx-tab-work" aria-controls="rx-work" aria-selected="false" tabindex="-1" style="--c:#f2a93b" data-rx-nav><svg class="ico ico-sm"><use href="#i-brief"/></svg><span>Work</span><i aria-hidden="true"></i></button><button class="rx__nav" type="button" role="tab" id="rx-tab-permit" aria-controls="rx-permit" aria-selected="false" tabindex="-1" style="--c:#5b9dff" data-rx-nav><svg class="ico ico-sm"><use href="#i-shield"/></svg><span>Permit</span><i aria-hidden="true"></i></button><button class="rx__nav" type="button" role="tab" id="rx-tab-stay" aria-controls="rx-stay" aria-selected="false" tabindex="-1" style="--c:#ff8a7a" data-rx-nav><svg class="ico ico-sm"><use href="#i-up"/></svg><span>Career</span><i aria-hidden="true"></i></button></div>
+        <h2 class="h2 rx__title">Six sides of Finland. <span class="text-blue">One clear choice.</span></h2>
+        <div class="rx__navs" role="tablist" aria-label="Reasons"><button class="rx__nav is-on" type="button" role="tab" id="rx-tab-happy" aria-controls="rx-happy" aria-selected="true" aria-label="Happiness" style="--c:#ffcf4a" data-rx-nav><svg class="ico ico-sm"><use href="#i-heart"/></svg><span>Happiness</span><i aria-hidden="true"></i></button><button class="rx__nav" type="button" role="tab" id="rx-tab-study" aria-controls="rx-study" aria-selected="false" tabindex="-1" aria-label="Education" style="--c:#1fcf9f" data-rx-nav><svg class="ico ico-sm"><use href="#i-cap"/></svg><span>Education</span><i aria-hidden="true"></i></button><button class="rx__nav" type="button" role="tab" id="rx-tab-work" aria-controls="rx-work" aria-selected="false" tabindex="-1" aria-label="Work" style="--c:#ff9f43" data-rx-nav><svg class="ico ico-sm"><use href="#i-brief"/></svg><span>Work</span><i aria-hidden="true"></i></button><button class="rx__nav" type="button" role="tab" id="rx-tab-stay" aria-controls="rx-stay" aria-selected="false" tabindex="-1" aria-label="Career" style="--c:#ff7eb6" data-rx-nav><svg class="ico ico-sm"><use href="#i-up"/></svg><span>Career</span><i aria-hidden="true"></i></button><button class="rx__nav" type="button" role="tab" id="rx-tab-nature" aria-controls="rx-nature" aria-selected="false" tabindex="-1" aria-label="Nature" style="--c:#4fc3f7" data-rx-nav><svg class="ico ico-sm"><use href="#i-waves"/></svg><span>Nature</span><i aria-hidden="true"></i></button><button class="rx__nav" type="button" role="tab" id="rx-tab-equal" aria-controls="rx-equal" aria-selected="false" tabindex="-1" aria-label="Equality" style="--c:#b48cff" data-rx-nav><svg class="ico ico-sm"><use href="#i-users"/></svg><span>Equality</span><i aria-hidden="true"></i></button></div>
         <div class="rx__steps">
-          <article class="rx__step is-on" id="rx-study" role="tabpanel" aria-labelledby="rx-tab-study" data-rx-step>
-            <p class="rx__count"><b>01</b> / 04 &middot; Education</p>
+          <article class="rx__step is-on" id="rx-happy" role="tabpanel" aria-labelledby="rx-tab-happy" data-rx-step>
+            <p class="rx__count"><b>01</b> / 06 &middot; Happiness</p>
+            <h3 class="rx__h"><span class="rx__w" style="--wi:0">The</span> <span class="rx__w" style="--wi:1">happiest</span> <span class="rx__w" style="--wi:2">country</span> <span class="rx__w" style="--wi:3">on</span> <span class="rx__w" style="--wi:4">Earth.</span></h3>
+            <p class="rx__p">Finland has topped the World Happiness Report every year from 2018 to 2026. High trust, safe cities and a healthy balance between study and free time make it an easy place to settle.</p>
+            <p class="rx__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>We help you settle in from the day you land</p>
+          </article>
+          <article class="rx__step" id="rx-study" role="tabpanel" aria-labelledby="rx-tab-study" data-rx-step>
+            <p class="rx__count"><b>02</b> / 06 &middot; Education</p>
             <h3 class="rx__h"><span class="rx__w" style="--wi:0">A</span> <span class="rx__w" style="--wi:1">world-class</span> <span class="rx__w" style="--wi:2">degree,</span> <span class="rx__w" style="--wi:3">taught</span> <span class="rx__w" style="--wi:4">in</span> <span class="rx__w" style="--wi:5">English.</span></h3>
             <p class="rx__p">More than 600 bachelor&rsquo;s and master&rsquo;s programmes are taught in English, in small groups where teaching is hands-on and you work on real projects from the first term.</p>
             <p class="rx__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>We shortlist the programmes that fit your profile and goals</p>
           </article>
           <article class="rx__step" id="rx-work" role="tabpanel" aria-labelledby="rx-tab-work" data-rx-step>
-            <p class="rx__count"><b>02</b> / 04 &middot; Work</p>
+            <p class="rx__count"><b>03</b> / 06 &middot; Work</p>
             <h3 class="rx__h"><span class="rx__w" style="--wi:0">Earn</span> <span class="rx__w" style="--wi:1">and</span> <span class="rx__w" style="--wi:2">gain</span> <span class="rx__w" style="--wi:3">experience</span> <span class="rx__w" style="--wi:4">while</span> <span class="rx__w" style="--wi:5">you</span> <span class="rx__w" style="--wi:6">study.</span></h3>
             <p class="rx__p">Your student permit lets you work in any field, an average of 30 hours a week across the year. Busier weeks are fine, so many students work full time over the summer.</p>
             <p class="rx__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>We help with your tax card and your first job search</p>
           </article>
-          <article class="rx__step" id="rx-permit" role="tabpanel" aria-labelledby="rx-tab-permit" data-rx-step>
-            <p class="rx__count"><b>03</b> / 04 &middot; Permit</p>
-            <h3 class="rx__h"><span class="rx__w" style="--wi:0">One</span> <span class="rx__w" style="--wi:1">permit.</span> <span class="rx__w" style="--wi:2">Your</span> <span class="rx__w" style="--wi:3">whole</span> <span class="rx__w" style="--wi:4">degree.</span></h3>
-            <p class="rx__p">Degree students get a continuous A permit for the full length of their studies, so there are no yearly renewals. You apply once, online, through Enter Finland.</p>
-            <p class="rx__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>We file your permit and match your funds evidence to Migri&rsquo;s checklist</p>
-          </article>
           <article class="rx__step" id="rx-stay" role="tabpanel" aria-labelledby="rx-tab-stay" data-rx-step>
-            <p class="rx__count"><b>04</b> / 04 &middot; Career</p>
+            <p class="rx__count"><b>04</b> / 06 &middot; Career</p>
             <h3 class="rx__h"><span class="rx__w" style="--wi:0">Stay</span> <span class="rx__w" style="--wi:1">on</span> <span class="rx__w" style="--wi:2">and</span> <span class="rx__w" style="--wi:3">build</span> <span class="rx__w" style="--wi:4">your</span> <span class="rx__w" style="--wi:5">career.</span></h3>
             <p class="rx__p">After graduating you can apply for a permit to look for work or start a business for up to two years. You can apply within five years of graduating, even from outside Finland.</p>
             <p class="rx__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>We plan your route from graduation to work and permanent residence</p>
+          </article>
+          <article class="rx__step" id="rx-nature" role="tabpanel" aria-labelledby="rx-tab-nature" data-rx-step>
+            <p class="rx__count"><b>05</b> / 06 &middot; Nature</p>
+            <h3 class="rx__h"><span class="rx__w" style="--wi:0">Nature</span> <span class="rx__w" style="--wi:1">on</span> <span class="rx__w" style="--wi:2">your</span> <span class="rx__w" style="--wi:3">doorstep.</span></h3>
+            <p class="rx__p">Finland has about 188,000 lakes and forest over three quarters of the land. Everyman&rsquo;s right lets anyone walk, camp and pick berries in nature, so the outdoors is never far from campus.</p>
+            <p class="rx__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>National parks are a short trip from most cities</p>
+          </article>
+          <article class="rx__step" id="rx-equal" role="tabpanel" aria-labelledby="rx-tab-equal" data-rx-step>
+            <p class="rx__count"><b>06</b> / 06 &middot; Equality</p>
+            <h3 class="rx__h"><span class="rx__w" style="--wi:0">A</span> <span class="rx__w" style="--wi:1">pioneer</span> <span class="rx__w" style="--wi:2">of</span> <span class="rx__w" style="--wi:3">equality.</span></h3>
+            <p class="rx__p">In 1906 Finland became the first country in the world to give women both the vote and the right to stand for parliament. That spirit shapes campus life, where teaching is informal and professors are easy to approach.</p>
+            <p class="rx__tc"><svg class="ico ico-sm"><use href="#i-check"/></svg>International students from every background feel at home</p>
           </article>
         </div>
       </div>
       <div class="rx__stage" data-rx-stage>
         <div class="rx__scene">
-          <div class="rx__prism" data-rx-prism>
+          <div class="rx__cube" data-rx-cube>
+          <div class="rx__face" style="--c:#ffcf4a" data-rx-face>
+            <div class="rx__top"><span class="rx__ico"><svg class="ico"><use href="#i-heart"/></svg></span><span class="rx__name">Happiness</span><span class="rx__no">01</span></div>
+            <div class="rx__stat"><b>#<span data-rx-num="1">1</span></b><span>happiest country in the world, 9 years running</span></div>
+            <div class="rx__art" aria-hidden="true"><svg class="rx__svg" viewBox="0 0 220 120"><rect class="rx__bar" x="12" y="14" width="14" height="78" rx="7" style="--i:0"/><text class="rx__lbl" x="19" y="112">&rsquo;18</text><rect class="rx__bar" x="35" y="14" width="14" height="78" rx="7" style="--i:1"/><text class="rx__lbl" x="42" y="112">&rsquo;19</text><rect class="rx__bar" x="58" y="14" width="14" height="78" rx="7" style="--i:2"/><text class="rx__lbl" x="65" y="112">&rsquo;20</text><rect class="rx__bar" x="81" y="14" width="14" height="78" rx="7" style="--i:3"/><text class="rx__lbl" x="88" y="112">&rsquo;21</text><rect class="rx__bar" x="104" y="14" width="14" height="78" rx="7" style="--i:4"/><text class="rx__lbl" x="111" y="112">&rsquo;22</text><rect class="rx__bar" x="127" y="14" width="14" height="78" rx="7" style="--i:5"/><text class="rx__lbl" x="134" y="112">&rsquo;23</text><rect class="rx__bar" x="150" y="14" width="14" height="78" rx="7" style="--i:6"/><text class="rx__lbl" x="157" y="112">&rsquo;24</text><rect class="rx__bar" x="173" y="14" width="14" height="78" rx="7" style="--i:7"/><text class="rx__lbl" x="180" y="112">&rsquo;25</text><rect class="rx__bar" x="196" y="14" width="14" height="78" rx="7" style="--i:8"/><text class="rx__lbl" x="203" y="112">&rsquo;26</text></svg></div>
+          </div>
           <div class="rx__face" style="--c:#1fcf9f" data-rx-face>
-            <div class="rx__top"><span class="rx__ico"><svg class="ico"><use href="#i-cap"/></svg></span><span class="rx__name">Education</span><span class="rx__no">01</span></div>
+            <div class="rx__top"><span class="rx__ico"><svg class="ico"><use href="#i-cap"/></svg></span><span class="rx__name">Education</span><span class="rx__no">02</span></div>
             <div class="rx__stat"><b><span data-rx-num="12">12</span></b><span>institutions in the QS Europe 2026 rankings</span></div>
-            <div class="rx__art" aria-hidden="true"><svg class="rx__svg" viewBox="0 0 220 150"><rect class="rx__bar" x="14" y="16" width="11" height="120" rx="3" style="--i:0"/><rect class="rx__bar" x="30" y="24" width="11" height="112" rx="3" style="--i:1"/><rect class="rx__bar" x="46" y="32" width="11" height="104" rx="3" style="--i:2"/><rect class="rx__bar" x="62" y="40" width="11" height="96" rx="3" style="--i:3"/><rect class="rx__bar" x="78" y="46" width="11" height="90" rx="3" style="--i:4"/><rect class="rx__bar" x="94" y="54" width="11" height="82" rx="3" style="--i:5"/><rect class="rx__bar" x="110" y="62" width="11" height="74" rx="3" style="--i:6"/><rect class="rx__bar" x="126" y="68" width="11" height="68" rx="3" style="--i:7"/><rect class="rx__bar" x="142" y="76" width="11" height="60" rx="3" style="--i:8"/><rect class="rx__bar" x="158" y="84" width="11" height="52" rx="3" style="--i:9"/><rect class="rx__bar" x="174" y="90" width="11" height="46" rx="3" style="--i:10"/><rect class="rx__bar" x="190" y="96" width="11" height="40" rx="3" style="--i:11"/><path class="rx__base" d="M8 142h204"/></svg></div>
+            <div class="rx__art" aria-hidden="true"><svg class="rx__svg" viewBox="0 0 220 120"><rect class="rx__bar" x="14" y="8" width="11" height="96" rx="3" style="--i:0"/><rect class="rx__bar" x="30" y="14" width="11" height="90" rx="3" style="--i:1"/><rect class="rx__bar" x="46" y="20" width="11" height="84" rx="3" style="--i:2"/><rect class="rx__bar" x="62" y="26" width="11" height="78" rx="3" style="--i:3"/><rect class="rx__bar" x="78" y="32" width="11" height="72" rx="3" style="--i:4"/><rect class="rx__bar" x="94" y="38" width="11" height="66" rx="3" style="--i:5"/><rect class="rx__bar" x="110" y="44" width="11" height="60" rx="3" style="--i:6"/><rect class="rx__bar" x="126" y="50" width="11" height="54" rx="3" style="--i:7"/><rect class="rx__bar" x="142" y="56" width="11" height="48" rx="3" style="--i:8"/><rect class="rx__bar" x="158" y="62" width="11" height="42" rx="3" style="--i:9"/><rect class="rx__bar" x="174" y="68" width="11" height="36" rx="3" style="--i:10"/><rect class="rx__bar" x="190" y="74" width="11" height="30" rx="3" style="--i:11"/><path class="rx__base" d="M8 110h204"/></svg></div>
           </div>
-          <div class="rx__face" style="--c:#f2a93b" data-rx-face>
-            <div class="rx__top"><span class="rx__ico"><svg class="ico"><use href="#i-brief"/></svg></span><span class="rx__name">Work</span><span class="rx__no">02</span></div>
+          <div class="rx__face" style="--c:#ff9f43" data-rx-face>
+            <div class="rx__top"><span class="rx__ico"><svg class="ico"><use href="#i-brief"/></svg></span><span class="rx__name">Work</span><span class="rx__no">03</span></div>
             <div class="rx__stat"><b><span data-rx-num="30">30</span> h</b><span>a week on average you may work while you study</span></div>
-            <div class="rx__art" aria-hidden="true"><svg class="rx__svg" viewBox="0 0 220 150"><circle class="rx__ringbg" cx="110" cy="75" r="60"/><circle class="rx__ring" cx="110" cy="75" r="60" pathLength="100"/><path class="rx__tick" d="M110 23v8" transform="rotate(0 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(30 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(60 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(90 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(120 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(150 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(180 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(210 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(240 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(270 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(300 110 75)"/><path class="rx__tick" d="M110 23v8" transform="rotate(330 110 75)"/><path class="rx__hand" d="M110 75V36"/><circle class="rx__hub" cx="110" cy="75" r="5"/></svg></div>
+            <div class="rx__art" aria-hidden="true"><svg class="rx__svg" viewBox="0 0 220 120"><circle class="rx__ringbg" cx="110" cy="60" r="50"/><circle class="rx__ring" cx="110" cy="60" r="50" pathLength="100"/><path class="rx__tick" d="M110 17v7" transform="rotate(0 110 60)"/><path class="rx__tick" d="M110 17v7" transform="rotate(30 110 60)"/><path class="rx__tick" d="M110 17v7" transform="rotate(60 110 60)"/><path class="rx__tick" d="M110 17v7" transform="rotate(90 110 60)"/><path class="rx__tick" d="M110 17v7" transform="rotate(120 110 60)"/><path class="rx__tick" d="M110 17v7" transform="rotate(150 110 60)"/><path class="rx__tick" d="M110 17v7" transform="rotate(180 110 60)"/><path class="rx__tick" d="M110 17v7" transform="rotate(210 110 60)"/><path class="rx__tick" d="M110 17v7" transform="rotate(240 110 60)"/><path class="rx__tick" d="M110 17v7" transform="rotate(270 110 60)"/><path class="rx__tick" d="M110 17v7" transform="rotate(300 110 60)"/><path class="rx__tick" d="M110 17v7" transform="rotate(330 110 60)"/><path class="rx__hand" d="M110 60V28"/><circle class="rx__hub" cx="110" cy="60" r="5"/></svg></div>
           </div>
-          <div class="rx__face" style="--c:#5b9dff" data-rx-face>
-            <div class="rx__top"><span class="rx__ico"><svg class="ico"><use href="#i-shield"/></svg></span><span class="rx__name">Permit</span><span class="rx__no">03</span></div>
-            <div class="rx__stat"><b><span data-rx-num="1">1</span></b><span>residence permit for your entire degree</span></div>
-            <div class="rx__art" aria-hidden="true"><svg class="rx__svg" viewBox="0 0 220 150"><path class="rx__yr" d="M20 44v62"/><text class="rx__lbl" x="20" y="126">Year 1</text><path class="rx__yr" d="M80 44v62"/><text class="rx__lbl" x="80" y="126">Year 2</text><path class="rx__yr" d="M140 44v62"/><text class="rx__lbl" x="140" y="126">Year 3</text><path class="rx__yr" d="M200 44v62"/><text class="rx__lbl" x="200" y="126">Year 4</text><rect class="rx__lane" x="20" y="64" width="180" height="22" rx="11"/><rect class="rx__fill" x="20" y="64" width="180" height="22" rx="11"/><text class="rx__tag" x="110" y="30">One A permit</text></svg></div>
-          </div>
-          <div class="rx__face" style="--c:#ff8a7a" data-rx-face>
+          <div class="rx__face" style="--c:#ff7eb6" data-rx-face>
             <div class="rx__top"><span class="rx__ico"><svg class="ico"><use href="#i-up"/></svg></span><span class="rx__name">Career</span><span class="rx__no">04</span></div>
             <div class="rx__stat"><b><span data-rx-num="2">2</span> yrs</b><span>to look for work or start a business after graduating</span></div>
-            <div class="rx__art" aria-hidden="true"><svg class="rx__svg" viewBox="0 0 220 150"><path class="rx__route" pathLength="100" d="M26 120C70 120 60 70 110 70S150 26 194 26"/><circle class="rx__stop" cx="26" cy="120" r="8"/><circle class="rx__stop rx__stop--end" cx="194" cy="26" r="10"/><text class="rx__lbl" x="34" y="144">Graduate</text><text class="rx__lbl" x="194" y="56">Career</text><text class="rx__tag" x="118" y="100">2 years</text></svg></div>
+            <div class="rx__art" aria-hidden="true"><svg class="rx__svg" viewBox="0 0 220 120"><path class="rx__route" pathLength="100" d="M26 92C70 92 60 56 110 56S150 22 194 22"/><circle class="rx__stop" cx="26" cy="92" r="8"/><circle class="rx__stop rx__stop--end" cx="194" cy="22" r="10"/><text class="rx__lbl" x="34" y="116">Graduate</text><text class="rx__lbl" x="194" y="50">Career</text></svg></div>
+          </div>
+          <div class="rx__face" style="--c:#4fc3f7" data-rx-face>
+            <div class="rx__top"><span class="rx__ico"><svg class="ico"><use href="#i-waves"/></svg></span><span class="rx__name">Nature</span><span class="rx__no">05</span></div>
+            <div class="rx__stat"><b><span data-rx-num="188">188</span>k</b><span>lakes, and the right to roam them all</span></div>
+            <div class="rx__art" aria-hidden="true"><svg class="rx__svg" viewBox="0 0 220 120"><circle class="rx__sun" cx="168" cy="30" r="16"/><path class="rx__wave" pathLength="100" style="--i:0" d="M10 62 q 25 -12 50 0 t 50 0 t 50 0 t 50 0"/><path class="rx__wave" pathLength="100" style="--i:1" d="M10 80 q 25 -12 50 0 t 50 0 t 50 0 t 50 0"/><path class="rx__wave" pathLength="100" style="--i:2" d="M10 98 q 25 -12 50 0 t 50 0 t 50 0 t 50 0"/></svg></div>
+          </div>
+          <div class="rx__face" style="--c:#b48cff" data-rx-face>
+            <div class="rx__top"><span class="rx__ico"><svg class="ico"><use href="#i-users"/></svg></span><span class="rx__name">Equality</span><span class="rx__no">06</span></div>
+            <div class="rx__stat"><b><span data-rx-num="1906">1906</span></b><span>first country to give women full political rights</span></div>
+            <div class="rx__art" aria-hidden="true"><svg class="rx__svg" viewBox="0 0 220 120"><g class="rx__pp" style="--i:0" transform="translate(30 32)"><circle cx="0" cy="-9" r="6"/><path d="M-10 13v-5a10 10 0 0 1 20 0v5z"/></g><g class="rx__pp" style="--i:1" transform="translate(70 32)"><circle cx="0" cy="-9" r="6"/><path d="M-10 13v-5a10 10 0 0 1 20 0v5z"/></g><g class="rx__pp" style="--i:2" transform="translate(110 32)"><circle cx="0" cy="-9" r="6"/><path d="M-10 13v-5a10 10 0 0 1 20 0v5z"/></g><g class="rx__pp" style="--i:3" transform="translate(150 32)"><circle cx="0" cy="-9" r="6"/><path d="M-10 13v-5a10 10 0 0 1 20 0v5z"/></g><g class="rx__pp" style="--i:4" transform="translate(190 32)"><circle cx="0" cy="-9" r="6"/><path d="M-10 13v-5a10 10 0 0 1 20 0v5z"/></g><g class="rx__pp" style="--i:5" transform="translate(30 82)"><circle cx="0" cy="-9" r="6"/><path d="M-10 13v-5a10 10 0 0 1 20 0v5z"/></g><g class="rx__pp" style="--i:6" transform="translate(70 82)"><circle cx="0" cy="-9" r="6"/><path d="M-10 13v-5a10 10 0 0 1 20 0v5z"/></g><g class="rx__pp" style="--i:7" transform="translate(110 82)"><circle cx="0" cy="-9" r="6"/><path d="M-10 13v-5a10 10 0 0 1 20 0v5z"/></g><g class="rx__pp" style="--i:8" transform="translate(150 82)"><circle cx="0" cy="-9" r="6"/><path d="M-10 13v-5a10 10 0 0 1 20 0v5z"/></g><g class="rx__pp" style="--i:9" transform="translate(190 82)"><circle cx="0" cy="-9" r="6"/><path d="M-10 13v-5a10 10 0 0 1 20 0v5z"/></g></svg></div>
           </div>
           </div>
           <i class="rx__floor" aria-hidden="true"></i>
         </div>
-        <span class="rx__hint"><svg class="ico ico-sm"><use href="#i-spark"/></svg><span class="rx__hint-fine">Scroll to turn &middot; drag to spin</span><span class="rx__hint-touch">Swipe to turn</span></span>
+        <span class="rx__hint"><svg class="ico ico-sm"><use href="#i-spark"/></svg><span class="rx__hint-fine">Scroll to roll &middot; drag to spin</span><span class="rx__hint-touch">Swipe to roll</span></span>
       </div>
     </div>
   </div>

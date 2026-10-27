@@ -415,42 +415,69 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * Why Finland reason prism. Desktop pins the section and maps the
-   * scroll onto the prism's angle: it rests on each face for a stretch,
-   * then turns to the next, and if the scroll stops mid-turn it glides to
-   * the nearest face. The angle is eased every frame, so wheel steps turn
-   * smoothly. Each face's --p (0 side-on, 1 facing) scrubs its number and
-   * drawing; the copy and tabs follow the face in front. The pointer tilts
-   * the prism and a drag spins it a face either way. Phones: tabs or a
-   * swipe turn it.
+   * Why Finland reason cube. Desktop pins the section and maps the scroll
+   * onto a position along the six faces (front, right, top, left, bottom,
+   * back): the cube rests on each face for a stretch, then rolls to the
+   * next, and if the scroll stops mid-roll it settles on the nearest face.
+   * Between faces the orientation is slerped (quaternions), so every roll
+   * takes the shortest path and lands with the face upright. The position
+   * is eased every frame, so wheel steps roll smoothly. Each face's --p (0
+   * side-on, 1 facing) scrubs its number and drawing; the copy and tabs
+   * follow the face in front. The pointer tilts the cube and a drag rolls
+   * it a face either way. Phones: tabs or a swipe roll it.
    * ------------------------------------------------------------------ */
   function initReasonStory() {
     var sec = $('[data-rx]');
     if (!sec) return;
-    var prism = $('[data-rx-prism]', sec), stage = $('[data-rx-stage]', sec), word = $('[data-rx-word]', sec);
+    var cube = $('[data-rx-cube]', sec), stage = $('[data-rx-stage]', sec), word = $('[data-rx-word]', sec);
     var faces = $$('[data-rx-face]', sec), steps = $$('[data-rx-step]', sec), navs = $$('[data-rx-nav]', sec);
-    var N = faces.length, MAX = (N - 1) * 90;
+    var N = faces.length, D = Math.PI / 180;
     var nums = faces.map(function (f) { return $('[data-rx-num]', f); });
     var tos = nums.map(function (n) { return Number(n.getAttribute('data-rx-num')); });
     var cols = navs.map(function (b) { return b.style.getPropertyValue('--c').trim(); });
     var pinMq = window.matchMedia ? window.matchMedia('(min-width: 900px) and (min-height: 620px)') : null;
     function pinned() { return !reduceMotion && !!pinMq && pinMq.matches; }
 
-    var SPAN = 0, wordRun = 0, angle = 0, target = 0, last = 0, skew = 0;
+    // Each face's outward normal, and the cube turn (rotateX, rotateY) that brings it to the front upright.
+    var NORMAL = [[0, 0, 1], [1, 0, 0], [0, -1, 0], [-1, 0, 0], [0, 1, 0], [0, 0, -1]];
+    var KEY = [[0, 0], [0, -90], [-90, 0], [0, 90], [90, 0], [0, 180]];
+    // Quaternion for rotateX(a) rotateY(b), as CSS composes them.
+    function quat(a, b) {
+      var ca = Math.cos(a * D / 2), sa = Math.sin(a * D / 2), cb = Math.cos(b * D / 2), sb = Math.sin(b * D / 2);
+      return [ca * cb, sa * cb, ca * sb, sa * sb];   // w, x, y, z
+    }
+    var Q = KEY.map(function (k) { return quat(k[0], k[1]); });
+    function slerp(a, b, t) {
+      var d = a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3], s = 1;
+      if (d < 0) { d = -d; s = -1; }
+      var k0 = 1 - t, k1 = t;
+      if (d < 0.9995) { var th = Math.acos(d), sn = Math.sin(th); k0 = Math.sin((1 - t) * th) / sn; k1 = Math.sin(t * th) / sn; }
+      var q = [0, 1, 2, 3].map(function (i) { return a[i] * k0 + b[i] * k1 * s; });
+      var l = Math.hypot(q[0], q[1], q[2], q[3]);
+      return q.map(function (v) { return v / l; });
+    }
+    function matrix(q) {
+      var w = q[0], x = q[1], y = q[2], z = q[3];
+      return [[1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
+              [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
+              [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)]];
+    }
+
+    var SPAN = 0, wordRun = 0, pos = 0, target = 0, last = 0, skew = 0;
     var tilt = { x: 0, y: 0, tx: 0, ty: 0 }, drag = null, dragOff = 0, active = -1, running = false, idle = 0;
     var smooth = function (t) { return t * t * (3 - 2 * t); };
 
     function size() {
-      SPAN = Math.max(420, Math.round(window.innerHeight * 0.8));
+      SPAN = Math.max(380, Math.round(window.innerHeight * 0.7));
       sec.style.setProperty('--rx-run', pinned() ? (N - 1) * SPAN + 'px' : '0px');
       sec.classList.toggle('is-live', pinned());
       wordRun = word ? Math.max(0, word.scrollWidth - window.innerWidth * 0.9) : 0;
     }
-    // Scroll -> angle, resting on each face for the first and last 18% of its stretch.
+    // Scroll -> position, resting on each face for the first and last 18% of its stretch.
     function fromScroll() {
       var f = clamp(-sec.getBoundingClientRect().top / SPAN, 0, N - 1);
       var k = Math.min(N - 2, Math.floor(f));
-      return (k + smooth(clamp((f - k - 0.18) / 0.64, 0, 1))) * 90;
+      return k + smooth(clamp((f - k - 0.18) / 0.64, 0, 1));
     }
     function setActive(i) {
       if (i === active) return;
@@ -463,49 +490,56 @@
       if (cols[i]) sec.style.setProperty('--rc', cols[i]);
     }
     function render() {
-      var a = clamp(angle + dragOff, -40, MAX + 40);
-      prism.style.transform = 'translateZ(calc(var(--fw) / -2)) rotateX(' + tilt.x.toFixed(2) + 'deg) rotateY(' + (tilt.y - a).toFixed(2) + 'deg)';
+      var at = clamp(pos + dragOff, -0.35, N - 0.65), base = clamp(at, 0, N - 1);
+      var k = Math.min(N - 2, Math.floor(base)), m = matrix(slerp(Q[k], Q[k + 1], base - k));
+      // Past either end the drag only leans the cube a little.
+      var lean = (at - base) * 60;
+      cube.style.transform = 'translateZ(calc(var(--s) / -2)) rotateX(' + tilt.x.toFixed(2) + 'deg) rotateY(' + (tilt.y - lean).toFixed(2) + 'deg) matrix3d(' +
+        [m[0][0], m[1][0], m[2][0], 0, m[0][1], m[1][1], m[2][1], 0, m[0][2], m[1][2], m[2][2], 0, 0, 0, 0, 1].map(function (v) { return Math.abs(v) < 1e-6 ? 0 : +v.toFixed(5); }).join(',') + ')';
       faces.forEach(function (f, i) {
-        var rel = i * 90 - a, p = smooth(clamp(1 - Math.abs(rel) / 90, 0, 1));
+        var n = NORMAL[i], z = clamp(m[2][0] * n[0] + m[2][1] * n[1] + m[2][2] * n[2], -1, 1);
+        var p = smooth(clamp(1 - Math.acos(z) / (Math.PI / 2), 0, 1));
         f.style.setProperty('--p', p.toFixed(3));
-        f.style.setProperty('--shade', (1 - Math.max(0, Math.cos(rel * Math.PI / 180))).toFixed(3));
+        f.style.setProperty('--shade', (1 - Math.max(0, z)).toFixed(3));
         var v = String(tos[i] < 2 || p > 0.985 ? tos[i] : Math.round(tos[i] * p));
         if (nums[i].textContent !== v) nums[i].textContent = v;
       });
-      navs.forEach(function (b, i) { b.style.setProperty('--f', clamp(a / 90 - i + 1, 0, 1).toFixed(3)); });
-      setActive(clamp(Math.round(a / 90), 0, N - 1));
-      if (word) word.style.transform = 'translate3d(' + (-clamp(a / MAX, 0, 1) * wordRun).toFixed(1) + 'px,0,0) skewX(' + skew.toFixed(2) + 'deg)';
+      navs.forEach(function (b, i) { b.style.setProperty('--f', clamp(base - i + 1, 0, 1).toFixed(3)); });
+      setActive(clamp(Math.round(base), 0, N - 1));
+      if (word) word.style.transform = 'translate3d(' + (-base / (N - 1) * wordRun).toFixed(1) + 'px,0,0) skewX(' + skew.toFixed(2) + 'deg)';
     }
     function frame() {
       if (!running) return;
       requestAnimationFrame(frame);
       if (pinned() && !drag) target = fromScroll();
-      angle += (target - angle) * 0.12;
-      if (Math.abs(target - angle) < 0.02) angle = target;
+      pos += (target - pos) * 0.11;
+      if (Math.abs(target - pos) < 0.0005) pos = target;
       tilt.x += (tilt.tx - tilt.x) * 0.08; tilt.y += (tilt.ty - tilt.y) * 0.08;
-      // The word track leans into the turn, like scroll velocity.
-      skew += (clamp((last - angle) * 0.9, -12, 12) - skew) * 0.15;
-      last = angle;
+      // The word track leans into the roll, like scroll velocity.
+      skew += (clamp((last - pos) * 90, -12, 12) - skew) * 0.15;
+      last = pos;
       render();
     }
     function goTo(i) {
       i = clamp(i, 0, N - 1);
       if (pinned()) window.scrollTo({ top: sec.offsetTop + i * SPAN, behavior: 'smooth' });
-      else target = i * 90;
+      else target = i;
     }
 
     navs.forEach(function (b, i) {
-      b.addEventListener('click', function () { goTo(i); });
+      b.addEventListener('click', function () {
+        if (reduceMotion) { pos = target = i; render(); } else goTo(i);
+      });
       b.addEventListener('keydown', function (e) {
         var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
         if (!d) return;
         e.preventDefault();
         var k = (i + d + N) % N;
-        navs[k].focus(); goTo(k);
+        navs[k].focus(); navs[k].click();
       });
     });
 
-    // Left mid-turn, the prism glides on to the nearest face.
+    // Left mid-roll, the cube settles on the nearest face.
     window.addEventListener('scroll', function () {
       if (!pinned()) return;
       clearTimeout(idle);
@@ -517,7 +551,7 @@
       }, 180);
     }, { passive: true });
 
-    // Drag (or swipe) the prism: it follows the pointer, then settles a face along.
+    // Drag (or swipe) the cube: it follows the pointer, then settles a face along.
     stage.addEventListener('pointerdown', function (e) {
       if (e.button !== 0 || reduceMotion) return;
       drag = { x: e.clientX, y: e.clientY, id: e.pointerId, on: false };
@@ -525,8 +559,8 @@
     stage.addEventListener('pointermove', function (e) {
       if (finePointer && !drag) {
         var r = stage.getBoundingClientRect();
-        tilt.tx = -((e.clientY - r.top) / r.height - 0.5) * 10;
-        tilt.ty = ((e.clientX - r.left) / r.width - 0.5) * 14;
+        tilt.tx = -((e.clientY - r.top) / r.height - 0.5) * 12;
+        tilt.ty = ((e.clientX - r.left) / r.width - 0.5) * 16;
       }
       if (!drag || e.pointerId !== drag.id) return;
       var dx = e.clientX - drag.x;
@@ -535,16 +569,16 @@
         drag.on = true; stage.classList.add('is-drag');
         try { stage.setPointerCapture(e.pointerId); } catch (err) { /* not capturable */ }
       }
-      dragOff = -dx * 0.35;
+      dragOff = -dx / 280;
     });
     function endDrag(e) {
       if (!drag || (e && e.pointerId !== drag.id)) return;
       var was = drag.on, off = dragOff;
       drag = null; stage.classList.remove('is-drag');
       if (!was) return;
-      angle += off; dragOff = 0;
-      var k = clamp(Math.round(target / 90) + (off > 14 ? 1 : off < -14 ? -1 : 0), 0, N - 1);
-      if (!pinned()) target = k * 90; else goTo(k);
+      pos = clamp(pos + off, 0, N - 1); dragOff = 0;
+      var k = clamp(Math.round(target) + (off > 0.1 ? 1 : off < -0.1 ? -1 : 0), 0, N - 1);
+      goTo(k);
     }
     stage.addEventListener('pointerup', endDrag);
     stage.addEventListener('pointercancel', endDrag);
@@ -554,13 +588,9 @@
     size();
     window.addEventListener('resize', size);
     if (pinMq) { if (pinMq.addEventListener) pinMq.addEventListener('change', size); else if (pinMq.addListener) pinMq.addListener(size); }
-    if (pinned()) angle = target = fromScroll();
+    if (pinned()) pos = target = fromScroll();
     render();
-    if (reduceMotion) {
-      // No easing or pinning: tabs swap faces straight away.
-      navs.forEach(function (b, i) { b.addEventListener('click', function () { angle = target = i * 90; render(); }); });
-      return;
-    }
+    if (reduceMotion) return;
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (es) {
         var was = running;
@@ -2876,27 +2906,6 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * Hero "Did you know" facts: one short fact at a time beside the
-   * Helsinki clock, fading to the next every few seconds while the hero is
-   * on screen. Reduced motion keeps the first fact.
-   * ------------------------------------------------------------------ */
-  function initHeroFacts() {
-    var list = $('[data-hp-facts]');
-    if (!list || reduceMotion) return;
-    var items = $$('li', list), i = 0, timer = 0, visible = true;
-    if (items.length < 2) return;
-    function next() {
-      items[i].classList.remove('is-on');
-      i = (i + 1) % items.length;
-      items[i].classList.add('is-on');
-    }
-    function run() { clearInterval(timer); if (visible && !document.hidden) timer = setInterval(next, 4500); }
-    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; run(); }).observe(list);
-    document.addEventListener('visibilitychange', run);
-    run();
-  }
-
-  /* ------------------------------------------------------------------ *
    * Live news ticker — headlines from /api/news (Yle News, Helsinki Times;
    * see netlify/functions/news.mjs) scroll right to left with a matching
    * site photo. Plain text, no outbound links. If the feed can't be
@@ -2988,7 +2997,6 @@
   initServiceDeck();
   initPostcards();
   initNewsTicker();
-  initHeroFacts();
   initFundingPlan();
   initFundingFocus();
   initFundingGuide();
