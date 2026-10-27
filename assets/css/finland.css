@@ -2159,7 +2159,7 @@ main { overflow-x: clip; }
 .mbar .btn-ai { flex: none; width: 46px; padding: 0; background: #fff; border: 1.5px solid var(--line); position: relative; }
 .mbar .btn-ai img { width: 26px; height: 26px; object-fit: contain; }
 .mbar .btn-ai::after { content: ""; position: absolute; inset: -3px; border-radius: inherit; border: 2px solid var(--aurora); opacity: .7; animation: ping 2.4s var(--ease) infinite; pointer-events: none; }
-@media (max-width: 767px) { body.mbar-on .fab--ai, body.in-hero .fab--ai { opacity: 0; pointer-events: none; transform: scale(.6); } }
+@media (max-width: 767px) { body.mbar-on .fab--ai, body:not(.past-hero) .fab--ai { opacity: 0; pointer-events: none; transform: scale(.6); } }
 @media (prefers-reduced-motion: reduce) { .mbar .btn-ai::after { animation: none; } }
 
 @media (max-width: 699px) {
