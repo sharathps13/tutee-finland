@@ -2582,6 +2582,19 @@ main { overflow-x: clip; }
 .rx__tags li { padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 700; color: var(--ink-2); background: #fff; border: 1px solid var(--line);
   box-shadow: inset 3px 0 0 var(--rc); }
 .rx__step.is-on .rx__tags { opacity: 1; transform: none; transition-delay: .3s; }
+/* Job types with details: a dotted underline marks them; hover, focus or a
+   tap opens a small card above the tag. */
+.rx__tags li:has(.rx__tagbtn) { padding: 0; }
+.rx__tagbtn { position: relative; padding: 4px 10px; border-radius: inherit; font: inherit; color: inherit; cursor: help;
+  text-decoration: underline dotted color-mix(in srgb, var(--rc) 80%, var(--ink)); text-underline-offset: 3px; }
+.rx__tagbtn:focus-visible { outline: 2px solid var(--fi-blue); outline-offset: 2px; }
+.rx__tags li:has(.rx__tagbtn:hover, .rx__tagbtn.is-open) { border-color: color-mix(in srgb, var(--rc) 60%, var(--line)); background: #fffdf8; }
+.rx__tip { position: absolute; left: var(--tip-x, 0px); bottom: calc(100% + 10px); z-index: 20; width: max-content; max-width: min(260px, calc(100vw - 32px));
+  padding: 10px 12px; border-radius: 12px; text-align: left; text-decoration: none; white-space: normal;
+  font-size: 13px; font-weight: 600; line-height: 1.45; color: #e6eefa; background: var(--night); box-shadow: 0 16px 30px -14px rgba(6,22,49,.7);
+  opacity: 0; transform: translateY(6px); pointer-events: none; transition: opacity .2s var(--ease), transform .25s var(--ease); }
+.rx__tip::after { content: ""; position: absolute; left: calc(18px - var(--tip-x, 0px)); top: 100%; border: 6px solid transparent; border-top-color: var(--night); }
+.rx__tagbtn.is-open .rx__tip { opacity: 1; transform: none; }
 .rx__step.is-on .rx__p { opacity: 1; transform: none; transition-delay: .22s; }
 .rx__step.is-on .rx__tc { opacity: 1; transform: none; transition-delay: .36s; }
 

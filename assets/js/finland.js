@@ -510,6 +510,7 @@
         b.classList.toggle('is-on', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); b.tabIndex = on ? 0 : -1;
       });
       if (cols[i]) sec.style.setProperty('--rc', cols[i]);
+      $$('[data-rx-tag].is-open', sec).forEach(function (b) { b.classList.remove('is-open'); b.setAttribute('aria-expanded', 'false'); });
     }
     function render() {
       var m = matrix(cur);
@@ -615,6 +616,39 @@
       mode = 'follow';
       window.scrollTo({ top: sec.offsetTop + next * SPAN, behavior: 'smooth' });
     }, { passive: false });
+
+    // Job-type tags with details: hover or keyboard focus opens one; a tap
+    // toggles it. The card is nudged sideways so it stays on screen.
+    var tags = $$('[data-rx-tag]', sec);
+    function tip(b, open) {
+      if (open) tags.forEach(function (o) { if (o !== b) tip(o, false); });
+      b.classList.toggle('is-open', open);
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (!open) return;
+      var t = $('.rx__tip', b);
+      t.style.setProperty('--tip-x', '0px');
+      var r = t.getBoundingClientRect(), vw = document.documentElement.clientWidth;
+      var shift = Math.min(0, vw - 16 - r.right) + Math.max(0, 16 - r.left);
+      t.style.setProperty('--tip-x', Math.round(shift) + 'px');
+    }
+    tags.forEach(function (b) {
+      if (finePointer) {
+        b.addEventListener('pointerenter', function () { tip(b, true); });
+        b.addEventListener('pointerleave', function () { tip(b, false); });
+      }
+      b.addEventListener('focus', function () { b._openedAt = performance.now(); tip(b, true); });
+      b.addEventListener('blur', function () { tip(b, false); });
+      // A mouse click keeps it open; a tap toggles it (unless that same tap just opened it by focusing).
+      b.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (finePointer || performance.now() - (b._openedAt || 0) < 400) tip(b, true);
+        else tip(b, !b.classList.contains('is-open'));
+      });
+      b.addEventListener('keydown', function (e) { if (e.key === 'Escape') tip(b, false); });
+    });
+    document.addEventListener('pointerdown', function (e) {
+      if (!e.target.closest || !e.target.closest('[data-rx-tag]')) tags.forEach(function (b) { tip(b, false); });
+    });
 
     // Every face's photo loads as the section approaches.
     whenNear(sec, function () { $$('[data-rx-img]', sec).forEach(function (im) { im.loading = 'eager'; }); });
