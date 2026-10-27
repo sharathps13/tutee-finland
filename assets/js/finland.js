@@ -2720,6 +2720,27 @@
   }
 
   /* ------------------------------------------------------------------ *
+   * Hero "Did you know" facts: one short fact at a time beside the
+   * Helsinki clock, fading to the next every few seconds while the hero is
+   * on screen. Reduced motion keeps the first fact.
+   * ------------------------------------------------------------------ */
+  function initHeroFacts() {
+    var list = $('[data-hp-facts]');
+    if (!list || reduceMotion) return;
+    var items = $$('li', list), i = 0, timer = 0, visible = true;
+    if (items.length < 2) return;
+    function next() {
+      items[i].classList.remove('is-on');
+      i = (i + 1) % items.length;
+      items[i].classList.add('is-on');
+    }
+    function run() { clearInterval(timer); if (visible && !document.hidden) timer = setInterval(next, 4500); }
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; run(); }).observe(list);
+    document.addEventListener('visibilitychange', run);
+    run();
+  }
+
+  /* ------------------------------------------------------------------ *
    * Live news ticker — headlines from /api/news (Yle News, Helsinki Times;
    * see netlify/functions/news.mjs) scroll right to left with a matching
    * site photo. Plain text, no outbound links. If the feed can't be
@@ -2733,7 +2754,7 @@
     ['Partners and children under 18 can join students on a family permit', 'family'],
     ['More than 600 English-taught degree programmes across 36 institutions', 'students'],
     ['A continuous A permit covers the whole degree — no credibility interview', 'permit'],
-    ['Finland topped the World Happiness Report every year from 2018 to 2025', 'aurora']
+    ['Finland has topped the World Happiness Report every year from 2018 to 2026', 'aurora']
   ];
   function initNewsTicker() {
     var root = $('[data-news]');
@@ -2810,6 +2831,7 @@
   initServiceDeck();
   initPostcards();
   initNewsTicker();
+  initHeroFacts();
   initFundingPlan();
   initFundingFocus();
   initFundingGuide();

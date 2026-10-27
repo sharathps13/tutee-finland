@@ -2503,3 +2503,33 @@ main { overflow-x: clip; }
 .brandmark--drawer { width: 138px; height: 56px; }
 .brandmark--footer { width: 206px; height: 84px; }
 @media (max-width: 699px) { .ft__brand .brandmark--footer { width: 142px; height: 58px; } }
+
+/* ============================================== HERO TOP ROW · FACTS + CLOCK
+   The clock and a rotating "Did you know" fact sit in dark frosted pills, so
+   they read cleanly wherever the particle map of Finland falls behind them. */
+.hp__meta { position: relative; z-index: 3; }
+.hp__right { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+.hp__clock, .hp__facts { padding: 6px 12px; border-radius: 999px; background: rgba(4,14,36,.55); border: 1px solid rgba(159,233,213,.22);
+  -webkit-backdrop-filter: blur(10px) saturate(1.3); backdrop-filter: blur(10px) saturate(1.3); box-shadow: 0 8px 20px -14px rgba(0,0,0,.8); }
+.hp__facts { display: inline-flex; align-items: center; gap: 10px; min-width: 0; max-width: min(430px, 42vw); }
+.hp__factlabel { flex: none; font-size: 10.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--aurora); }
+.hp__facts ul { position: relative; list-style: none; margin: 0; padding: 0; flex: 1; min-width: 0; height: 1.35em; }
+.hp__facts li { position: absolute; inset: 0; display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  color: #dbe6f5; font-weight: 600; opacity: 0; transform: translateY(6px); transition: opacity .5s var(--ease), transform .5s var(--ease); }
+.hp__facts li.is-on { opacity: 1; transform: none; }
+.hp__facts li b { flex: none; color: #fff; font-weight: 800; }
+@media (max-width: 899px) { .hp__factlabel { display: none; } }
+/* Phones: the fact gets its own line under the tag and clock. */
+@media (max-width: 699px) {
+  .hp__meta { flex-wrap: wrap; row-gap: 8px; }
+  .hp__right { display: contents; }
+  .hp__clock { padding: 5px 10px; font-size: 12px; }
+  .hp__facts { order: 3; flex: 1 1 100%; max-width: none; padding: 5px 12px; font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { .hp__facts li { transition: none; } }
+/* The rotating lines are stacked, so the pill needs a set width; both pills
+   share one height so they line up. */
+.hp__clock, .hp__facts { box-sizing: border-box; height: 34px; padding-block: 0; }
+.hp__facts { width: min(420px, 40vw); max-width: none; }
+@media (max-width: 899px) { .hp__facts { width: min(320px, 44vw); } }
+@media (max-width: 699px) { .hp__clock, .hp__facts { height: 30px; } .hp__facts { width: auto; } }
