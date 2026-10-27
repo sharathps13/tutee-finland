@@ -419,12 +419,14 @@
    * onto a position along the six faces (front, right, top, left, bottom,
    * back): the cube rests on each face for a stretch, then rolls to the
    * next, and if the scroll stops mid-roll it settles on the nearest face.
-   * Between faces the orientation is slerped (quaternions), so every roll
-   * takes the shortest path and lands with the face upright. The position
-   * is eased every frame, so wheel steps roll smoothly. Each face's --p (0
-   * side-on, 1 facing) scrubs its number and drawing; the copy and tabs
-   * follow the face in front. The pointer tilts the cube and a drag rolls
-   * it a face either way. Phones: tabs or a swipe roll it.
+   * The cube's orientation is a quaternion eased towards that target every
+   * frame, so each roll takes the shortest path and lands upright.
+   * It can also be grabbed and dragged in any direction like a trackball;
+   * let go (or flick) and it spins on, then settles upright on whichever
+   * face is most in front, and the page quietly moves to that face's place
+   * in the scroll. The face in front always drives the copy and tabs, so
+   * whatever side is showing can be read. Each face's --p (0 side-on, 1
+   * facing) scrubs its number and drawing.
    * ------------------------------------------------------------------ */
   function initReasonStory() {
     var sec = $('[data-rx]');
@@ -441,20 +443,25 @@
     // Each face's outward normal, and the cube turn (rotateX, rotateY) that brings it to the front upright.
     var NORMAL = [[0, 0, 1], [1, 0, 0], [0, -1, 0], [-1, 0, 0], [0, 1, 0], [0, 0, -1]];
     var KEY = [[0, 0], [0, -90], [-90, 0], [0, 90], [90, 0], [0, 180]];
-    // Quaternion for rotateX(a) rotateY(b), as CSS composes them.
+    // Quaternions are [w, x, y, z]; rotateX(a) rotateY(b) as CSS composes them.
     function quat(a, b) {
       var ca = Math.cos(a * D / 2), sa = Math.sin(a * D / 2), cb = Math.cos(b * D / 2), sb = Math.sin(b * D / 2);
-      return [ca * cb, sa * cb, ca * sb, sa * sb];   // w, x, y, z
+      return [ca * cb, sa * cb, ca * sb, sa * sb];
     }
-    var Q = KEY.map(function (k) { return quat(k[0], k[1]); });
+    function axisAngle(x, y, z, ang) { var s = Math.sin(ang / 2); return [Math.cos(ang / 2), x * s, y * s, z * s]; }
+    function mul(a, b) {
+      return [a[0] * b[0] - a[1] * b[1] - a[2] * b[2] - a[3] * b[3],
+              a[0] * b[1] + a[1] * b[0] + a[2] * b[3] - a[3] * b[2],
+              a[0] * b[2] - a[1] * b[3] + a[2] * b[0] + a[3] * b[1],
+              a[0] * b[3] + a[1] * b[2] - a[2] * b[1] + a[3] * b[0]];
+    }
+    function norm(q) { var l = Math.hypot(q[0], q[1], q[2], q[3]) || 1; return q.map(function (v) { return v / l; }); }
     function slerp(a, b, t) {
       var d = a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3], s = 1;
       if (d < 0) { d = -d; s = -1; }
       var k0 = 1 - t, k1 = t;
       if (d < 0.9995) { var th = Math.acos(d), sn = Math.sin(th); k0 = Math.sin((1 - t) * th) / sn; k1 = Math.sin(t * th) / sn; }
-      var q = [0, 1, 2, 3].map(function (i) { return a[i] * k0 + b[i] * k1 * s; });
-      var l = Math.hypot(q[0], q[1], q[2], q[3]);
-      return q.map(function (v) { return v / l; });
+      return norm([0, 1, 2, 3].map(function (i) { return a[i] * k0 + b[i] * k1 * s; }));
     }
     function matrix(q) {
       var w = q[0], x = q[1], y = q[2], z = q[3];
@@ -462,9 +469,23 @@
               [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
               [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)]];
     }
+    var Q = KEY.map(function (k) { return quat(k[0], k[1]); });
+    function pathQuat(at) {
+      at = clamp(at, 0, N - 1);
+      var k = Math.min(N - 2, Math.floor(at));
+      return slerp(Q[k], Q[k + 1], at - k);
+    }
+    function facing(m, i) { var n = NORMAL[i]; return m[2][0] * n[0] + m[2][1] * n[1] + m[2][2] * n[2]; }
+    function frontFace(m) {
+      var best = 0;
+      for (var i = 1; i < N; i++) if (facing(m, i) > facing(m, best)) best = i;
+      return best;
+    }
 
-    var SPAN = 0, wordRun = 0, pos = 0, target = 0, last = 0, skew = 0;
-    var tilt = { x: 0, y: 0, tx: 0, ty: 0 }, drag = null, dragOff = 0, active = -1, running = false, idle = 0;
+    var SPAN = 0, wordRun = 0, pos = 0, target = 0, skew = 0, lastPos = 0;
+    var cur = Q[0], tilt = { x: 0, y: 0, tx: 0, ty: 0 }, active = -1, running = false, idle = 0;
+    // mode: 'follow' eases towards the scroll / tab target; 'drag' follows the pointer; 'spin' coasts after a flick.
+    var mode = 'follow', drag = null, spin = { x: 0, y: 1, v: 0 };
     var smooth = function (t) { return t * t * (3 - 2 * t); };
 
     function size() {
@@ -473,6 +494,7 @@
       sec.classList.toggle('is-live', pinned());
       wordRun = word ? Math.max(0, word.scrollWidth - window.innerWidth * 0.9) : 0;
     }
+    function inPin() { var r = sec.getBoundingClientRect(); return r.top <= 1 && r.bottom >= window.innerHeight - 1; }
     // Scroll -> position, resting on each face for the first and last 18% of its stretch.
     function fromScroll() {
       var f = clamp(-sec.getBoundingClientRect().top / SPAN, 0, N - 1);
@@ -490,45 +512,57 @@
       if (cols[i]) sec.style.setProperty('--rc', cols[i]);
     }
     function render() {
-      var at = clamp(pos + dragOff, -0.35, N - 0.65), base = clamp(at, 0, N - 1);
-      var k = Math.min(N - 2, Math.floor(base)), m = matrix(slerp(Q[k], Q[k + 1], base - k));
-      // Past either end the drag only leans the cube a little.
-      var lean = (at - base) * 60;
-      cube.style.transform = 'translateZ(calc(var(--s) / -2)) rotateX(' + tilt.x.toFixed(2) + 'deg) rotateY(' + (tilt.y - lean).toFixed(2) + 'deg) matrix3d(' +
+      var m = matrix(cur);
+      cube.style.transform = 'translateZ(calc(var(--s) / -2)) rotateX(' + tilt.x.toFixed(2) + 'deg) rotateY(' + tilt.y.toFixed(2) + 'deg) matrix3d(' +
         [m[0][0], m[1][0], m[2][0], 0, m[0][1], m[1][1], m[2][1], 0, m[0][2], m[1][2], m[2][2], 0, 0, 0, 0, 1].map(function (v) { return Math.abs(v) < 1e-6 ? 0 : +v.toFixed(5); }).join(',') + ')';
       faces.forEach(function (f, i) {
-        var n = NORMAL[i], z = clamp(m[2][0] * n[0] + m[2][1] * n[1] + m[2][2] * n[2], -1, 1);
+        var z = clamp(facing(m, i), -1, 1);
         var p = smooth(clamp(1 - Math.acos(z) / (Math.PI / 2), 0, 1));
         f.style.setProperty('--p', p.toFixed(3));
         f.style.setProperty('--shade', (1 - Math.max(0, z)).toFixed(3));
         var v = String(tos[i] < 2 || p > 0.985 ? tos[i] : Math.round(tos[i] * p));
         if (nums[i].textContent !== v) nums[i].textContent = v;
       });
-      navs.forEach(function (b, i) { b.style.setProperty('--f', clamp(base - i + 1, 0, 1).toFixed(3)); });
-      setActive(clamp(Math.round(base), 0, N - 1));
-      if (word) word.style.transform = 'translate3d(' + (-base / (N - 1) * wordRun).toFixed(1) + 'px,0,0) skewX(' + skew.toFixed(2) + 'deg)';
+      var now = frontFace(m);
+      setActive(now);
+      // Tabs fill up to the face in front, the one in front by how squarely it faces.
+      navs.forEach(function (b, i) { b.style.setProperty('--f', i < now ? 1 : i > now ? 0 : clamp(facing(m, i), 0, 1).toFixed(3)); });
+      if (word) word.style.transform = 'translate3d(' + (-pos / (N - 1) * wordRun).toFixed(1) + 'px,0,0) skewX(' + skew.toFixed(2) + 'deg)';
+    }
+    // Land on face k: ease there, and (when pinned) move the page to k's place without a visible jump.
+    function settle(k) {
+      mode = 'follow';
+      target = k;
+      if (pinned() && inPin()) window.scrollTo({ top: sec.offsetTop + k * SPAN, behavior: 'instant' });
     }
     function frame() {
       if (!running) return;
       requestAnimationFrame(frame);
-      if (pinned() && !drag) target = fromScroll();
+      if (mode === 'follow') {
+        if (pinned()) target = fromScroll();
+        cur = slerp(cur, pathQuat(target), 0.12);
+      } else if (mode === 'spin') {
+        cur = norm(mul(axisAngle(spin.x, spin.y, 0, spin.v), cur));
+        spin.v *= 0.93;
+        if (spin.v < 0.004) settle(frontFace(matrix(cur)));
+      }
       pos += (target - pos) * 0.11;
-      if (Math.abs(target - pos) < 0.0005) pos = target;
       tilt.x += (tilt.tx - tilt.x) * 0.08; tilt.y += (tilt.ty - tilt.y) * 0.08;
       // The word track leans into the roll, like scroll velocity.
-      skew += (clamp((last - pos) * 90, -12, 12) - skew) * 0.15;
-      last = pos;
+      skew += (clamp((lastPos - pos) * 90, -12, 12) - skew) * 0.15;
+      lastPos = pos;
       render();
     }
     function goTo(i) {
       i = clamp(i, 0, N - 1);
+      mode = 'follow';
       if (pinned()) window.scrollTo({ top: sec.offsetTop + i * SPAN, behavior: 'smooth' });
       else target = i;
     }
 
     navs.forEach(function (b, i) {
       b.addEventListener('click', function () {
-        if (reduceMotion) { pos = target = i; render(); } else goTo(i);
+        if (reduceMotion) { cur = Q[i]; pos = target = i; render(); } else goTo(i);
       });
       b.addEventListener('keydown', function (e) {
         var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
@@ -544,17 +578,18 @@
       if (!pinned()) return;
       clearTimeout(idle);
       idle = setTimeout(function () {
-        var r = sec.getBoundingClientRect();
-        if (r.top > 0 || r.bottom < window.innerHeight || drag) return;
-        var f = -r.top / SPAN, fr = f - Math.floor(f);
+        if (!inPin() || mode !== 'follow') return;
+        var f = -sec.getBoundingClientRect().top / SPAN, fr = f - Math.floor(f);
         if (fr > 0.16 && fr < 0.84) window.scrollTo({ top: sec.offsetTop + Math.round(f) * SPAN, behavior: 'smooth' });
       }, 180);
     }, { passive: true });
 
-    // Drag (or swipe) the cube: it follows the pointer, then settles a face along.
+    // Trackball drag: the cube turns about the axis at right angles to the
+    // pointer's path, as far as the pointer moves; a flick keeps it spinning.
+    var DRAG = 0.0085;   // radians per pixel
     stage.addEventListener('pointerdown', function (e) {
       if (e.button !== 0 || reduceMotion) return;
-      drag = { x: e.clientX, y: e.clientY, id: e.pointerId, on: false };
+      drag = { x: e.clientX, y: e.clientY, lx: e.clientX, ly: e.clientY, t: performance.now(), id: e.pointerId, on: false, vx: 0, vy: 0 };
     });
     stage.addEventListener('pointermove', function (e) {
       if (finePointer && !drag) {
@@ -563,32 +598,37 @@
         tilt.ty = ((e.clientX - r.left) / r.width - 0.5) * 16;
       }
       if (!drag || e.pointerId !== drag.id) return;
-      var dx = e.clientX - drag.x;
       if (!drag.on) {
-        if (Math.abs(dx) < 6 || Math.abs(dx) < Math.abs(e.clientY - drag.y)) return;
-        drag.on = true; stage.classList.add('is-drag');
+        if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 5) return;
+        drag.on = true; mode = 'drag'; stage.classList.add('is-drag');
+        tilt.tx = tilt.ty = 0;
         try { stage.setPointerCapture(e.pointerId); } catch (err) { /* not capturable */ }
       }
-      dragOff = -dx / 280;
+      var dx = e.clientX - drag.lx, dy = e.clientY - drag.ly, len = Math.hypot(dx, dy), now = performance.now();
+      if (len > 0) cur = norm(mul(axisAngle(-dy / len, dx / len, 0, len * DRAG), cur));
+      var dt = Math.max(1, now - drag.t);
+      drag.vx = drag.vx * 0.5 + dx / dt * 16; drag.vy = drag.vy * 0.5 + dy / dt * 16;   // px per ~16 ms, smoothed
+      drag.lx = e.clientX; drag.ly = e.clientY; drag.t = now;
     });
     function endDrag(e) {
       if (!drag || (e && e.pointerId !== drag.id)) return;
-      var was = drag.on, off = dragOff;
+      var d = drag;
       drag = null; stage.classList.remove('is-drag');
-      if (!was) return;
-      pos = clamp(pos + off, 0, N - 1); dragOff = 0;
-      var k = clamp(Math.round(target) + (off > 0.1 ? 1 : off < -0.1 ? -1 : 0), 0, N - 1);
-      goTo(k);
+      if (!d.on) return;
+      var v = Math.hypot(d.vx, d.vy);
+      if (performance.now() - d.t > 90 || v < 2) { settle(frontFace(matrix(cur))); return; }
+      spin = { x: -d.vy / v, y: d.vx / v, v: Math.min(v * DRAG, 0.35) };
+      mode = 'spin';
     }
     stage.addEventListener('pointerup', endDrag);
     stage.addEventListener('pointercancel', endDrag);
-    stage.addEventListener('pointerleave', function () { tilt.tx = 0; tilt.ty = 0; });
+    stage.addEventListener('pointerleave', function () { if (!drag) { tilt.tx = 0; tilt.ty = 0; } });
     stage.addEventListener('dragstart', function (e) { e.preventDefault(); });
 
     size();
     window.addEventListener('resize', size);
     if (pinMq) { if (pinMq.addEventListener) pinMq.addEventListener('change', size); else if (pinMq.addListener) pinMq.addListener(size); }
-    if (pinned()) pos = target = fromScroll();
+    if (pinned()) { pos = target = fromScroll(); cur = pathQuat(target); }
     render();
     if (reduceMotion) return;
     if ('IntersectionObserver' in window) {

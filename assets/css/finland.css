@@ -2568,7 +2568,7 @@ main { overflow-x: clip; }
 /* The cube: six square faces of side --s, placed front, right, top, left,
    bottom, back (the order it rolls through). */
 .rx__stage { --s: min(220px, 60vw); position: relative; display: grid; place-items: center; min-height: calc(var(--s) + 34px);
-  touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab; }
+  touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; }
 .rx__stage.is-drag { cursor: grabbing; }
 .rx__scene { position: relative; width: var(--s); height: var(--s); perspective: 1200px; }
 .rx__cube { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; transform: translateZ(calc(var(--s) / -2)); }
@@ -2612,7 +2612,11 @@ main { overflow-x: clip; }
 .rx__sun { fill: var(--c); opacity: .9; transform-box: fill-box; transform-origin: center; transform: scale(var(--p, 1)); }
 .rx__wave { fill: none; stroke: var(--c); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 100;
   stroke-dashoffset: calc(100 - clamp(0, calc(var(--p, 1) * 1.5 - var(--i) * .2), 1) * 100); opacity: calc(1 - var(--i) * .25); }
-.rx__pp { fill: var(--c); opacity: clamp(.12, calc(var(--p, 1) * 1.8 - var(--i) * .08), 1); }
+.rx__pulse { fill: color-mix(in srgb, var(--c) 16%, transparent); transform-box: fill-box; transform-origin: center; transform: scale(calc(.4 + var(--p, 1) * .6)); opacity: var(--p, 1); }
+.rx__shield { fill: color-mix(in srgb, var(--c) 18%, transparent); stroke: var(--c); stroke-width: 4; stroke-linejoin: round; stroke-dasharray: 100;
+  stroke-dashoffset: calc(100 - clamp(0, calc(var(--p, 1) * 1.4), 1) * 100); }
+.rx__okay { fill: none; stroke: #fff; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 100;
+  stroke-dashoffset: calc(100 - clamp(0, calc(var(--p, 1) * 2.2 - 1.2), 1) * 100); }
 .rx__floor { position: absolute; left: 6%; right: 6%; bottom: -26px; height: 28px; border-radius: 50%; pointer-events: none;
   background: radial-gradient(closest-side, rgba(6,22,49,.3), transparent); filter: blur(4px); }
 .rx__hint { display: none; }
