@@ -378,6 +378,7 @@ async function sendToAppsScript(f, country) {
   if (!res.ok || !parsed?.success) {
     throw new Error(`apps script refused the lead: HTTP ${res.status} ${parsed?.message || ''}`);
   }
+  if (parsed.mailed === false) console.error(`enquiry: apps script saved the lead but could not email it: ${parsed.mail_error || 'no detail'}`);
   return { saved: true, mailed: parsed.mailed !== false };
 }
 

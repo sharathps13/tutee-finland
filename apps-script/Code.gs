@@ -65,9 +65,22 @@ function doPost(e) {
     lock.releaseLock();
   }
 
-  var mailed = true;
-  try { sendLeadEmail_(lead, row); } catch (err) { mailed = false; console.error('mail failed: ' + err); }
-  return reply_(true, 'Saved', { mailed: mailed });
+  var mailed = true, mailError = '';
+  try { sendLeadEmail_(lead, row); } catch (err) { mailed = false; mailError = String(err); console.error('mail failed: ' + err); }
+  return reply_(true, 'Saved', { mailed: mailed, mail_error: mailError });
+}
+
+/** Run from the editor to check email on its own: sends a sample lead to
+ *  business@tuteeconnect.com. Any problem (permission, quota) shows in the
+ *  Execution log straight away. */
+function testEmail() {
+  var lead = normalise_({ name: 'Test Lead', phone: '+91 9876543210', email: MAIL_TO, state: 'Tamil Nadu',
+    course: "Master's – Data Science (Next intake)", lead_source: 'Finland Landing Page – test from the editor', call_time: 'Anytime' });
+  var now = new Date();
+  var row = [Utilities.formatDate(now, TIME_ZONE, 'dd/MM/yyyy'), Utilities.formatDate(now, TIME_ZONE, 'hh:mm a'),
+    lead.name, lead.phone, lead.email, lead.state, lead.shortlist, lead.course, lead.source, lead.callTime];
+  sendLeadEmail_(lead, row);
+  return 'Sent. Emails left today: ' + MailApp.getRemainingDailyQuota();
 }
 
 /** Health check, so the setup can be tested from a browser. */

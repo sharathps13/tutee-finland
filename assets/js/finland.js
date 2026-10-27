@@ -1642,6 +1642,94 @@
     label.textContent = pct >= 90 ? 'Ready for review ✓' : pct >= 60 ? 'Looking strong' : pct >= 25 ? 'Getting there' : "Let's start";
   }
 
+  /* Field checks shared by the live hints and the submit. Each returns an
+     error message, or '' when the value is fine. */
+  var FIELD_RULES = {
+    name: function (f) { return f.name.value.trim().replace(/[^A-Za-z\u00C0-\u024F]/g, '').length >= 2 ? '' : 'Please enter your full name.'; },
+    email: function (f) {
+      var v = f.email.value.trim();
+      if (!v) return 'Please enter your email address.';
+      return /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)*\.[A-Za-z]{2,}$/.test(v) ? '' : 'Enter a valid email address, like name@example.com.';
+    },
+    phone_number: function (f) {
+      var d = f.phone_number.value.replace(/\D/g, '');
+      if (!d) return 'Please enter your phone number.';
+      if (f.country_code && f.country_code.value === '+91') return /^[6-9]\d{9}$/.test(d) ? '' : 'Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9.';
+      return /^\d{7,15}$/.test(d) ? '' : 'Phone numbers have 7 to 15 digits.';
+    },
+    state: function (f) { return f.state && !f.state.value ? 'Please select your state.' : ''; }
+  };
+  function fieldRow(input) { return input.closest('.phone') || input.closest('.lf__duo') || input.closest('.field') || input; }
+  function showFieldError(form, name, msg) {
+    var input = form.elements[name];
+    if (!input) return;
+    var row = fieldRow(input), box = input.closest('.field') || input.closest('.dd') || input, id = 'err-' + name;
+    var err = document.getElementById(id);
+    if (!err && msg) {
+      err = document.createElement('p');
+      err.className = 'fx-err'; err.id = id; err.setAttribute('role', 'alert');
+      row.insertAdjacentElement('afterend', err);
+    }
+    if (err) { err.textContent = msg; err.hidden = !msg; }
+    box.classList.toggle('is-invalid', !!msg);
+    box.classList.toggle('is-valid', !msg && !!String(input.value).trim());
+    input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+    if (msg) input.setAttribute('aria-describedby', id); else input.removeAttribute('aria-describedby');
+  }
+  function checkField(form, name) {
+    var msg = FIELD_RULES[name] ? FIELD_RULES[name](form.elements) : '';
+    showFieldError(form, name, msg);
+    return msg;
+  }
+  function initLiveValidation(form) {
+    var touched = {};
+    Object.keys(FIELD_RULES).forEach(function (name) {
+      var input = form.elements[name];
+      if (!input) return;
+      // Phone: digits only, as they type.
+      if (name === 'phone_number') input.addEventListener('input', function () {
+        var clean = input.value.replace(/\D/g, '').slice(0, 15);
+        if (clean !== input.value) input.value = clean;
+      });
+      input.addEventListener('input', function () { if (touched[name]) checkField(form, name); });
+      input.addEventListener('change', function () { touched[name] = true; checkField(form, name); });
+      input.addEventListener('blur', function () { if (String(input.value).trim()) { touched[name] = true; checkField(form, name); } });
+    });
+    if (form.elements.country_code) form.elements.country_code.addEventListener('change', function () { if (touched.phone_number) checkField(form, 'phone_number'); });
+    return function validateAll() {
+      var first = null;
+      Object.keys(FIELD_RULES).forEach(function (name) {
+        if (!form.elements[name]) return;
+        touched[name] = true;
+        if (checkField(form, name) && !first) first = name;
+      });
+      return first;
+    };
+  }
+
+  /* A lead form that has been sent stays "completed" in this browser for 30
+     days, so the same person isn't asked to fill it in again. */
+  var LEAD_DONE_KEY = 'tc_fi_lead_done';
+  function leadDone() {
+    try {
+      var d = JSON.parse(localStorage.getItem(LEAD_DONE_KEY) || 'null');
+      return d && Date.now() - d.at < 30 * 864e5 ? d : null;
+    } catch (e) { return null; }
+  }
+  function showLeadDone(form, d, animate) {
+    var card = form.closest('.lf__card'), done = card && $('[data-lf-done]', card);
+    if (!done) return;
+    var first = String(d.name || '').trim().split(/\s+/)[0];
+    $('[data-lf-done-name]', done).textContent = first ? ', ' + first : '';
+    $('[data-lf-done-time]', done).textContent = d.call_time && !/^any/i.test(d.call_time) ? ' in the ' + d.call_time.replace(/\s*\(.*\)/, '').toLowerCase() : '';
+    form.hidden = true;
+    card.classList.add('is-done');
+    done.hidden = false;
+    if (animate && !reduceMotion) done.classList.add('is-enter');
+    var lf = form.closest('[data-lf]');
+    if (lf) lf.dispatchEvent(new CustomEvent('tc:lead-done', { detail: d }));
+  }
+
   function initForms() {
     fillCountryCodes();
 
@@ -1659,18 +1747,25 @@
         }
       }
 
+      var validateAll = initLiveValidation(form);
+      var sent = leadDone();
+      if (sent) showLeadDone(form, sent, false);
+
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         status('idle');
+        if (leadDone()) return;
         var data = {};
         new FormData(form).forEach(function (v, k) { data[k] = v; });
 
-        if (!String(data.name || '').trim()) { status('error', 'Please enter your name.'); return; }
-        if (!PHONE_RE.test(String(data.phone_number || '').replace(/\D/g, ''))) {
-          status('error', 'Please enter a valid phone number (7-15 digits).'); return;
+        var bad = validateAll();
+        if (bad) {
+          var el = form.elements[bad];
+          var target = (el.closest('.dd') && $('.dd__btn', el.closest('.dd'))) || el;
+          if (target.focus) target.focus({ preventScroll: true });
+          fieldRow(el).scrollIntoView({ block: 'center', behavior: reduceMotion ? 'auto' : 'smooth' });
+          return;
         }
-        if (!EMAIL_RE.test(data.email || '')) { status('error', 'Please enter a valid email address.'); return; }
-        if (form.elements.state && !data.state) { status('error', 'Please select your state.'); return; }
 
         data.phone = (data.country_code || '') + ' ' + (data.phone_number || '');
         delete data.country_code;
@@ -1688,13 +1783,13 @@
           .then(function (r) { return r.json().catch(function () { return { success: false }; }); })
           .then(function (res) {
             if (res && res.success) {
-              status('success');
               if (btn) { var r = btn.getBoundingClientRect(); fx.confetti(r.left + r.width / 2, r.top, 120); }
-              form.reset();
-              fillCountryCodes();
-              syncShortlist();
+              var d = { name: data.name, call_time: data.call_time || '', at: Date.now() };
+              try { localStorage.setItem(LEAD_DONE_KEY, JSON.stringify(d)); } catch (err) { /* private mode */ }
               form.dispatchEvent(new CustomEvent('tc:lead-sent'));
-              setTimeout(function () { status('idle'); }, 6000);
+              showLeadDone(form, d, true);
+              var doneBox = $('[data-lf-done]', form.closest('.lf__card'));
+              if (doneBox) doneBox.focus({ preventScroll: true });
             } else {
               status('error', (res && res.message) || 'Something went wrong. Please try again.');
             }
@@ -1722,7 +1817,7 @@
     var root = $('[data-lf]');
     if (!root) return;
     var form = $('form', root), steps = $$('[data-lf-step]', root), bars = $$('.lf__progress i', root), card = $('[data-lp]', root);
-    var nameEl = $('[data-lp-name]', root), status = $('[data-lp-status]', root), step = 0, sentTimer = 0;
+    var nameEl = $('[data-lp-name]', root), status = $('[data-lp-status]', root), step = 0;
     // Phones show the profile card folded to its header; a tap unfolds it.
     if (card) card.addEventListener('click', function () { card.classList.toggle('is-open'); });
     function go(i, focus) {
@@ -1738,7 +1833,22 @@
       bars.forEach(function (b, k) { b.classList.toggle('is-on', k <= i); });
       if (focus) { var first = $('input:not([type=hidden]), select', steps[i]); if (first) first.focus({ preventScroll: true }); }
     }
-    $('[data-lf-next]', root).addEventListener('click', function () { go(1, true); });
+    var choices = $('.lf__choices', root), levelErr = null;
+    function levelError(on) {
+      if (!levelErr) {
+        levelErr = document.createElement('p');
+        levelErr.className = 'fx-err'; levelErr.id = 'err-study_level'; levelErr.setAttribute('role', 'alert');
+        levelErr.textContent = 'Choose what you\u2019re aiming for to continue.';
+        choices.insertAdjacentElement('afterend', levelErr);
+      }
+      levelErr.hidden = !on;
+      choices.classList.toggle('is-invalid', on);
+    }
+    $$('input[name="study_level"]', form).forEach(function (r) { r.addEventListener('change', function () { levelError(false); }); });
+    $('[data-lf-next]', root).addEventListener('click', function () {
+      if (!$('input[name="study_level"]:checked', form)) { levelError(true); return; }
+      go(1, true);
+    });
     $('[data-lf-back]', root).addEventListener('click', function () { go(0, true); });
 
     // Mirror the answers onto the profile card.
@@ -1757,7 +1867,7 @@
       nameEl.textContent = nm || 'Your name';
       nameEl.classList.toggle('is-empty', !nm);
       var level = picked('study_level');
-      setText('[data-lp-level]', /Not sure/.test(level) ? 'Not sure yet' : level + (/PhD/.test(level) ? '' : ' degree'));
+      setText('[data-lp-level]', !level ? '—' : /Not sure/.test(level) ? 'Not sure yet' : level + (/PhD/.test(level) ? '' : ' degree'));
       setText('[data-lp-intake]', picked('intake'));
       setText('[data-lp-dest]', ($('[data-destination-label]') || {}).textContent || 'General Finland Inquiry');
       setText('[data-lp-email]', f.email.value.trim() || '—');
@@ -1774,13 +1884,19 @@
     var label = $('[data-destination-label]');
     if (label && 'MutationObserver' in window) new MutationObserver(mirror).observe(label, { childList: true, characterData: true, subtree: true });
 
-    form.addEventListener('tc:lead-sent', function () {
+    // Once the lead is sent the card stays stamped and the steps go away.
+    function stamp() {
       card.classList.add('is-sent');
       status.textContent = 'Submitted';
-      go(0);
-      mirror();
-      clearTimeout(sentTimer);
-      sentTimer = setTimeout(function () { card.classList.remove('is-sent'); mirror(); }, 8000);
+      var bar = $('.lf__progress', root); if (bar) bar.hidden = true;
+    }
+    form.addEventListener('tc:lead-sent', function () { mirror(); stamp(); });
+    root.addEventListener('tc:lead-done', function (e) {
+      if (!card.classList.contains('is-sent')) {
+        nameEl.textContent = e.detail.name || 'Your name';
+        nameEl.classList.toggle('is-empty', !e.detail.name);
+      }
+      stamp();
     });
 
     // The card leans toward the cursor and catches the light.
@@ -1793,6 +1909,10 @@
       card.parentNode.addEventListener('pointerleave', function () { ['--rx', '--ry', '--gx', '--gy'].forEach(function (k) { card.style.removeProperty(k); }); });
     }
     mirror();
+    // A lead sent on an earlier visit: initForms showed the done panel
+    // before this ran, so stamp the card here too.
+    var earlier = leadDone();
+    if (earlier) root.dispatchEvent(new CustomEvent('tc:lead-done', { detail: earlier }));
   }
 
   /* ------------------------------------------------------------------ *

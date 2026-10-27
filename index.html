@@ -780,7 +780,7 @@
 
           <fieldset class="lf__step is-on" data-lf-step>
             <legend class="lf__q"><span>Step 1 of 2</span>What are you aiming for?</legend>
-            <div class="lf__choices"><label class="lf__choice"><input type="radio" name="study_level" value="Bachelor's"><span class="lf__cico"><svg class="ico"><use href="#i-book"/></svg></span><b>Bachelor's</b><small>First degree</small><i class="lf__tick" aria-hidden="true"><svg class="ico ico-sm"><use href="#i-check"/></svg></i></label><label class="lf__choice"><input type="radio" name="study_level" value="Master's" checked><span class="lf__cico"><svg class="ico"><use href="#i-cap"/></svg></span><b>Master's</b><small>Advanced degree</small><i class="lf__tick" aria-hidden="true"><svg class="ico ico-sm"><use href="#i-check"/></svg></i></label><label class="lf__choice"><input type="radio" name="study_level" value="Doctoral"><span class="lf__cico"><svg class="ico"><use href="#i-flask"/></svg></span><b>Doctoral / PhD</b><small>Research degree</small><i class="lf__tick" aria-hidden="true"><svg class="ico ico-sm"><use href="#i-check"/></svg></i></label><label class="lf__choice"><input type="radio" name="study_level" value="Not sure"><span class="lf__cico"><svg class="ico"><use href="#i-spark"/></svg></span><b>Not sure yet</b><small>Help me choose</small><i class="lf__tick" aria-hidden="true"><svg class="ico ico-sm"><use href="#i-check"/></svg></i></label></div>
+            <div class="lf__choices"><label class="lf__choice"><input type="radio" name="study_level" value="Bachelor's"><span class="lf__cico"><svg class="ico"><use href="#i-book"/></svg></span><b>Bachelor's</b><small>First degree</small><i class="lf__tick" aria-hidden="true"><svg class="ico ico-sm"><use href="#i-check"/></svg></i></label><label class="lf__choice"><input type="radio" name="study_level" value="Master's"><span class="lf__cico"><svg class="ico"><use href="#i-cap"/></svg></span><b>Master's</b><small>Advanced degree</small><i class="lf__tick" aria-hidden="true"><svg class="ico ico-sm"><use href="#i-check"/></svg></i></label><label class="lf__choice"><input type="radio" name="study_level" value="Doctoral"><span class="lf__cico"><svg class="ico"><use href="#i-flask"/></svg></span><b>Doctoral / PhD</b><small>Research degree</small><i class="lf__tick" aria-hidden="true"><svg class="ico ico-sm"><use href="#i-check"/></svg></i></label><label class="lf__choice"><input type="radio" name="study_level" value="Not sure"><span class="lf__cico"><svg class="ico"><use href="#i-spark"/></svg></span><b>Not sure yet</b><small>Help me choose</small><i class="lf__tick" aria-hidden="true"><svg class="ico ico-sm"><use href="#i-check"/></svg></i></label></div>
             <span class="lf__sub">When would you like to start?</span>
             <div class="lf__pills"><label class="lf__pill"><input type="radio" name="intake" value="Next intake" checked><span>Next available intake</span></label><label class="lf__pill"><input type="radio" name="intake" value="Within 12 months"><span>Within 12 months</span></label><label class="lf__pill"><input type="radio" name="intake" value="Later"><span>Later / exploring</span></label></div>
             <div class="slchips" data-sl-chips hidden>
@@ -815,6 +815,17 @@
             <div class="alert alert--err hidden" data-form-error role="alert"><svg class="ico ico-sm"><use href="#i-x"/></svg><span data-form-error-text>Submission failed. Please try again.</span></div>
           </div>
         </form>
+        <div class="lf__done" data-lf-done hidden role="status" tabindex="-1">
+          <span class="lf__doneico" aria-hidden="true"><svg class="ico"><use href="#i-check"/></svg></span>
+          <span class="lf__donekick">Form completed</span>
+          <h3 class="lf__donetitle">Thank you<span data-lf-done-name></span>!</h3>
+          <p class="lf__donetext">Your Finland profile is with our team. A counsellor will call you<span data-lf-done-time></span> within one working day to share your route map.</p>
+          <ul class="lf__donenext">
+            <li><svg class="ico ico-sm"><use href="#i-phone"/></svg>Keep your phone handy for our call</li>
+            <li><svg class="ico ico-sm"><use href="#i-mail"/></svg>Check your inbox for a follow-up email</li>
+          </ul>
+          <a class="btn btn-primary btn-block" href="https://wa.me/917358364959" target="_blank" rel="noopener"><svg class="ico ico-sm ico-fill"><use href="#i-wa"/></svg>Chat with us on WhatsApp</a>
+        </div>
       </div>
 
       <aside class="lf__side reveal" style="--d:.1s">
@@ -826,7 +837,7 @@
             <div><small>Applicant</small><b class="lp__name" data-lp-name>Your name</b><span class="lp__label" data-strength-label>Let's start</span></div>
           </div>
           <dl class="lp__rows">
-            <div><dt>Aiming for</dt><dd data-lp-level>Master's degree</dd></div>
+            <div><dt>Aiming for</dt><dd data-lp-level>&mdash;</dd></div>
             <div><dt>Start</dt><dd data-lp-intake>Next available intake</dd></div>
             <div class="lp__wide"><dt>Interested in</dt><dd data-lp-dest>General Finland Inquiry</dd></div>
             <div><dt>Email</dt><dd data-lp-email>&mdash;</dd></div>
