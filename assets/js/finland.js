@@ -190,6 +190,8 @@
         var on = hero.getBoundingClientRect().bottom < 80 && contact.getBoundingClientRect().top > window.innerHeight * 0.75;
         mbar.classList.toggle('is-on', on);
         document.body.classList.toggle('mbar-on', on);
+        // Phones hide the floating Tutee AI button while the hero fills the screen.
+        document.body.classList.toggle('in-hero', hero.getBoundingClientRect().bottom >= 80);
       }
 
       var mid = window.innerHeight * 0.4, active = 0;
