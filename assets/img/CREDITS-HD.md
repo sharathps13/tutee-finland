@@ -56,3 +56,10 @@ Trimmed and re-encoded with ffmpeg (no audio): WebM VP9 plus MP4 H.264, with a p
 
 `assets/img/flags/*.svg` — 63 flags from the open-source [flag-icons](https://github.com/lipis/flag-icons) package v7.2.3 (4:3 set), MIT licence, served locally.
 
+## Why Finland cube faces (`assets/img/why/`)
+
+Square 760x760 centre crops of photos already credited above, one per cube face:
+`happiness.jpg` (cities/helsinki.jpg), `education.jpg` (services/college.jpg),
+`work.jpg` (services/career.jpg), `career.jpg` (cities/tampere.jpg),
+`nature.jpg` (seasons/summer.jpg) and `safety.jpg` (cities/turku.jpg). The
+footer credit list already names each source photo, so no new credit is needed.

@@ -584,6 +584,41 @@
       }, 180);
     }, { passive: true });
 
+    // While pinned, one wheel gesture moves exactly one face, however hard
+    // the flick: the gesture's trailing events (trackpad momentum, a fast
+    // spin of the wheel) are swallowed until the wheel has been still for a
+    // moment. Coming in from either end, the cube first locks onto the face
+    // it arrived at. Past the first or last face the page scrolls on.
+    var wheelLock = 0, lastStep = 0, goal = 0, wasIn = false;
+    window.addEventListener('scroll', function () { if (!inPin()) wasIn = false; }, { passive: true });
+    window.addEventListener('wheel', function (e) {
+      if (!pinned() || e.ctrlKey || Math.abs(e.deltaY) < 1 || !inPin()) return;
+      var now = performance.now(), dir = e.deltaY > 0 ? 1 : -1;
+      var f = clamp(-sec.getBoundingClientRect().top / SPAN, 0, N - 1);
+      if (!wasIn) {
+        wasIn = true;
+        goal = clamp(dir > 0 ? Math.floor(f + 0.02) : Math.ceil(f - 0.02), 0, N - 1);
+        e.preventDefault();
+        wheelLock = now + 450;
+        mode = 'follow';
+        window.scrollTo({ top: sec.offsetTop + goal * SPAN, behavior: 'smooth' });
+        return;
+      }
+      if (now < wheelLock) { e.preventDefault(); wheelLock = Math.max(wheelLock, now + 220); return; }
+      // Long after the last step (or after a drag), start from where the page actually is.
+      if (now - lastStep > 1300) goal = clamp(Math.round(f), 0, N - 1);
+      var next = goal + dir;
+      if (next < 0 || next > N - 1) return;
+      e.preventDefault();
+      goal = next;
+      wheelLock = now + 700; lastStep = now;
+      mode = 'follow';
+      window.scrollTo({ top: sec.offsetTop + next * SPAN, behavior: 'smooth' });
+    }, { passive: false });
+
+    // Every face's photo loads as the section approaches.
+    whenNear(sec, function () { $$('[data-rx-img]', sec).forEach(function (im) { im.loading = 'eager'; }); });
+
     // Trackball drag: the cube turns about the axis at right angles to the
     // pointer's path, as far as the pointer moves; a flick keeps it spinning.
     var DRAG = 0.0085;   // radians per pixel
