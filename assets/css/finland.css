@@ -2358,5 +2358,9 @@ main { overflow-x: clip; }
 
 /* Lead form: state and preferred call time share one row. */
 .lf__duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.lf__duo .select { width: 100%; min-width: 0; }
+.lf__duo .field { min-width: 0; }
+.lf__duo .select { width: 100%; min-width: 0; text-overflow: ellipsis; }
 .lf__duo .select:invalid { color: var(--muted); }
+.lf__duo .field > .ico { z-index: 2; }
+/* Dropdowns match the text fields height for height. */
+.lf .dd__btn { min-height: 51px; }
