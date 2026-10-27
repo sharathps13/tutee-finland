@@ -27,25 +27,32 @@ Universities · Course · Lead Source · Preferred Call Time
 
 ## One-time setup (about 5 minutes)
 
-1. Open the **Website Leads** spreadsheet → **Extensions → Apps Script**.
+This is a **separate, standalone** Apps Script project, so it doesn't touch
+the script your other landing page already uses.
+
+1. Go to **script.google.com → New project**. Rename it (top left) to
+   **Finland Leads**.
 2. Replace the contents of `Code.gs` with [`Code.gs`](Code.gs) from this folder, then save.
-3. In `setToken()`, replace `PASTE-A-LONG-RANDOM-TOKEN-HERE` with a long random
-   string (30+ letters and numbers). Choose **setToken** in the function menu
-   and click **Run**. Approve the permissions Google asks for.
-4. Choose **setupFinlandLeads** and click **Run**. This creates the
-   **Finland Leads** tab with the header row formatted, frozen and filterable.
-5. **Deploy → New deployment →** type **Web app**:
+3. **Link the sheet:** copy the Website Leads ID from its URL (the part between
+   `/d/` and `/edit`). In `setSheetId()`, replace `PASTE-THE-SPREADSHEET-ID-HERE`
+   with it, then pick **setSheetId** in the function menu and click **Run**.
+   Approve the permissions Google asks for.
+4. **Set the token:** in `setToken()`, replace `PASTE-A-LONG-RANDOM-TOKEN-HERE`
+   with a long random string (30+ letters and numbers), then run **setToken**.
+5. Run **setupFinlandLeads**. This creates the **Finland Leads** tab with the
+   header row formatted, frozen and filterable.
+6. **Deploy → New deployment →** type **Web app**:
    - Execute as: **Me**
    - Who has access: **Anyone**
 
    Click **Deploy** and copy the **Web app URL** (it ends in `/exec`).
-6. In Netlify → the Finland site → **Site configuration → Environment
+7. In Netlify → the Finland site → **Site configuration → Environment
    variables**, add:
-   - `APPS_SCRIPT_URL` = the `/exec` URL from step 5
-   - `APPS_SCRIPT_TOKEN` = the same token you used in step 3
+   - `APPS_SCRIPT_URL` = the `/exec` URL from step 6
+   - `APPS_SCRIPT_TOKEN` = the same token you used in step 4
 
    Then **Deploys → Trigger deploy** so the function picks them up.
-7. Check it: open `https://<your-site>/api/enquiry` in a browser. It should
+8. Check it: open `https://<your-site>/api/enquiry` in a browser. It should
    show `"sheet_configured": true`. Then submit a test lead on the page; a row
    should appear in **Finland Leads** and an email should arrive.
 

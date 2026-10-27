@@ -1,9 +1,9 @@
 /**
  * Tutee Connect — website leads → Google Sheets + email.
  *
- * Paste this into the Apps Script project bound to the "Website Leads"
- * spreadsheet (Extensions → Apps Script). Setup steps are in
- * apps-script/README.md next to this file.
+ * Paste this into its own standalone Apps Script project (script.google.com),
+ * linked to the "Website Leads" spreadsheet with setSheetId(). Setup steps
+ * are in apps-script/README.md next to this file.
  *
  * The landing page never calls this script directly. The form posts to the
  * site's own /api/enquiry function, which forwards the lead here with a shared
@@ -26,7 +26,7 @@ var HEADER_BG = '#0b3d3a';
 /** Run once from the editor: creates and formats the Finland Leads tab. */
 function setupFinlandLeads() {
   var sheet = getLeadsSheet_(DEFAULT_TAB);
-  SpreadsheetApp.getActiveSpreadsheet().setActiveSheet(sheet);
+  try { getSpreadsheet_().setActiveSheet(sheet); } catch (e) { /* standalone project */ }
   return 'Ready: ' + sheet.getName();
 }
 
@@ -105,7 +105,7 @@ function safeCell_(v) {
 
 /** The leads tab, created and formatted on first use. */
 function getLeadsSheet_(name) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var ss = getSpreadsheet_();
   var sheet = ss.getSheetByName(name);
   if (sheet) return sheet;
 
@@ -167,4 +167,22 @@ function reply_(ok, message, extra) {
   var out = { success: ok, message: message };
   if (extra) Object.keys(extra).forEach(function (k) { out[k] = extra[k]; });
   return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);
+}
+
+/** The Website Leads spreadsheet. A standalone project (script.google.com)
+ *  opens it by the ID saved in SHEET_ID; a project made from the sheet's
+ *  own Extensions menu uses that sheet directly. */
+function getSpreadsheet_() {
+  var id = PropertiesService.getScriptProperties().getProperty('SHEET_ID');
+  return id ? SpreadsheetApp.openById(id) : SpreadsheetApp.getActiveSpreadsheet();
+}
+
+/** Run once in a standalone project: paste the Website Leads ID (the long
+ *  part of its URL between /d/ and /edit). */
+function setSheetId() {
+  var id = 'PASTE-THE-SPREADSHEET-ID-HERE';
+  if (/PASTE/.test(id)) throw new Error('Replace the placeholder with the Website Leads spreadsheet ID first.');
+  SpreadsheetApp.openById(id);
+  PropertiesService.getScriptProperties().setProperty('SHEET_ID', id);
+  return 'Sheet linked.';
 }
