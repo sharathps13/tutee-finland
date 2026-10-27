@@ -2456,3 +2456,29 @@ main { overflow-x: clip; }
   .brandmark--header { height: 44px; }
   .logo__plate:has(.brandmark--header) { padding: 3px 10px; border-radius: 12px; }
 }
+
+/* ================================================= HEADER LOGO · ICON SWAP
+   Over the hero (and any dark section) the header shows just the round
+   Tutee Connect icon on a glass disc. When the white bar appears the disc
+   widens into the full logo: the plate grows, the icon fades and shrinks
+   away and the wordmark fades in, all on one curve. */
+.logo__plate--swap { position: relative; overflow: hidden; box-sizing: border-box; height: 56px; width: 56px; padding: 0 !important; border-radius: 50% !important;
+  justify-content: flex-start; align-items: center;
+  transition: width .55s var(--ease), border-radius .55s var(--ease), background .4s, box-shadow .4s, border-color .4s; }
+.logo__plate--swap .brandmark--icon { position: absolute; left: 3px; top: 3px; width: 48px; height: 48px; border-radius: 50%; object-fit: cover;
+  transition: opacity .3s ease, transform .55s var(--ease); }
+.logo__plate--swap .brandmark--header { flex: none; height: 48px; width: auto; margin: 0 0 0 12px !important; opacity: 0; transform: translateX(-10px);
+  transition: opacity .35s ease, transform .55s var(--ease); }
+.header.is-scrolled .logo__plate--swap { width: 142px; border-radius: 14px !important; }
+.header.is-scrolled .logo__plate--swap .brandmark--icon { opacity: 0; transform: scale(.6) rotate(-20deg); }
+.header.is-scrolled .logo__plate--swap .brandmark--header { opacity: 1; transform: none; transition-delay: .12s; }
+@media (max-width: 479px) {
+  .logo__plate--swap { width: 52px; height: 52px; }
+  .logo__plate--swap .brandmark--icon { width: 44px; height: 44px; }
+  .logo__plate--swap .brandmark--header { height: 44px; margin-left: 10px !important; }
+  .header.is-scrolled .logo__plate--swap { width: 128px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .logo__plate--swap, .logo__plate--swap .brandmark--icon, .logo__plate--swap .brandmark--header { transition: opacity .2s; transform: none !important; }
+}
+
