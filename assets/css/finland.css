@@ -488,7 +488,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 
 /* ================================================================ FAQ */
 .faq { display: grid; gap: 24px; }
-@media (min-width: 960px) { .faq { grid-template-columns: 360px 1fr; gap: 48px; align-items: start; } .faq__aside { position: sticky; top: calc(var(--header-h) + 24px); } }
+@media (min-width: 960px) { .faq { grid-template-columns: 360px 1fr; gap: 48px; align-items: start; } }
 .faq__aside { display: grid; gap: 16px; }
 .help { display: grid; gap: 12px; padding: 20px; border-radius: var(--radius); background: var(--ice); border: 1px solid var(--line); }
 .help__btns { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -2399,3 +2399,28 @@ main { overflow-x: clip; }
 @media (prefers-reduced-motion: reduce) { .lf__done.is-enter { animation: none; } }
 
 .lf__form[hidden], .lf__progress[hidden] { display: none; }
+
+/* ============================================== UNIVERSITY STAMPS · PAPER
+   Real postage-stamp look: cream paper with round perforations, a thin
+   frame round the picture and "SUOMI · FINLAND" printed on the margin.
+   The perforated strip is kept narrower than the hole spacing so the holes
+   only bite the outer edge; the paper margin itself is the picture's border.
+   The shadow sits on the list item so it follows the perforated edge. */
+.pc__stamps > li { filter: drop-shadow(0 2px 1.5px rgba(6,22,49,.16)) drop-shadow(0 8px 12px rgba(6,22,49,.16)); transition: filter .3s; }
+.pc__stamps > li:has(.pc__stamp:hover), .pc__stamps > li:has(.is-on) { filter: drop-shadow(0 3px 2px rgba(6,22,49,.18)) drop-shadow(0 14px 18px rgba(6,22,49,.26)); }
+.pc__stamp { --r: 3.5px; --s: 10px; --m: 5px; position: relative; padding: var(--m); filter: none; background: #f7f0dc;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, radial-gradient(var(--r) at var(--r) var(--r), #0000 96%, #000) calc(var(--r) * -1) calc(var(--r) * -1) / var(--s) var(--s) round;
+  mask: linear-gradient(#000 0 0) content-box, radial-gradient(var(--r) at var(--r) var(--r), #0000 96%, #000) calc(var(--r) * -1) calc(var(--r) * -1) / var(--s) var(--s) round; }
+.pc__stamp:hover, .pc__stamp:focus-visible, .pc__stamp.is-on { filter: none; }
+.pc__stamp-in { border: 6px solid #fbf6e8; border-bottom-width: 15px; box-shadow: none; }
+.pc__stamp-in img { outline: 1px solid rgba(255,255,255,.6); outline-offset: -4px; }
+.pc__stamp::after { content: "SUOMI · FINLAND"; position: absolute; left: 0; right: 0; bottom: calc(var(--m) + 3px); text-align: center; font-size: 7.5px; font-weight: 800;
+  letter-spacing: .16em; color: var(--fi-blue); opacity: .75; white-space: nowrap; overflow: hidden; pointer-events: none; }
+.pc__stamp.is-on .pc__stamp-in, .pc__stamp:focus-visible .pc__stamp-in { border-color: #dcfaf0; box-shadow: none; }
+.pc__stamp.is-on .pc__stamp-in img, .pc__stamp:focus-visible .pc__stamp-in img { outline: 2px solid var(--aurora); outline-offset: -3px; }
+@media (max-width: 699px) {
+  .pc__stamp { --r: 2.6px; --s: 7.5px; --m: 3.5px; }
+  .pc__stamp-in { border-width: 3px 3px 10px; }
+  .pc__stamp-in img { outline-offset: -2px; }
+  .pc__stamp::after { font-size: 5px; bottom: calc(var(--m) + 2px); letter-spacing: .08em; }
+}
