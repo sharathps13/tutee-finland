@@ -2439,3 +2439,20 @@ main { overflow-x: clip; }
   font: inherit; font-size: 13.5px; font-weight: 700; color: var(--fi-blue); cursor: pointer; }
 .lf__again:hover { background: var(--ice); }
 .lf__again:focus-visible { outline: 3px solid var(--aurora); outline-offset: 2px; }
+
+/* ===================================================== HEADER LOGO · GLASS
+   The plate sits inside the 68px bar with room above and below, so it no
+   longer touches the header's edges. Over the hero it is an icy glass
+   gradient with a faint aurora rim: light enough for the logo's dark text,
+   tinted to match the night sky. The logo is drawn at a whole-pixel height
+   from a large enough source to stay sharp. */
+.brandmark--header { height: 48px; }
+.logo__plate:has(.brandmark--header) { padding: 3px 12px; border-radius: 14px;
+  background: linear-gradient(135deg, rgba(255,255,255,.94) 0%, rgba(234,244,255,.86) 55%, rgba(218,249,239,.82) 100%);
+  border: 1px solid rgba(255,255,255,.75);
+  box-shadow: 0 10px 26px -14px rgba(2,10,30,.7), 0 0 0 1px rgba(47,227,180,.22), 0 0 22px -8px rgba(47,227,180,.35), inset 0 1px 0 #fff; }
+.logo__plate .brandmark--header { image-rendering: auto; transform: translateZ(0); backface-visibility: hidden; }
+@media (max-width: 479px) {
+  .brandmark--header { height: 44px; }
+  .logo__plate:has(.brandmark--header) { padding: 3px 10px; border-radius: 12px; }
+}
