@@ -70,6 +70,22 @@
   /* Photos far below the hero carry their address in data-defer-src (or
      data-defer-bg for backgrounds) and load, then decode, as their section
      comes within a screen or so. */
+  /* Every other lazy photo is decoded off the main thread as it comes within
+     a screen and a half, so its first appearance never stalls a frame. */
+  function initPreDecode() {
+    if (!('IntersectionObserver' in window)) return;
+    afterLoad(function () {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          io.unobserve(e.target);
+          if (e.target.complete) preDecode(e.target);
+          else e.target.addEventListener('load', function () { preDecode(e.target); }, { once: true });
+        });
+      }, { rootMargin: '150% 0px' });
+      $$('img[loading="lazy"]').forEach(function (im) { if (!im.hasAttribute('data-defer-src')) io.observe(im); });
+    });
+  }
   function initDeferredMedia() {
     var els = $$('[data-defer-src], [data-defer-bg]');
     var groups = [];
@@ -1808,6 +1824,8 @@
     if (!root) return;
     var tabs = $$('[data-fv-tab]', root), panes = $$('[data-fv-pane]', root), imgs = $$('[data-fv-img]', root), pill = $('[data-fv-pill]', root);
     var N = tabs.length, idx = 0, t = 0, last = 0, raf = 0, inView = false, hover = false, MS = 7000;
+    // The countdown runs on the tab strip alone, so each frame restyles a few bars, not the whole card.
+    var strip = tabs[0].parentNode;
     function placePill() {
       var tb = tabs[idx], box = tb.parentNode;
       box.style.setProperty('--px', tb.offsetLeft + 'px');
@@ -1830,7 +1848,7 @@
         }
       });
       placePill();
-      root.style.setProperty('--t', 0);
+      strip.style.setProperty('--t', 0);
     }
     function playing() { return inView && !hover && !reduceMotion && !document.hidden; }
     function frame(now) {
@@ -1838,7 +1856,7 @@
       if (!playing()) return;
       t += (now - last) / MS; last = now;
       if (t >= 1) go(idx + 1);
-      root.style.setProperty('--t', t.toFixed(4));
+      strip.style.setProperty('--t', t.toFixed(4));
       raf = requestAnimationFrame(frame);
     }
     function sync() { if (playing() && !raf) { last = performance.now(); raf = requestAnimationFrame(frame); } }
@@ -2730,7 +2748,7 @@
     if (live) sec.classList.add('is-live');
 
     // Season photos load after the page so they never compete with first paint.
-    function loadBgs() { bgs.forEach(function (img) { var s = img.getAttribute('data-src'); if (s) { img.src = s; img.removeAttribute('data-src'); } }); }
+    function loadBgs() { bgs.forEach(function (img) { var s = img.getAttribute('data-src'); if (s) { img.src = s; img.removeAttribute('data-src'); preDecode(img); } }); }
     // The chapter photos wait until the visitor starts moving through the
     // hero (or the page has been idle a few seconds), keeping first load light.
     if (live) {
@@ -2804,7 +2822,7 @@
       var mapBox = mobile ? { x: W * 0.08, y: top, w: W * 0.84, h: room } : { x: W * 0.5, y: H * 0.09, w: W * 0.44, h: H * 0.84 };
       var txtBox = mobile ? { x: W * 0.05, y: top + room * 0.12, w: W * 0.9, h: room * 0.76 } : { x: W * 0.55, y: H * 0.26, w: W * 0.39, h: H * 0.46 };
       // Enough snow to draw the shapes crisply, capped so big screens stay smooth.
-      var n = Math.round(clamp(W * H / 560, mobile ? 520 : 750, 1900) * (lite ? 0.6 : 1));
+      var n = Math.round(clamp(W * H / 680, mobile ? 480 : 700, 1500) * (lite ? 0.6 : 1));
       if (n !== N) {
         N = n; parts = [];
         for (var i = 0; i < N; i++) {
@@ -3170,6 +3188,7 @@
    * Boot
    * ------------------------------------------------------------------ */
   initDeferredMedia();
+  initPreDecode();
   initMarquees();
   initParticleHero();
   initScrollUi();
