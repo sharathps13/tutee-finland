@@ -319,7 +319,7 @@
     { id: 'apply', t: 'How to apply', k: 'apply application how studyinfo opintopolku joint application motivation letter shortlist process steps admission offer accept',
       a: "Applications go through **Studyinfo (Opintopolku)**, Finland's national application service.\n\n1. **Shortlist & apply** — we shortlist programmes that fit your profile and prepare your Studyinfo application, motivation letter and documents\n2. **Admission & scholarship** — offers usually arrive with the institution's scholarship decision; we help you compare them and accept the right one\n3. **Residence permit** — apply on Enter Finland for a continuous A permit\n\nStart with a [free evaluation](" + sec('contact') + ") and a counsellor will map your route.",
       c: ['Show me the full journey', 'What are the basic requirements?', 'Evaluate my profile'], s: 'relocate' },
-    { id: 'intake', t: 'Intakes and timing', k: 'intake intakes when start september autumn january spring timeline deadline semester term',
+    { id: 'intake', t: 'Intakes and timing', k: 'intake intakes when start september autumn timeline deadline semester term',
       a: "Finnish degrees mainly start in the **autumn intake** — term begins as the forests turn red and gold, around **September**. Applications run through **Studyinfo** months before that, and each programme sets its own application period.\n\nTell us when you'd like to start in the [free evaluation](" + sec('contact') + ") (next available intake, within 12 months, or later) and your counsellor will send a **route map with your permit timeline**.",
       c: ['How do I apply?', 'Evaluate my profile'], s: 'contact' },
     { id: 'journey', t: 'Your journey in six milestones', k: 'journey steps milestones route roadmap process timeline from first application to permanent resident',
@@ -496,6 +496,56 @@
   function reset() { ctx = { uni: null, lastQ: '', course: null }; }
   function kbAnswer(e) { return { text: e.a, chips: e.c || [] }; }
   var FALLBACK_CHIPS = ['What scholarships are there?', 'How does the residence permit work?', 'Master’s in computer science', 'Talk to a counsellor'];
+  var WA = '[WhatsApp us](https://wa.me/917358364959)';
+
+  /* Intakes. The page gives the autumn intake (term starts around September);
+     it doesn't say which programmes start in other months, so those go to a counsellor. */
+  var INTAKE_RE = /\b(intakes?|intak\w*|in takes?|deadlines?|start dates?)\b/;
+  var MONTH_RE = /\b(jan\w*|feb\w*|mar(?:ch)?|apr(?:il)?|june?|july?|aug(?:ust)?|sept?(?:ember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b|\b(?:in|from|for) (may)\b/;
+  var SEASON_RE = /\b(autumn|fall|spring|summer|winter)\b/;
+  var MONTHS = { jan: 'January', feb: 'February', mar: 'March', apr: 'April', may: 'May', jun: 'June', jul: 'July', aug: 'August', sep: 'September', oct: 'October', nov: 'November', dec: 'December' };
+  /* Places people name, mapped to the campus city they're in ("universities near Suomenlinna"). */
+  var NEAR_RE = /\b(near|nearby|nearest|close to|closest to|close by|next to|walking distance|distance from|far from)\b/;
+  var LANDMARKS = [
+    ['Helsinki', /\b(helsinki cathedral|senate square|suomenlin\w*|sveaborg|kauppatori|market square|esplanadi?|kamppi|kallio|pasila|kumpula|viikki|meilahti|toolo|temppeliaukio|rock church|oodi|kiasma|ateneum|uspenski\w*)\b/],
+    ['Espoo', /\b(otani?em\w*|keilaniemi|tapiola|leppavaara|matinkyla|nuuksio)\b/],
+    ['Vantaa', /\b(helsinki airport|tikkurila|myyrmaki)\b/],
+    ['Turku', /\b(turku castle|turun linna|aura river|aurajoki|ruissalo)\b/],
+    ['Tampere', /\b(sarkanniemi|hervanta|pyynikki|nasinneula)\b/],
+    ['Rovaniemi', /\b(santa ?cla\w*|santa village|santa ?park|arctic circle|napapiiri|arktikum)\b/],
+    ['Oulu', /\b(linnanmaa|kontinkangas)\b/],
+    ['Kuopio', /\b(puijo|savilahti)\b/],
+    ['Lappeenranta', /\b(skinnarila)\b/]
+  ];
+  // A question's key word must appear in the passage it gets, or that passage isn't the answer.
+  var ANCHORS = [
+    [/\b(intakes?|intak\w*|semesters?|deadlines?|start dates?)\b/, /\b(intakes?|semesters?|deadlines?|start\w*|application periods?)\b/i],
+    [NEAR_RE, /\b(near|nearby|close to|distance|minutes?|km|walk)\b/i]
+  ];
+  function anchorMiss(q, text) { return ANCHORS.some(function (a) { return a[0].test(q) && !a[1].test(text); }); }
+
+  // Questions this site can't answer reliably (distances and travel times, whether your marks are enough, what can
+  // still start next month, the best area to live, a university's exact English score): say so, then hand over.
+  var NEEDS_COUNSELLOR = [
+    [/\b(how far|distance (from|to|between)|how long (does it|will it|would it|to) (take|get|reach|travel|commute)|commut\w*|by (train|bus|metro|tram|mrt|subway|tube|car)|travel time|minutes? (from|to|away)|km (from|to|away)|close to the city|far from)\b/, null,
+      'I can\'t give reliable distances or travel times: they depend on the exact campus and where you\'d live.'],
+    [/\b(next|this|coming) (month|week|few weeks)\b|\bstart\w* (soon|immediately|asap|right away)\b|\b(still|currently) (open|accepting)\b/, null,
+      'Which courses can still take you that soon depends on each university\'s current deadlines and places, which change all the time.'],
+    [/\b\d{2}(\.\d+)? ?(%|percent)|\b(percentage|marks|cgpa|gpa|backlogs?|gap year|study gap|year gap|education gap)\b/, /\b(admission|admit|get in|get into|eligib\w*|accept\w*|apply|qualify|enough|chances?|possible)\b/,
+      'Whether your marks are enough depends on the university, the course and the rest of your profile, so I won\'t guess.'],
+    [/\b(best|good|safe|safest|cheap\w*|nice) (area|areas|suburbs?|neighbou?rhoods?|localit(y|ies)|places?|part of (the )?(city|town)) (to (live|stay)|for students?)\b|\bwhere (should|can|do) (i|students) (live|stay)\b/, null,
+      'The best area to live depends on your campus, budget and lifestyle, and this site doesn\'t compare neighbourhoods.'],
+    [/\b(ielts|pte|toefl|duolingo)\b.*\b(scores?|bands?|minimum)\b|\b(scores?|bands?|minimum)\b.*\b(ielts|pte|toefl|duolingo)\b/, null,
+      'Each university sets its own minimum English test score, and it varies by course, so I won\'t quote one.'],
+    [/\b(distance learning|distance education|online (course|courses|degree|degrees|study|studies|classes|programmes?|programs?)|study online|studying online|remote study)\b/, null,
+      'A student visa is for full-time study on campus, and this site does not cover online or distance courses.']
+  ];
+  function needsCounsellor(q) {
+    for (var i = 0; i < NEEDS_COUNSELLOR.length; i++) { var n = NEEDS_COUNSELLOR[i]; if (n[0].test(q) && (!n[1] || n[1].test(q))) return n[2]; }
+    return '';
+  }
+  // "universities near <a place we know>" is answered by its city instead
+  function namesLandmark(q) { return /b(near|nearby|nearest|close to|closest to|next to|around|walking distance)b/.test(q) && LANDMARKS.some(function (l) { return l.some(function (x) { return x instanceof RegExp && x.test(q); }); }); }
 
   function answer(raw) {
     var q = fold(String(raw).replace(/\bIT\b/g, 'ICT')).replace(/\bmba\b/g, 'master business administration');
@@ -512,6 +562,9 @@
     // Never quote money: fees for a specific programme or university get the
     // budget answer, not a number.
     var money = /\b(how much|fee|fees|tuition|cost|costs|price|euro|eur|inr|rupees|lakh|expensive|cheap|cheapest|affordable|lowest fee\w*)\b/.test(q);
+
+    var unsure = !namesLandmark(q) && needsCounsellor(q);
+    if (unsure) return Promise.resolve({ text: unsure + ' A counsellor can check it for you — ' + WA + ', or ask in the [free evaluation](' + sec('contact') + ').', chips: ['Talk to a counsellor', 'Evaluate my profile'] });
 
     return ensureData().then(function () {
       var uni = findUni(q);
@@ -537,6 +590,38 @@
         return { text: pre + costs.a, chips: costs.c };
       }
 
+      // Intakes and start months ("programs in January intake", "is there a September intake?").
+      // A month next to work or a permit deadline is about something else.
+      var mon = MONTH_RE.exec(q), season = SEASON_RE.exec(q), notWork = !/\b(work\w*|jobs?)\b/.test(q);
+      if ((INTAKE_RE.test(q) && !(/\b(permit|visa|migri)\b/.test(q) && !/\bintak/.test(q))) ||
+          (mon && notWork && /\b(start\w*|begin\w*|commenc\w*|batch|session|semesters?|programs?|programmes?|courses?|degrees?|admissions?)\b/.test(q)) ||
+          (season && notWork && (/\bsemesters?\b/.test(q) || (/\b(start\w*|begin\w*|commenc\w*)\b/.test(q) && /\b(course\w*|programs?|programmes?|degrees?|studies|study|terms?|classes)\b/.test(q))))) {
+        var when = mon ? MONTHS[(mon[1] || mon[2]).slice(0, 3)] : season ? (season[1] === 'fall' ? 'autumn' : season[1]) : '';
+        if (!when || when === 'September' || when === 'autumn') {
+          var ik = KB.filter(function (e) { return e.id === 'intake'; })[0];
+          return { text: (uni ? 'Each programme at **' + uni.name + '** sets its own application period on Studyinfo. ' : '') + ik.a, chips: ik.c };
+        }
+        return { text: 'Finnish degrees mainly start in the **autumn intake**, around **September**, with applications through **Studyinfo** months before that. A **' + when + '** start isn\'t covered on this site, and which programmes offer one changes from year to year, so I\'d rather not guess a list.\n\n' +
+          'A counsellor can check the current ' + when + ' options for your subject — ' + WA + ', or tell us when you\'d like to start in the [free evaluation](' + sec('contact') + ').',
+          chips: ['Talk to a counsellor', 'How do I apply?', 'Evaluate my profile'] };
+      }
+
+      // "Universities near Suomenlinna": answer by the campus city, never with a generic list.
+      if (NEAR_RE.test(q)) {
+        if (uni) return { text: '**' + uni.name + '** is based in **' + uni.city + '**' + (citiesOf(uni).length > 1 ? ', and teaches English-taught courses in ' + citiesOf(uni).join(', ') : '') + '. I can tell you the city, not distances or what\'s nearby — a counsellor can help with that. ' + uniLink(uni) + '.',
+          chips: ['What courses does ' + shortName(uni) + ' offer?', 'Talk to a counsellor'] };
+        var spot = LANDMARKS.filter(function (x) { return x[1].test(q); })[0], near = spot ? spot[0] : city;
+        if (near) {
+          var na = cityAnswer(near, q);
+          na.text = (spot ? 'That\'s in **' + near + '**, so here are the institutions that teach there. ' : 'Here are the institutions that teach in **' + near + '**. ') +
+            'This goes by **city**, not travel time — a counsellor can help with commutes from where you\'ll live.\n\n' + na.text;
+          return na;
+        }
+        if (/\b(universit\w*|uni|unis|uas|college\w*|institution\w*|school\w*|campus\w*|study|studying)\b/.test(q) && !/\b(rent|cost|costs|price|fees?|accommodation|housing|living)\b/.test(q))
+          return { text: 'I can match institutions to a Finnish city, or to a well-known place in one (Otaniemi, Suomenlinna or Santa Claus Village, say), but I didn\'t recognise the place in your question — and I can\'t work out distances. Tell me the city, e.g. *universities in Tampere*, or ask a counsellor: ' + WA + '.',
+            chips: ['Universities in Helsinki', 'Universities in Tampere', 'Talk to a counsellor'] };
+      }
+
       var byId = function (id) { return kbAnswer(KB.filter(function (e) { return e.id === id; })[0]); };
       if (/\b(who|what) are you\b|\bare you (a )?(bot|robot|human|real|ai)\b|\byour name\b/.test(q)) return byId('ai');
       if (/\bd visa\b|\bd type visa\b/.test(q)) return byId('dvisa');
@@ -553,6 +638,8 @@
       // Parents aren't covered by the family route on this page.
       if (/\b(parent|parents|mother|father|mom|mum|dad|sibling\w*|brother|sister)\b/.test(q) && /\b(bring|come|join|take|visit|family|permit|with me)\b/.test(q))
         return { text: "The family route on this page covers your **spouse or registered partner** and your **children under 18** — they can get a residence permit on the basis of family ties while you study. Parents and siblings aren't covered by that route. If they'd like to visit you, a counsellor can talk you through the options.", chips: ['Bringing your family', 'Talk to a counsellor'] };
+
+      if (/\b(family|spouse|wife|husband|partner|children|child|kids|dependants?)\b/.test(q) && /\b(bring|come|join|take|with me|move)\b/.test(q)) return byId('family');
 
       // How long degrees take, from the programme listings.
       if (/\b(how long|duration|how many years|length of)\b/.test(q) && (levelOf(q) || COURSE_HINT.test(q))) {
@@ -612,12 +699,13 @@
 
       // Everything else: the knowledge base.
       var hit = kbSearch(q);
-      if (hit.best && hit.best.s >= 3.2 && hit.cover >= 0.5) {
+      var miss = anchorMiss(q, hit.best ? hit.best.e.a : '');
+      if (hit.best && hit.best.s >= 3.2 && hit.cover >= 0.5 && !miss) {
         var res = kbAnswer(hit.best.e);
         return res;
       }
       // A plain field name ("nursing", "data science") is still a course search.
-      if (fieldy) return courseAnswer(q, { city: city });
+      if (fieldy && !miss) return courseAnswer(q, { city: city });
       return { text: "I'm not sure about that one from what's on this site, and I'd rather not guess. A Tutee Connect counsellor can answer it properly — [WhatsApp us](https://wa.me/917358364959), or I can take your details for a call back.\n\nHere's what I can help with right away:",
         chips: FALLBACK_CHIPS };
     });
