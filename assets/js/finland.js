@@ -2265,7 +2265,7 @@
     }
     function mirror() {
       var f = form.elements, nm = f.name.value.trim();
-      nameEl.textContent = nm || 'Your name';
+      nameEl.textContent = nm || 'Fills in as you go';
       nameEl.classList.toggle('is-empty', !nm);
       var level = picked('study_level');
       setText('[data-lp-level]', !level ? '—' : /Not sure/.test(level) ? 'Not sure yet' : level + (/PhD/.test(level) ? '' : ' degree'));
@@ -2300,7 +2300,7 @@
     });
     root.addEventListener('tc:lead-done', function (e) {
       if (!card.classList.contains('is-sent')) {
-        nameEl.textContent = e.detail.name || 'Your name';
+        nameEl.textContent = e.detail.name || 'Fills in as you go';
         nameEl.classList.toggle('is-empty', !e.detail.name);
       }
       stamp();

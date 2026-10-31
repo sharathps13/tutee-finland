@@ -1313,7 +1313,7 @@ main { overflow-x: clip; }
 .lp__who > div { display: grid; gap: 2px; min-width: 0; }
 .lp__who small, .lp__rows dt { font-size: 10.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #8ea3c4; }
 .lp__name { font-size: clamp(1.3rem, 1.05rem + 1vw, 1.75rem); line-height: 1.15; letter-spacing: -.02em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.lp__name.is-empty { color: rgba(255,255,255,.35); }
+.lp__name.is-empty { font-size: 15px; font-weight: 600; font-style: italic; letter-spacing: 0; color: #8ea3c4; }
 .lp__name.is-typing::after { content: ""; display: inline-block; width: 2px; height: .9em; margin-left: 3px; vertical-align: -2px; background: var(--aurora); animation: lfCaret 1s steps(2, start) infinite; }
 @keyframes lfCaret { to { opacity: 0; } }
 .lp__label { font-size: 13px; font-weight: 700; color: var(--aurora); }
@@ -2118,6 +2118,7 @@ main { overflow-x: clip; }
 @media (max-width: 699px) {
   .lp:not(.is-open) .lp__who small::after { content: " · tap to view"; }
   .lp__name { font-size: 1.05rem !important; }
+  .lp__name.is-empty { font-size: 13px !important; }
   .lp__who { gap: 10px !important; }
   .lp__ring { width: 40px !important; height: 40px !important; }
   .lf__side > .lp { padding: 9px 12px 10px; }
