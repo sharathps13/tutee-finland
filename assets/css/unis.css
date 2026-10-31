@@ -107,10 +107,23 @@
 .uc__type--uas { color: #0b6b52; }
 .rankpill { position: absolute; right: 12px; bottom: 10px; z-index: 1; display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; background: rgba(242,169,59,.95); color: #3b2402; font-weight: 800; font-size: 12px; }
 .rankpill .ico { width: 14px; height: 14px; }
-.slbtn { position: absolute; right: 12px; top: 12px; z-index: 2; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: rgba(6,22,49,.45); color: #fff; border: 1px solid rgba(255,255,255,.4); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: transform .25s var(--ease), background .25s; }
+/* The heart is a solid white button with a brand-red heart, so it reads
+   as a control on any photo; shortlisted turns it solid brand. */
+.slbtn { position: absolute; right: 12px; top: 12px; z-index: 2; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: var(--brand); border: 1px solid #fff; box-shadow: 0 6px 16px -6px rgba(6,22,49,.6); transition: transform .25s var(--ease), background .25s, color .25s; }
 .slbtn:hover { transform: scale(1.1); }
-.slbtn .ico { width: 18px; height: 18px; }
-.slbtn[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); }
+.slbtn .ico { width: 18px; height: 18px; stroke-width: 2.4; }
+.slbtn[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: #fff; }
+/* "Shortlist me" cue: every 7s a white ring pings out and the heart gives
+   one small beat, staggered card to card (--cue from cardHtml) and paused
+   off screen (.is-asleep, set by unis.js). Transform/opacity only; stops
+   once the card is shortlisted. */
+.slbtn::after { content: ""; position: absolute; inset: -1px; border-radius: 50%; border: 2px solid #fff; opacity: 0; pointer-events: none;
+  animation: slCue 7s var(--ease) infinite; animation-delay: calc(1.2s + var(--cue, 0) * 1.15s); }
+.slbtn .ico { animation: slBeat 7s var(--ease) infinite; animation-delay: calc(1.2s + var(--cue, 0) * 1.15s); }
+@keyframes slCue { 0% { opacity: 0; transform: scale(1); } 3% { opacity: .9; } 20%, 100% { opacity: 0; transform: scale(1.6); } }
+@keyframes slBeat { 0%, 12%, 100% { transform: none; } 4% { transform: scale(1.22); } 8% { transform: scale(.97); } }
+.slbtn[aria-pressed="true"]::after, .slbtn[aria-pressed="true"] .ico { animation: none; }
+.uc.is-asleep .slbtn::after, .uc.is-asleep .slbtn .ico { animation-play-state: paused; }
 .slbtn[aria-pressed="true"] .ico, .um__iconbtn[aria-pressed="true"] .ico, .um__slbtn[aria-pressed="true"] .ico { fill: currentColor; }
 .slbtn.pop, .um__iconbtn.pop, .um__slbtn.pop { animation: pop .4s var(--ease); }
 @keyframes pop { 40% { transform: scale(1.25); } }
@@ -148,7 +161,19 @@
 .slbar.has-items .slbar__heart { color: #ff8a8f; }
 .slbar.has-items .slbar__heart .ico { fill: currentColor; }
 .slbar__count { position: absolute; top: -7px; right: -7px; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; display: grid; place-items: center; background: var(--brand); color: #fff; font-size: 12px; font-weight: 800; border: 2px solid var(--night); }
-.slbar__count.pop { animation: pop .4s var(--ease); }
+/* Every add bumps the heart, flips the count in and ripples a ring out
+   while the label reads "Added: <name>" (initDock); a removal only
+   settles the count. */
+.slbar__heart::after { content: ""; position: absolute; inset: -1px; border-radius: inherit; opacity: 0; pointer-events: none; }
+.slbar.is-bump .slbar__heart { animation: slbarPop .45s cubic-bezier(.3, 1.5, .5, 1); }
+@keyframes slbarPop { 45% { transform: scale(1.12); } }
+.slbar.is-bump .slbar__heart::after { animation: slbarRipple .9s ease-out; }
+@keyframes slbarRipple { from { opacity: 1; box-shadow: 0 0 0 0 rgba(255,138,143,.65); } to { opacity: 1; box-shadow: 0 0 0 18px rgba(255,138,143,0); } }
+.slbar.is-bump .slbar__count { animation: slbarFlip .55s var(--ease); }
+@keyframes slbarFlip { 0% { transform: perspective(80px) rotateX(-90deg) scale(.6); } 60% { transform: perspective(80px) rotateX(0) scale(1.3); } 100% { transform: none; } }
+.slbar__count.is-settle { animation: slbarSettle .35s var(--ease); }
+@keyframes slbarSettle { from { transform: scale(.7); } }
+.slbar.is-added [data-dock-label] { color: #fff; font-weight: 700; }
 .slbar__text { min-width: 0; display: grid; line-height: 1.25; }
 .slbar__text b { font-size: 14.5px; white-space: nowrap; }
 .slbar__text small { font-size: 13px; color: #b9c8de; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -203,7 +228,10 @@ body.has-dock .toast { z-index: 95; }
 .um__tools { position: absolute; z-index: 2; top: 14px; right: 14px; display: flex; gap: 8px; }
 .um__iconbtn { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: rgba(6,22,49,.5); border: 1px solid rgba(255,255,255,.35); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background .2s, transform .2s; }
 .um__iconbtn:hover { background: rgba(6,22,49,.75); transform: scale(1.06); }
-.um__iconbtn[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); }
+/* The popup's heart gets the same solid white resting state as the cards. */
+.um__iconbtn[data-um-sl] { color: var(--brand); background: #fff; border-color: #fff; box-shadow: 0 6px 16px -6px rgba(6,22,49,.6); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.um__iconbtn[data-um-sl]:not([aria-pressed="true"]):hover { background: #fff5f5; }
+.um__iconbtn[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: #fff; }
 .um__title { position: relative; z-index: 1; display: grid; gap: 8px; padding: 0 clamp(18px, 3vw, 32px) clamp(16px, 2.4vw, 24px); padding-right: 110px; }
 .um__title h2 { font-size: clamp(1.6rem, 1.2rem + 2vw, 2.6rem); line-height: 1.08; letter-spacing: -.025em; }
 .um__title p { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #d5e1f1; }
@@ -271,6 +299,7 @@ body.has-dock .toast { z-index: 95; }
 
 @media (prefers-reduced-motion: reduce) {
   .uc, .umc, .slitem, .slbar { animation: none; }
+  .slbtn::after, .slbtn .ico, .slbar .slbar__heart, .slbar .slbar__heart::after, .slbar .slbar__count { animation: none !important; }
   .um__panel, .um__bg { transition: none; }
 }
 .page-dir.has-dock { padding-bottom: 76px; }

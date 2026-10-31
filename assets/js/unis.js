@@ -92,6 +92,16 @@
     if (btn) { btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop'); }
     toast(was ? 'Removed from your shortlist' : 'Added to your shortlist');
   }
+  /* The card hearts' "shortlist me" ping (unis.css) only runs while the
+     card is on screen. */
+  var cueIO = !reduceMotion && 'IntersectionObserver' in window ? new IntersectionObserver(function (es) {
+    es.forEach(function (e) { e.target.classList.toggle('is-asleep', !e.isIntersecting); });
+  }) : null;
+  function watchCues(root) {
+    if (!cueIO) return;
+    cueIO.disconnect();
+    $$('.uc', root).forEach(function (c) { cueIO.observe(c); });
+  }
   function syncHearts() {
     $$('[data-sl-id]').forEach(function (b) { b.setAttribute('aria-pressed', SL && SL.has(b.getAttribute('data-sl-id')) ? 'true' : 'false'); });
   }
@@ -103,14 +113,36 @@
     if (!dock || !SL) return;
     var count = $('[data-dock-count]', dock), label = $('[data-dock-label]', dock), stack = $('[data-dock-stack]', dock);
     var list = drawer && $('[data-sl-list]', drawer);
+    var prev = null, addedTimer = 0;
 
-    function render(items) {
+    function idleLabel(items) {
       var n = items.length;
+      return !n ? 'Tap the heart on any university to add it' : n === 1 ? items[0].name : n + ' universities saved';
+    }
+    function replay(el, cls) {
+      if (reduceMotion) return;
+      el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls);
+    }
+    function render(items) {
+      var n = items.length, ids = items.map(function (x) { return x.id; });
+      // The store hands over the whole list: diff it to find the new pick.
+      var added = prev ? items.filter(function (x) { return prev.indexOf(x.id) < 0; }) : [];
+      var removed = prev ? prev.some(function (id) { return ids.indexOf(id) < 0; }) : false;
+      prev = ids;
       dock.classList.toggle('has-items', n > 0);
       count.textContent = n;
-      count.classList.remove('pop'); void count.offsetWidth; count.classList.add('pop');
-      label.textContent = !n ? 'Tap the heart on any university to add it'
-        : n === 1 ? items[0].name : n + ' universities saved';
+      if (added.length) {
+        // Every add: the heart bumps, the count flips in, a ring ripples
+        // out and the label reads "Added: <name>" for a moment.
+        clearTimeout(addedTimer);
+        label.textContent = 'Added: ' + added[added.length - 1].name;
+        dock.classList.add('is-added');
+        addedTimer = setTimeout(function () { addedTimer = 0; dock.classList.remove('is-added'); label.textContent = idleLabel(SL.all()); }, 2500);
+        replay(dock, 'is-bump');
+      } else {
+        if (removed) { clearTimeout(addedTimer); addedTimer = 0; dock.classList.remove('is-added'); replay(count, 'is-settle'); }
+        if (!addedTimer) label.textContent = idleLabel(items);
+      }
       stack.innerHTML = items.slice(-4).map(function (x) { return '<span>' + esc(initials(x.name)) + '</span>'; }).join('');
       $$('[data-sl-n]').forEach(function (el) { el.textContent = n; });
       if (list) {
@@ -148,7 +180,7 @@
     var city = cityOf(u), on = SL && SL.has(u.id), f = fieldsOf(u), progs = progsOf(u), seen = {};
     progs.forEach(function (p) { if (p.city) seen[p.city] = 1; });
     var nCities = Object.keys(seen).length || 1;
-    return '<article class="uc" style="--i:' + i + '">' +
+    return '<article class="uc" style="--i:' + i + ';--cue:' + (i % 6) + '">' +
       '<button class="uc__open" type="button" data-open-uni="' + esc(u.id) + '" aria-label="' + esc(u.name) + ': view details and courses"></button>' +
       '<div class="ph" style="--ph-bg:' + tint(city) + '">' +
         '<span class="ph__mono" aria-hidden="true">' + esc(initials(u.name)) + '</span>' +
@@ -287,6 +319,7 @@
       });
       grid.innerHTML = rows.map(cardHtml).join('');
       guardImages(grid);
+      watchCues(grid);
       if (countEl) countEl.innerHTML = '<b>' + rows.length + '</b> of ' + all.length + ' shown';
       if (empty) empty.hidden = rows.length > 0;
       typeBtns.forEach(function (b) { b.setAttribute('aria-pressed', (b.getAttribute('data-type') || '') === state.type ? 'true' : 'false'); });

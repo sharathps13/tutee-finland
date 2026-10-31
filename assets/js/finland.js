@@ -1584,6 +1584,12 @@
       heart.classList.remove('is-pop'); void heart.offsetWidth; heart.classList.add('is-pop');
     }); });
     if (window.TCShortlist) window.TCShortlist.onChange(syncHeart);
+    // The hearts' "shortlist me" ping (CSS) is staggered between the two
+    // and only runs while the postcards are on screen.
+    hearts.forEach(function (h, i) { h.style.setProperty('--cue', i); });
+    if (!reduceMotion && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { root.classList.toggle('is-asleep', !es[0].isIntersecting); }).observe(root);
+    }
 
     /* ---------- flip ---------- */
     function flip(to) {
@@ -2325,20 +2331,51 @@
   /* ------------------------------------------------------------------ *
    * Shortlist reminder — a floating button that shows how many
    * universities are shortlisted and leads to the lead form. Hidden while
-   * the form is on screen; bumps when the count goes up.
+   * the form is on screen. It springs in the first time it appears, and
+   * every add (not only the first) bumps it, ripples and reads
+   * "Added: <name>" for a moment; a removal just settles the count. Until
+   * the visitor clicks it, a soft glow pulses every ~10s (CSS .is-idle).
    * ------------------------------------------------------------------ */
   function initShortlistFab() {
     var fab = $('[data-slfab]'), SL = window.TCShortlist;
     if (!fab || !SL) return;
-    var count = $('[data-slfab-count]', fab), label = $('[data-slfab-label]', fab), last = -1;
-    function sync() {
-      var n = SL.all().length;
+    var count = $('[data-slfab-count]', fab), label = $('[data-slfab-label]', fab);
+    var prev = null, addedTimer = 0, SEEN = 'tcSlfabSeen', seen = false;
+    try { seen = sessionStorage.getItem(SEEN) === '1'; } catch (e) { /* storage blocked */ }
+    function normal(n) { return n + (n === 1 ? ' university' : ' universities') + ' shortlisted'; }
+    function play(cls) {
+      if (reduceMotion) return;
+      fab.classList.remove('is-enter', 'is-bump', 'is-settle'); void fab.offsetWidth; fab.classList.add(cls);
+    }
+    // TCShortlist hands listeners the whole list, so diff it against the
+    // previous one to find what was just added.
+    function sync(list) {
+      list = list || SL.all();
+      var n = list.length, shown = !fab.hidden;
+      var ids = list.map(function (x) { return x.id; });
+      var added = prev ? list.filter(function (x) { return prev.indexOf(x.id) < 0; }) : [];
+      var removed = prev ? prev.some(function (id) { return ids.indexOf(id) < 0; }) : false;
       fab.hidden = n === 0;
       count.textContent = n;
-      label.textContent = n + (n === 1 ? ' university' : ' universities') + ' shortlisted';
-      if (last >= 0 && n > last && !reduceMotion) { fab.classList.remove('is-bump'); void fab.offsetWidth; fab.classList.add('is-bump'); }
-      last = n;
+      fab.classList.toggle('is-idle', n > 0 && !seen);
+      if (added.length) {
+        clearTimeout(addedTimer);
+        label.textContent = 'Added: ' + added[added.length - 1].name;
+        addedTimer = setTimeout(function () { addedTimer = 0; label.textContent = normal(SL.all().length); }, 2500);
+        play(shown ? 'is-bump' : 'is-enter');
+      } else {
+        if (removed) { clearTimeout(addedTimer); addedTimer = 0; }
+        if (!addedTimer) label.textContent = normal(n);
+        if (removed && n) play('is-settle');
+        else if (n && !shown) play('is-enter');
+      }
+      prev = ids;
     }
+    fab.addEventListener('click', function () {
+      seen = true;
+      fab.classList.remove('is-idle');
+      try { sessionStorage.setItem(SEEN, '1'); } catch (e) { /* storage blocked */ }
+    });
     var form = $('#contact');
     if (form && 'IntersectionObserver' in window) new IntersectionObserver(function (es) { fab.classList.toggle('is-away', es[0].isIntersecting); }, { threshold: 0.15 }).observe(form);
     SL.onChange(sync);
